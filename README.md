@@ -1,3 +1,20 @@
+### Équipe `<nom-équipe>`
+
+<dl>
+<dt>Chef·fe projet</dt>
+<dd>NOM Prénom</dd>
+<dt>Membres</dt>
+<dd>
+
+- NOM Prénom
+- NOM Prénom
+- NOM Prénom
+- …
+
+</dd>
+
+---
+
 # SAÉ 3·01 (dépôt de rendu)
 
 Ce dépôt est le dépôt de référence de votre équipe pour la SAÉ 3·01.
