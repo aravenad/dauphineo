@@ -2,14 +2,16 @@
 
 <dl>
 <dt>Chef·fe projet</dt>
-<dd>NOM Prénom</dd>
+<dd>ARAVENA-BRAVO Damien</dd>
 <dt>Membres</dt>
 <dd>
 
-- NOM Prénom
-- NOM Prénom
-- NOM Prénom
-- …
+- BENDRIS Nael
+- BENKHEIRA Lilya
+- SEKMA Sarah
+- JACOB Timothe
+- TIERRIE Axel
+- DESCHAUX-BEAUME Maelys
 
 </dd>
 
