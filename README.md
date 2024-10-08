@@ -1,4 +1,4 @@
-### Équipe `<nom-équipe>`
+### Équipe `<Team-08>`
 
 <dl>
 <dt>Chef·fe projet</dt>
