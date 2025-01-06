@@ -1,7 +1,13 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import FormDialog from "./FormDialog";
-import CardSPR from "./CardSPR"
+import ConnexionDialog from "./ConnexionDialog";
+import CardSPR from "./CardSPR";
+import AccordionFAQ from "./AccordionFAQ";
 
-
-export { Header, Footer, FormDialog, CardSPR }
+export {
+  Header,
+  Footer,
+  ConnexionDialog,
+  CardSPR,
+  AccordionFAQ,
+};

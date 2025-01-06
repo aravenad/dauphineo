@@ -21,7 +21,7 @@ import {
 import { useState } from "react";
 import React from "react";
 
-function FormDialog() {
+function ConnexionDialog() {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -32,7 +32,6 @@ function FormDialog() {
     setOpen(false);
   };
 
-  // Password TextField
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -114,7 +113,7 @@ function FormDialog() {
               Connectez-vous
             </ButtonCustom>
             <Typography variant="body1">Pas encore membre ?</Typography>
-            <Link href="#" fontWeight={700} color={"common.black"}>
+            <Link href="" fontWeight={700} color={"common.black"}>
               Inscrivez-vous
             </Link>
           </Stack>
@@ -124,4 +123,4 @@ function FormDialog() {
   );
 }
 
-export default FormDialog;
+export default ConnexionDialog;

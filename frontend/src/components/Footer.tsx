@@ -27,7 +27,7 @@ function Footer() {
       title:'Support',
       links: [
         {text:'Contactez-nous', href:''},
-        {text:'FAQ', href:''}
+        {text:'FAQ', href:'/faq'}
       ],
     },
     {
