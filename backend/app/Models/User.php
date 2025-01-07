@@ -6,10 +6,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+<<<<<<< HEAD
     use HasFactory, Notifiable;
+=======
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable, HasApiTokens;
+>>>>>>> a6eb2104842c72980753b0ba49bfc06e4219fa01
 
     /**
      * The attributes that are mass assignable.
