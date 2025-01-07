@@ -53,9 +53,4 @@ Route::prefix('avis')->group(function() {
     Route::delete('{id}', [AvisController::class, 'destroy']);
 });
 
-// Routes de CreneauxController
-Route::prefix('creneaux')->group(function() {
-    Route::get('/', [CreneauxController::class, 'index']);
-});
-
 // Autres controllers...
