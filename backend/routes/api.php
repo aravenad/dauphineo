@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ReservationController;
 
 Route::get('/users', function (Request $request) {
     return $request->user();
@@ -10,7 +11,7 @@ Route::get('/users', function (Request $request) {
 
 
 // Routes de UserController
-Route::prefix('users')->group(function() {
+Route::prefix(prefix: 'users')->group(function() {
     Route::get('/', [UserController::class, 'index']);
     Route::get('{userId}', [UserController::class, 'show']);
     Route::post('/', [UserController::class, 'store']);
@@ -19,3 +20,9 @@ Route::prefix('users')->group(function() {
 });
 
 // Autres controllers...
+
+Route::prefix(prefix: 'reservations')->group(function() {
+    Route::get('/', [ReservationController::class, 'index']);
+    Route::post('/', [ReservationController::class, 'store']);
+    Route::patch('{reservationId}', [ReservationController::class, 'updateStatus']);
+});
