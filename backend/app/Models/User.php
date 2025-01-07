@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -18,9 +17,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nom',
+        'prenom',
         'email',
-        'password',
+        'pseudo',
+        'mot_de_passe',
+        'verif_age',
+        'derniere_activite'
     ];
 
     /**
@@ -29,7 +32,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'mot_de_passe',
         'remember_token',
         'email_verified_at',
         'created_at',
@@ -45,7 +48,25 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'mot_de_passe' => 'hashed',
+            'verif_age' => 'boolean',
+            'derniere_activite' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the reservations for the user.
+     */
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class, 'id_utilisateur');
+    }
+
+    /**
+     * Get the avis for the user.
+     */
+    public function avis(): HasMany
+    {
+        return $this->hasMany(Avis::class, 'id_utilisateur');
     }
 }

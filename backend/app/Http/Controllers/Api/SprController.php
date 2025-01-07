@@ -7,10 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 /**
- * @OA\Info(
- *     title="SPR API",
- *     version="1.0.0",
- *     description="API endpoints for managing Sites du Patrimoine Remarquable"
+ * @OA\Tag(
+ *     name="SPR",
+ *     description="API Endpoints for Sites du Patrimoine Remarquable"
  * )
  */
 class SprController extends Controller
@@ -18,6 +17,8 @@ class SprController extends Controller
     /**
      * @OA\Get(
      *     path="/api/spr",
+     *     tags={"SPR"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Get all SPR sites",
      *     @OA\Response(
      *         response=200,
@@ -33,6 +34,8 @@ class SprController extends Controller
     /**
      * @OA\Post(
      *     path="/api/spr",
+     *     tags={"SPR"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Create a new SPR site",
      *     @OA\RequestBody(
      *         required=true,
@@ -72,7 +75,9 @@ class SprController extends Controller
     /**
      * @OA\Get(
      *     path="/api/spr/{id}",
-     *     summary="Get SPR site by ID",
+     *     tags={"SPR"},
+     *     security={{"bearerAuth": {}}},
+     *     summary="Get specific SPR site",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -81,11 +86,7 @@ class SprController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="SPR site details"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="SPR site not found"
+     *         description="SPR details"
      *     )
      * )
      */
@@ -98,6 +99,8 @@ class SprController extends Controller
     /**
      * @OA\Put(
      *     path="/api/spr/{id}",
+     *     tags={"SPR"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Update SPR site",
      *     @OA\Parameter(
      *         name="id",
@@ -106,7 +109,9 @@ class SprController extends Controller
      *         @OA\Schema(type="integer")
      *     ),
      *     @OA\RequestBody(
+     *         required=true,
      *         @OA\JsonContent(
+     *             type="object",
      *             @OA\Property(property="code_departement", type="string"),
      *             @OA\Property(property="nom_du_departement", type="string"),
      *             @OA\Property(property="nom_commune", type="string"),
@@ -118,7 +123,22 @@ class SprController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="SPR updated successfully"
+     *         description="SPR updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer"),
+     *             @OA\Property(property="code_departement", type="string"),
+     *             @OA\Property(property="nom_du_departement", type="string"),
+     *             @OA\Property(property="nom_commune", type="string"),
+     *             @OA\Property(property="capacite_de_visite", type="integer"),
+     *             @OA\Property(property="mot_cle", type="string"),
+     *             @OA\Property(property="is_pmr", type="boolean"),
+     *             @OA\Property(property="temps_de_visite", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="SPR not found"
      *     )
      * )
      */
@@ -143,6 +163,8 @@ class SprController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/spr/{id}",
+     *     tags={"SPR"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Delete SPR site",
      *     @OA\Parameter(
      *         name="id",

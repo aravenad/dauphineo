@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 
 /**
- * @OA\Info(
- *     title="Images API",
- *     version="1.0.0",
- *     description="API documentation for managing SPR images"
+ * @OA\Tag(
+ *     name="Images",
+ *     description="API Endpoints for Images management"
  * )
  */
 class ImagesController extends Controller
@@ -21,6 +20,7 @@ class ImagesController extends Controller
     /**
      * @OA\Get(
      *     path="/api/images",
+     *     tags={"Images"},
      *     security={{"bearerAuth": {}}},
      *     summary="Fetch all images",
      *     @OA\Response(
@@ -43,6 +43,7 @@ class ImagesController extends Controller
     /**
      * @OA\Post(
      *     path="/api/images",
+     *     tags={"Images"},
      *     security={{"bearerAuth": {}}},
      *     summary="Upload a new image",
      *     @OA\RequestBody(
@@ -97,6 +98,7 @@ class ImagesController extends Controller
     /**
      * @OA\Get(
      *     path="/api/images/{id}",
+     *     tags={"Images"},
      *     security={{"bearerAuth": {}}},
      *     summary="Get specific image",
      *     @OA\Parameter(
@@ -129,6 +131,7 @@ class ImagesController extends Controller
     /**
      * @OA\Post(
      *     path="/api/images/{id}",
+     *     tags={"Images"},
      *     security={{"bearerAuth": {}}},
      *     summary="Update an image",
      *     @OA\Parameter(
@@ -189,6 +192,7 @@ class ImagesController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/images/{id}",
+     *     tags={"Images"},
      *     security={{"bearerAuth": {}}},
      *     summary="Delete an image",
      *     @OA\Parameter(
