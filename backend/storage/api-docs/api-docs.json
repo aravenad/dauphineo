@@ -1,13 +1,847 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Users API",
-        "description": "API documentation for managing users",
+        "title": "SAE API",
+        "description": "API documentation for SAE Project",
         "version": "1.0.0"
     },
     "paths": {
+        "/api/avis": {
+            "get": {
+                "tags": [
+                    "Avis"
+                ],
+                "summary": "Get all reviews",
+                "operationId": "9aa1f35688cda1f3fb4f0cf2a0e894bf",
+                "responses": {
+                    "200": {
+                        "description": "List of reviews",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "titre": {
+                                                "type": "string"
+                                            },
+                                            "commentaire": {
+                                                "type": "string"
+                                            },
+                                            "note": {
+                                                "type": "integer"
+                                            },
+                                            "date_de_publication": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "status_avis": {
+                                                "type": "boolean"
+                                            },
+                                            "id_utilisateur": {
+                                                "type": "integer"
+                                            },
+                                            "id_spr": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Avis"
+                ],
+                "summary": "Create a new review",
+                "operationId": "4ce7ae7d18c00535038ea22e2f3c29ef",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "titre",
+                                    "commentaire",
+                                    "note",
+                                    "id_utilisateur",
+                                    "id_spr"
+                                ],
+                                "properties": {
+                                    "titre": {
+                                        "type": "string"
+                                    },
+                                    "commentaire": {
+                                        "type": "string"
+                                    },
+                                    "note": {
+                                        "type": "integer",
+                                        "maximum": 5,
+                                        "minimum": 0
+                                    },
+                                    "status_avis": {
+                                        "type": "boolean"
+                                    },
+                                    "id_utilisateur": {
+                                        "type": "integer"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Review created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/avis/{id}": {
+            "get": {
+                "tags": [
+                    "Avis"
+                ],
+                "summary": "Get specific review",
+                "operationId": "aa1d9dca3439d413bd1c4f3b3bc7442d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review details"
+                    },
+                    "404": {
+                        "description": "Review not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Avis"
+                ],
+                "summary": "Delete review",
+                "operationId": "9898e37d6aee19b452fa537ed4bf37bd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Review deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/guides": {
+            "get": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Get all guides",
+                "operationId": "fe1ed82809914df8899dcedb2ce9cfc8",
+                "responses": {
+                    "200": {
+                        "description": "List of guides"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Create a new guide",
+                "operationId": "515b2b4b125bc305909b67c8bf4e5dd3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "email",
+                                    "pseudo",
+                                    "mot_de_passe",
+                                    "id_spr"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "type": "string"
+                                    },
+                                    "prenom": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "pseudo": {
+                                        "type": "string"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer"
+                                    },
+                                    "derniere_activite": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Guide created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/guides/{id}": {
+            "get": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Get specific guide",
+                "operationId": "b5e28f5e61a230f277e66237e624bd4a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Guide details"
+                    },
+                    "404": {
+                        "description": "Guide not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Update guide",
+                "operationId": "0da0bff6a392f3a27f28c82be761b8e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string"
+                                    },
+                                    "prenom": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "pseudo": {
+                                        "type": "string"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer"
+                                    },
+                                    "derniere_activite": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Guide updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Delete guide",
+                "operationId": "95e5a0413d0cc74096227fb30170906d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Guide deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/images": {
+            "get": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Fetch all images",
+                "operationId": "362a59b6d949bab932638ccd9fcf2555",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "image_url": {
+                                                "type": "string"
+                                            },
+                                            "id_spr": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Upload a new image",
+                "operationId": "7e5cc7cd738f2b38d1ad7551d0531e5c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "image": {
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Image uploaded successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "image_url": {
+                                            "type": "string"
+                                        },
+                                        "id_spr": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/images/{id}": {
+            "get": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Get specific image",
+                "operationId": "a2aa1ddac1c8dfbfa592dc432e54d475",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "image_url": {
+                                            "type": "string"
+                                        },
+                                        "id_spr": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Image not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Update an image",
+                "operationId": "af74e8ea91eefd63f3c3477b67202ddf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "image": {
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Image updated successfully"
+                    },
+                    "404": {
+                        "description": "Image not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Images"
+                ],
+                "summary": "Delete an image",
+                "operationId": "8cd10a7589bc2fc8168fd3c3464196f7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Image deleted successfully"
+                    },
+                    "404": {
+                        "description": "Image not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/spr": {
+            "get": {
+                "tags": [
+                    "SPR"
+                ],
+                "summary": "Get all SPR sites",
+                "operationId": "1599e93b320b883ebe87ef9d7f41708c",
+                "responses": {
+                    "200": {
+                        "description": "List of SPR sites"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "SPR"
+                ],
+                "summary": "Create a new SPR site",
+                "operationId": "89cc2cbe2f7fa3d8476e4eae0e681761",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code_departement",
+                                    "nom_du_departement",
+                                    "nom_commune",
+                                    "capacite_de_visite"
+                                ],
+                                "properties": {
+                                    "code_departement": {
+                                        "type": "string"
+                                    },
+                                    "nom_du_departement": {
+                                        "type": "string"
+                                    },
+                                    "nom_commune": {
+                                        "type": "string"
+                                    },
+                                    "capacite_de_visite": {
+                                        "type": "integer"
+                                    },
+                                    "mot_cle": {
+                                        "type": "string"
+                                    },
+                                    "is_pmr": {
+                                        "type": "boolean"
+                                    },
+                                    "temps_de_visite": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "SPR created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/spr/{id}": {
+            "get": {
+                "tags": [
+                    "SPR"
+                ],
+                "summary": "Get specific SPR site",
+                "operationId": "ed5e510e44db68b6a3959c57ce1a3208",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "SPR details"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "SPR"
+                ],
+                "summary": "Update SPR site",
+                "operationId": "ba6378b0e2ede42961902e39d78a9a8d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "code_departement": {
+                                        "type": "string"
+                                    },
+                                    "nom_du_departement": {
+                                        "type": "string"
+                                    },
+                                    "nom_commune": {
+                                        "type": "string"
+                                    },
+                                    "capacite_de_visite": {
+                                        "type": "integer"
+                                    },
+                                    "mot_cle": {
+                                        "type": "string"
+                                    },
+                                    "is_pmr": {
+                                        "type": "boolean"
+                                    },
+                                    "temps_de_visite": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "SPR updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "code_departement": {
+                                            "type": "string"
+                                        },
+                                        "nom_du_departement": {
+                                            "type": "string"
+                                        },
+                                        "nom_commune": {
+                                            "type": "string"
+                                        },
+                                        "capacite_de_visite": {
+                                            "type": "integer"
+                                        },
+                                        "mot_cle": {
+                                            "type": "string"
+                                        },
+                                        "is_pmr": {
+                                            "type": "boolean"
+                                        },
+                                        "temps_de_visite": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "SPR not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "SPR"
+                ],
+                "summary": "Delete SPR site",
+                "operationId": "d38e631a6700e790667ee35425d22412",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "SPR deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/users": {
             "get": {
+                "tags": [
+                    "Users"
+                ],
                 "summary": "Fetch all users",
                 "operationId": "566aed8efb436ca506e0ef51a032ecd9",
                 "responses": {
@@ -22,6 +856,9 @@
                 ]
             },
             "post": {
+                "tags": [
+                    "Users"
+                ],
                 "summary": "Create a new user",
                 "operationId": "be551c1d694a01c164966f58bfa77013",
                 "requestBody": {
@@ -29,20 +866,43 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "email",
+                                    "pseudo",
+                                    "mot_de_passe"
+                                ],
                                 "properties": {
-                                    "name": {
+                                    "nom": {
                                         "type": "string",
-                                        "example": "John Doe"
+                                        "example": "Doe"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "John"
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
                                         "example": "john.doe@example.com"
                                     },
-                                    "password": {
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "johndoe"
+                                    },
+                                    "mot_de_passe": {
                                         "type": "string",
                                         "format": "password",
                                         "example": "securepassword123"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "derniere_activite": {
+                                        "type": "string",
+                                        "format": "date-time"
                                     }
                                 },
                                 "type": "object"
@@ -52,28 +912,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "User created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "John Doe"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "john.doe@example.com"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "User created successfully"
                     }
                 },
                 "security": [
@@ -85,6 +924,9 @@
         },
         "/api/users/{userId}": {
             "get": {
+                "tags": [
+                    "Users"
+                ],
                 "summary": "Show one user",
                 "operationId": "0df42d27bb1e69b72d1b576ba1792938",
                 "parameters": [
@@ -147,6 +989,9 @@
                 ]
             },
             "put": {
+                "tags": [
+                    "Users"
+                ],
                 "summary": "Update user",
                 "operationId": "b044744b80fb098731bd042ae4b557f1",
                 "parameters": [
@@ -166,19 +1011,29 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
+                                    "nom": {
+                                        "type": "string"
+                                    },
+                                    "prenom": {
+                                        "type": "string"
                                     },
                                     "email": {
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "john.doe@example.com"
+                                        "format": "email"
                                     },
-                                    "password": {
+                                    "pseudo": {
+                                        "type": "string"
+                                    },
+                                    "mot_de_passe": {
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "securepassword123"
+                                        "format": "password"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean"
+                                    },
+                                    "derniere_activite": {
+                                        "type": "string",
+                                        "format": "date-time"
                                     }
                                 },
                                 "type": "object"
@@ -188,44 +1043,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "User updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "example": "John Doe"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "john.doe@example.com"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "User not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "User updated successfully"
                     }
                 },
                 "security": [
@@ -235,6 +1053,9 @@
                 ]
             },
             "delete": {
+                "tags": [
+                    "Users"
+                ],
                 "summary": "Delete one user",
                 "operationId": "81a5f96b1259160f50257c1b70d91984",
                 "parameters": [
@@ -298,5 +1119,27 @@
                 "scheme": "bearer"
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Avis",
+            "description": "API Endpoints for managing reviews"
+        },
+        {
+            "name": "Guides",
+            "description": "API Endpoints for Guide management"
+        },
+        {
+            "name": "Images",
+            "description": "API Endpoints for Images management"
+        },
+        {
+            "name": "SPR",
+            "description": "API Endpoints for Sites du Patrimoine Remarquable"
+        },
+        {
+            "name": "Users",
+            "description": "API Endpoints for user management"
+        }
+    ]
 }
