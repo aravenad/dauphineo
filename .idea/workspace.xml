@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8330d964-16b3-4a7b-bee3-fd709988838e" name="Changes" comment="beggining of the model and controler for the creneaux table">
-      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/CreneauxController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/app/Models/Creneaux.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +82,7 @@
       <updated>1736237717415</updated>
       <workItem from="1736237718978" duration="4396000" />
       <workItem from="1736242216369" duration="12959000" />
-      <workItem from="1736263815826" duration="1047000" />
+      <workItem from="1736263815826" duration="1799000" />
     </task>
     <task id="LOCAL-00001" summary="created the controller and model for SPR">
       <option name="closed" value="true" />

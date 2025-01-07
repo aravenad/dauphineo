@@ -9,14 +9,12 @@ use App\Http\Controllers\Api\SprController;
 use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
 
-
 Route::get('/users', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
 // Routes de UserController
-Route::prefix(prefix: 'users')->group(function() {
+Route::prefix('users')->group(function() {
     Route::get('/', [UserController::class, 'index']);
     Route::get('{userId}', [UserController::class, 'show']);
     Route::post('/', [UserController::class, 'store']);
@@ -59,10 +57,14 @@ Route::prefix('avis')->group(function() {
     Route::delete('{id}', [AvisController::class, 'destroy']);
 });
 
-// Autres controllers...
-
+// Routes for ReservationController
 Route::prefix(prefix: 'reservations')->group(function() {
     Route::get('/', [ReservationController::class, 'index']);
     Route::post('/', [ReservationController::class, 'store']);
     Route::patch('{reservationId}', [ReservationController::class, 'updateStatus']);
+});
+
+// Routes de CreneauxController
+Route::prefix('creneaux')->group(function() {
+    Route::get('/', [CreneauxController::class, 'index']);
 });
