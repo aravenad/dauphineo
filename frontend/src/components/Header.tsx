@@ -10,7 +10,7 @@ import {
 import { Language } from "@mui/icons-material";
 import LogoVert from "../assets/dauphineo_logo_vert.png";
 import { ButtonCustom } from "./mui_custom";
-import { FormDialog } from "./index";
+import { ConnexionDialog } from "./index";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -71,7 +71,7 @@ function Header() {
             </Typography>
           </Avatar>
         ) : (
-          <FormDialog />
+          <ConnexionDialog />
         )}
       </Stack>
     </Stack>

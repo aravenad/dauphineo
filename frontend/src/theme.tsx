@@ -19,6 +19,9 @@ let theme = createTheme({
     info: {
       main: "#E6AF2E",
     },
+    grey: {
+      50: "#F3F3F3"
+    },
     text: {
       secondary: "#838383",
     },
@@ -83,9 +86,4 @@ let theme = createTheme({
   },
 });
 
-theme = createTheme(theme, {
-  palette:{
-
-  }
-})
 export default theme;

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { getUsers } from '../api/users';
+import { useState, useEffect } from 'react';
+import { getUsers } from '../api/endpoints/users';
 import { Box, Typography, Card, CardContent } from '@mui/material';
 import { SearchBarCustom } from '../components/mui_custom';
+import { User } from '../api/types/apiTypes';
+import { AxiosError } from 'axios';
 
 function Home() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

@@ -1,3 +1,5 @@
 import ButtonCustom from "./ButtonCustom";
 import SearchBarCustom from "./SearchBarCustom";
-export { ButtonCustom, SearchBarCustom }
+import AccordionCustom from "./AccordionCustom";
+
+export { ButtonCustom, SearchBarCustom, AccordionCustom }
