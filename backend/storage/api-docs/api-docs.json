@@ -6,6 +6,18 @@
         "version": "1.0.0"
     },
     "paths": {
+<<<<<<< HEAD
+        "/api/reservations": {
+            "get": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Fetch all reservations",
+                "operationId": "f10e68ff0ce263ef754b2f640eda8d93",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+=======
         "/api/avis": {
             "get": {
                 "tags": [
@@ -53,6 +65,7 @@
                                 }
                             }
                         }
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                     }
                 },
                 "security": [
@@ -63,16 +76,80 @@
             },
             "post": {
                 "tags": [
+<<<<<<< HEAD
+                    "Reservation"
+                ],
+                "summary": "Create a new reservation",
+                "description": "This endpoint allows users to create a new reservation.",
+                "operationId": "4f59911f11563f79b4f01bd02222607d",
+=======
                     "Avis"
                 ],
                 "summary": "Create a new review",
                 "operationId": "4ce7ae7d18c00535038ea22e2f3c29ef",
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
+<<<<<<< HEAD
+                                    "date",
+                                    "heure",
+                                    "prix",
+                                    "statut_reservation",
+                                    "statut_paiement",
+                                    "taille",
+                                    "id_utilisateur"
+                                ],
+                                "properties": {
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-07"
+                                    },
+                                    "heure": {
+                                        "type": "string",
+                                        "format": "time",
+                                        "example": "14:30:00"
+                                    },
+                                    "prix": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 50.75
+                                    },
+                                    "statut_reservation": {
+                                        "type": "string",
+                                        "example": "confirmée"
+                                    },
+                                    "statut_paiement": {
+                                        "type": "string",
+                                        "example": "payé"
+                                    },
+                                    "taille": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "id_utilisateur": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "id_visite": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "id_spr": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "id_guide": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+=======
                                     "titre",
                                     "commentaire",
                                     "note",
@@ -99,6 +176,7 @@
                                     },
                                     "id_spr": {
                                         "type": "integer"
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                                     }
                                 },
                                 "type": "object"
@@ -108,7 +186,30 @@
                 },
                 "responses": {
                     "201": {
+<<<<<<< HEAD
+                        "description": "Reservation created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Reservation created successfully"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation failed"
+=======
                         "description": "Review created successfully"
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                     }
                 },
                 "security": [
@@ -118,6 +219,15 @@
                 ]
             }
         },
+<<<<<<< HEAD
+        "/api/reservations/{id}": {
+            "put": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Update the status of a reservation",
+                "operationId": "decff4da6a5998aa55b14bcd1037fd6a",
+=======
         "/api/avis/{id}": {
             "get": {
                 "tags": [
@@ -297,6 +407,7 @@
                 ],
                 "summary": "Update guide",
                 "operationId": "0da0bff6a392f3a27f28c82be761b8e3",
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                 "parameters": [
                     {
                         "name": "id",
@@ -313,6 +424,11 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+<<<<<<< HEAD
+                                    "statut_reservation": {
+                                        "type": "string",
+                                        "example": "annulé"
+=======
                                     "nom": {
                                         "type": "string"
                                     },
@@ -339,6 +455,7 @@
                                     "derniere_activite": {
                                         "type": "string",
                                         "format": "date-time"
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                                     }
                                 },
                                 "type": "object"
@@ -348,6 +465,12 @@
                 },
                 "responses": {
                     "200": {
+<<<<<<< HEAD
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+=======
                         "description": "Guide updated successfully"
                     }
                 },
@@ -828,6 +951,7 @@
                 "responses": {
                     "204": {
                         "description": "SPR deleted successfully"
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
                     }
                 },
                 "security": [
@@ -1122,6 +1246,10 @@
     },
     "tags": [
         {
+<<<<<<< HEAD
+            "name": "Reservation",
+            "description": "API Endpoints for Managing Reservations"
+=======
             "name": "Avis",
             "description": "API Endpoints for managing reviews"
         },
@@ -1140,6 +1268,7 @@
         {
             "name": "Users",
             "description": "API Endpoints for user management"
+>>>>>>> dcd9b1ec2495dddabf9e47f4f76e4fdee6fe37ab
         }
     ]
 }
