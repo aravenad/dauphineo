@@ -1,4 +1,4 @@
-""<?php
+<?php
 
 namespace App\Models;
 
@@ -11,7 +11,7 @@ class Creneaux extends Model
 
     public function spr()
     {
-        return $this->belongsTo(SPR::class, 'id_spr');
+        return $this->belongsTo(Spr::class, 'id_spr');
     }
 
     public function disponibilites()

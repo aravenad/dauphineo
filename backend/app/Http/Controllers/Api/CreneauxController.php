@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Creneaux;
+use App\Models\Spr;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CreneauxController extends Controller
@@ -10,7 +12,7 @@ class CreneauxController extends Controller
     // Relation avec le SPR
     public function spr()
     {
-        return $this->belongsTo(SPR::class, 'id_spr'); // 'id_spr' est la clé étrangère
+        return $this->belongsTo(Spr::class, 'id_spr'); // 'id_spr' est la clé étrangère
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ImagesController;
 use App\Http\Controllers\Api\SprController;
 use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
+use App\Http\Controllers\Api\CreneauxController;
 
 Route::get('/users', function (Request $request) {
     return $request->user();
@@ -58,7 +59,7 @@ Route::prefix('avis')->group(function() {
 });
 
 // Routes for ReservationController
-Route::prefix(prefix: 'reservations')->group(function() {
+Route::prefix('reservations')->group(function() {
     Route::get('/', [ReservationController::class, 'index']);
     Route::post('/', [ReservationController::class, 'store']);
     Route::patch('{reservationId}', [ReservationController::class, 'updateStatus']);
