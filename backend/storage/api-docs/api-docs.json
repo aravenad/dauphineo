@@ -254,23 +254,6 @@
             }
         },
         "/api/reservations": {
-            "get": {
-                "tags": [
-                    "Reservation"
-                ],
-                "summary": "Fetch all reservations",
-                "operationId": "f10e68ff0ce263ef754b2f640eda8d93",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Reservation"
@@ -398,15 +381,6 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "date",
-                                    "heure",
-                                    "prix",
-                                    "statut_reservation",
-                                    "statut_paiement",
-                                    "taille",
-                                    "id_utilisateur"
-                                ],
                                 "properties": {
                                     "statut_reservation": {
                                         "type": "string",
@@ -763,6 +737,150 @@
                     }
                 ]
             }
+        },
+        "/api/utilisateur": {
+            "get": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Fetch all users",
+                "operationId": "8a28f6d8d71d411de84c3959602f35b0",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Create a new user",
+                "operationId": "481c526ab19ffb2e9397efee961d0192",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Dupont"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "Jean"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jean.dupont@example.com"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "securepassword123"
+                                    },
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "Jdu59"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "nom": {
+                                            "type": "string",
+                                            "example": "Dupont"
+                                        },
+                                        "prenom": {
+                                            "type": "string",
+                                            "example": "Jean"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "jean.dupont@example.com"
+                                        },
+                                        "pseudo": {
+                                            "type": "string",
+                                            "example": "Jdu59"
+                                        },
+                                        "verif_age": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "derniere_activite": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-01-01T12:00:00Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/utilisateur/{id}": {
+            "get": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Get specific user details",
+                "operationId": "0873a0f9719ccfad3ddaf09d472f55fc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Utilisateur details"
+                    },
+                    "404": {
+                        "description": "Utilisateur not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -784,12 +902,12 @@
             "description": "API Endpoints for Managing Reservations"
         },
         {
-            "name": "Reservation",
-            "description": "API Endpoints for Managing Reservations"
-        },
-        {
             "name": "SPR",
             "description": "Endpoints for spr"
+        },
+        {
+            "name": "utilisateur",
+            "description": "Endpoints for managing users"
         }
     ]
 }

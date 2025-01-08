@@ -12,6 +12,10 @@ class Utilisateur extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
+    protected $table='utilisateur';
+    // Désactiver les timestamps
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -47,6 +51,4 @@ class Utilisateur extends Authenticatable
         ];
     }
 }
-{
-    //
-}
+
