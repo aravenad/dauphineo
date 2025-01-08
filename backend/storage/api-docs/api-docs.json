@@ -398,6 +398,15 @@
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "date",
+                                    "heure",
+                                    "prix",
+                                    "statut_reservation",
+                                    "statut_paiement",
+                                    "taille",
+                                    "id_utilisateur"
+                                ],
                                 "properties": {
                                     "statut_reservation": {
                                         "type": "string",
@@ -769,6 +778,10 @@
         {
             "name": "avis",
             "description": "Endpoints for managing reviews"
+        },
+        {
+            "name": "Reservation",
+            "description": "API Endpoints for Managing Reservations"
         },
         {
             "name": "Reservation",
