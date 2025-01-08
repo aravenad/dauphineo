@@ -32,7 +32,7 @@ class Utilisateur extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'mot_de_passe',
+        'mot_de_passe'
     ];
 
     /**

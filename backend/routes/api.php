@@ -10,12 +10,15 @@ use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
 
-Route::get('/users', function (Request $request) {
+Route::get('/utilisateur', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
 // Routes de UserController
-Route::prefix('users')->group(function() {
+Route::prefix('utilisateur')->group(function() {
     Route::get('/', [UserController::class, 'index']);
     Route::get('{userId}', [UserController::class, 'show']);
     Route::post('/', [UserController::class, 'store']);
