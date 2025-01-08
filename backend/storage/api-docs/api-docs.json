@@ -398,15 +398,6 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "date",
-                                    "heure",
-                                    "prix",
-                                    "statut_reservation",
-                                    "statut_paiement",
-                                    "taille",
-                                    "id_utilisateur"
-                                ],
                                 "properties": {
                                     "statut_reservation": {
                                         "type": "string",
@@ -763,6 +754,175 @@
                     }
                 ]
             }
+        },
+        "/api/visites": {
+            "get": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Get all visits",
+                "operationId": "6964aa5d426cefb79ccadb5e9ce063e5",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Create a new visit",
+                "operationId": "7ebad97f95ff240c8f399fb4d847e860",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "capacite_actuelle",
+                                    "capacite_max",
+                                    "date_visite",
+                                    "id_spr",
+                                    "id_disponibilite"
+                                ],
+                                "properties": {
+                                    "capacite_actuelle": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "capacite_max": {
+                                        "type": "integer",
+                                        "example": 30
+                                    },
+                                    "date_visite": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-01-15"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "id_disponibilite": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Visit created successfully"
+                    }
+                }
+            }
+        },
+        "/api/visites/{id}": {
+            "get": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Get a specific visit",
+                "operationId": "6692b7f4d872a11d82205e32d8b66bf1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Delete a visit",
+                "operationId": "51521dcfaf993a53461bfe3ecb27c29a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/api/visites/user/{userId}": {
+            "get": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Get all visits associated with a specific user",
+                "operationId": "82790b1551ba410d0921e585bb935994",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "No visits found for this user"
+                    }
+                }
+            }
+        },
+        "/api/visites/spr/{sprId}": {
+            "get": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Get all visits for a specific SPR",
+                "operationId": "bd19b1500dc79a932ca3c6e251983f70",
+                "parameters": [
+                    {
+                        "name": "sprId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -784,12 +944,12 @@
             "description": "API Endpoints for Managing Reservations"
         },
         {
-            "name": "Reservation",
-            "description": "API Endpoints for Managing Reservations"
-        },
-        {
             "name": "SPR",
             "description": "Endpoints for spr"
+        },
+        {
+            "name": "Visite",
+            "description": "API Endpoints for Managing Visits"
         }
     ]
 }

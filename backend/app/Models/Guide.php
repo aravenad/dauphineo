@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Guide extends Model
 {
     use HasFactory;
+    protected $table = 'guide';
 
     /**
      * The attributes that are mass assignable.
