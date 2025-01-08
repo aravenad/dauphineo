@@ -154,19 +154,19 @@ public function updateStatus(Request $request, $id)
     // Rechercher la réservation
     $reservation = Reservation::find($id);
 
-    if (!$reservation) {
-        return response()->json(['message' => 'Reservation not found'], 404);
-    }
+    // if (!$reservation) {
+    //     return response()->json(['message' => 'Reservation not found'], 404);
+    // }
 
-    // Validation du statut ENUM
-    $request->validate([
-        'statut_reservation' => 'required|string|in:terminé,en cours,annulé'
-    ]);
+    // // Validation du statut ENUM
+    // $request->validate([
+    //     'statut_reservation' => 'required|string|in:terminé,en cours,annulé'
+    // ]);
 
-    // Mise à jour du statut
-    $reservation->statut_reservation = $request->statut_reservation;
-    $reservation->save();
+    // // Mise à jour du statut
+    // $reservation->statut_reservation = $request->statut_reservation;
+    // $reservation->save();
 
-    return response()->json(['message' => 'Reservation status updated successfully'], 200);
+    // return response()->json(['message' => 'Reservation status updated successfully'], 200);
 }
 }

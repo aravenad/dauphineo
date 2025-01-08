@@ -10,17 +10,32 @@ class Avis extends Model
 {
     use HasFactory;
 
-    /**
+     /**
      * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
      */
     protected $fillable = [
         'titre',
         'commentaire',
         'note',
+        // 'id_utilisateur',
+        // 'id_spr',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $visible = [
+        'id',
+        'titre',
+        'commentaire',
+        'note',
         'date_de_publication',
-        'status_avis',
-        'id_utilisateur',
-        'id_spr'
+        'id_spr',
+        'utilisateur'
     ];
 
     /**

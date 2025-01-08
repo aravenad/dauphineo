@@ -10,21 +10,8 @@ class Spr extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'code_departement',
-        'nom_du_departement',
-        'nom_commune',
-        'capacite_de_visite',
-        'mot_cle',
-        'is_pmr',
-        'temps_de_visite'
-    ];
-
+     protected $table = 'spr';
+     
     /**
      * The attributes that should be cast.
      *

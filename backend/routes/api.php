@@ -36,9 +36,6 @@ Route::prefix('images')->group(function() {
 Route::prefix('spr')->group(function() {
     Route::get('/', [SprController::class, 'index']);
     Route::get('{id}', [SprController::class, 'show']);
-    Route::post('/', [SprController::class, 'store']);
-    Route::put('{id}', [SprController::class, 'update']);
-    Route::delete('{id}', [SprController::class, 'destroy']);
 });
 
 // Routes for GuideController

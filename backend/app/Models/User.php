@@ -2,20 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-<<<<<<< HEAD
-    use HasFactory, Notifiable;
-=======
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
->>>>>>> a6eb2104842c72980753b0ba49bfc06e4219fa01
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,13 +18,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'nom',
-        'prenom',
+        'name',
         'email',
-        'pseudo',
-        'mot_de_passe',
-        'verif_age',
-        'derniere_activite'
+        'password',
     ];
 
     /**
@@ -38,7 +29,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'mot_de_passe',
+        'password',
         'remember_token',
         'email_verified_at',
         'created_at',
@@ -54,25 +45,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'mot_de_passe' => 'hashed',
-            'verif_age' => 'boolean',
-            'derniere_activite' => 'datetime',
+            'password' => 'hashed',
         ];
-    }
-
-    /**
-     * Get the reservations for the user.
-     */
-    public function reservations(): HasMany
-    {
-        return $this->hasMany(Reservation::class, 'id_utilisateur');
-    }
-
-    /**
-     * Get the avis for the user.
-     */
-    public function avis(): HasMany
-    {
-        return $this->hasMany(Avis::class, 'id_utilisateur');
     }
 }

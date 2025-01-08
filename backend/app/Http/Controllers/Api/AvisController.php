@@ -8,8 +8,8 @@ use App\Http\Controllers\Controller;
 
 /**
  * @OA\Tag(
- *     name="Avis",
- *     description="API Endpoints for managing reviews"
+ *     name="avis",
+ *     description="Endpoints for managing reviews"
  * )
  */
 class AvisController extends Controller
@@ -17,55 +17,64 @@ class AvisController extends Controller
     /**
      * @OA\Get(
      *     path="/api/avis",
-     *     tags={"Avis"},
+     *     tags={"avis"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Get all reviews",
+     *     summary="Fetch all reviews",
      *     @OA\Response(
      *         response=200,
-     *         description="List of reviews",
+     *         description="Success",
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
      *                 type="object",
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="titre", type="string"),
-     *                 @OA\Property(property="commentaire", type="string"),
-     *                 @OA\Property(property="note", type="integer"),
-     *                 @OA\Property(property="date_de_publication", type="string", format="date-time"),
-     *                 @OA\Property(property="status_avis", type="boolean"),
-     *                 @OA\Property(property="id_utilisateur", type="integer"),
-     *                 @OA\Property(property="id_spr", type="integer")
-     *             )
+     *                 @OA\Property(property="id", type="integer", example="1"),
+     *                 @OA\Property(property="titre", type="string", example="Super visite"),
+     *                 @OA\Property(property="commentaire", type="string", example="Très belle expérience, guide au top !"),
+     *                 @OA\Property(property="note", type="integer", example="5"),
+     *                 @OA\Property(property="date_de_publication", type="string", format="date-time", example="2025-01-07 09:06:47"),
+     *                 @OA\Property(property="id_spr", type="integer", example="1"),
+     *                 @OA\Property(property="utilisateur", type="object", example={"nom": "Dupont", "prenom": "Jean", "pseudo": "jean.dupont"}),
+     *)
      *         )
      *     )
      * )
      */
     public function index()
     {
-        return Avis::with(['utilisateur', 'spr'])->get();
+        return Avis::with(['utilisateur'])->get();
     }
 
     /**
      * @OA\Post(
      *     path="/api/avis",
-     *     tags={"Avis"},
+     *     tags={"avis"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Create a new review",
+     *     summary="Create a review",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"titre","commentaire","note","id_utilisateur","id_spr"},
-     *             @OA\Property(property="titre", type="string"),
-     *             @OA\Property(property="commentaire", type="string"),
-     *             @OA\Property(property="note", type="integer", minimum=0, maximum=5),
-     *             @OA\Property(property="status_avis", type="boolean"),
-     *             @OA\Property(property="id_utilisateur", type="integer"),
-     *             @OA\Property(property="id_spr", type="integer")
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(property="titre", type="string", example="Une expérience inoubliable"),
+     *                 @OA\Property(property="commentaire", type="string", example="J'ai visité ce SPR, c'était génial !"),
+     *                 @OA\Property(property="note", type="integer", example="5"),
+     *                 @OA\Property(property="id_utilisateur", type="integer", example="1"),
+     *                 @OA\Property(property="id_spr", type="integer", example="1"),
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Review created successfully"
+     *         description="Review created successfully",
+     *           @OA\JsonContent(
+     *             type="object",
+     *              @OA\Property(property="titre", type="string", example="Une expérience inoubliable"),
+     *                 @OA\Property(property="commentaire", type="string", example="J'ai visité ce SPR, c'était génial !"),
+     *                 @OA\Property(property="note", type="integer", example="5"),
+     *                 @OA\Property(property="id_utilisateur", type="integer", example="1"),
+     *                 @OA\Property(property="id_spr", type="integer", example="1"),
+     *         )
      *     )
      * )
      */
@@ -75,13 +84,12 @@ class AvisController extends Controller
             'titre' => 'required|string|max:255',
             'commentaire' => 'required|string',
             'note' => 'required|integer|between:0,5',
-            'id_utilisateur' => 'required|exists:users,id',
-            'id_spr' => 'required|exists:spr,id',
-            'status_avis' => 'boolean'
+            // 'id_utilisateur' => 'required|integer',
+            // 'id_spr' => 'required|integer',
         ]);
 
         $validated['date_de_publication'] = now();
-        $validated['status_avis'] = $validated['status_avis'] ?? true;
+        // $validated['status_avis'] = $validated['status_avis'] ?? true;
 
         $avis = Avis::create($validated);
         return response()->json($avis, 201);
@@ -90,9 +98,9 @@ class AvisController extends Controller
     /**
      * @OA\Get(
      *     path="/api/avis/{id}",
-     *     tags={"Avis"},
+     *     tags={"avis"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Get specific review",
+     *     summary="Show one review",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -101,27 +109,40 @@ class AvisController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Review details"
+     *         description="Success",
+     *           @OA\JsonContent(
+     *             type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="titre", type="string", example="Super visite"),
+     *                 @OA\Property(property="commentaire", type="string", example="Très belle expérience, guide au top !"),
+     *                 @OA\Property(property="note", type="integer", example="5"),
+     *                 @OA\Property(property="date_de_publication", type="string", example="2024-03-02T18:00:00.000000Z"),
+     *                 @OA\Property(property="id_spr", type="integer", example="1"),
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Review not found"
+     *         description="Review not found",
+     *          @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Review not found")
+     *         )
      *     )
      * )
      */
     public function show(string $id)
     {
-        $avis = Avis::with(['utilisateur', 'spr'])->findOrFail($id);
+        $avis = Avis::findOrFail($id);
         return response()->json($avis);
     }
 
-    
+
     /**
      * @OA\Delete(
      *     path="/api/avis/{id}",
-     *     tags={"Avis"},
+     *     tags={"avis"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Delete review",
+     *     summary="Delete one review",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -138,6 +159,6 @@ class AvisController extends Controller
     {
         $avis = Avis::findOrFail($id);
         $avis->delete();
-        return response()->json(null, 204);
+        return response()->json(["message" => "Avis supprimé avec succès", 204]);
     }
 }
