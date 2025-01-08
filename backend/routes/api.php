@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SprController;
 use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
+use App\Http\Controllers\Api\VisiteController;
 use App\Http\Controllers\Api\AuthController;
 
 Route::get('/utilisateur', function (Request $request) {
@@ -72,5 +73,16 @@ Route::prefix('reservations')->group(function() {
 
 // Routes de CreneauxController
 Route::prefix('creneaux')->group(function() {
-    Route::get('/', [CreneauxController::class, 'index']);
+    Route::get('/{id_spr}', [CreneauxController::class, 'index']);
+});
+
+// Routes for VisiteController
+Route::prefix('visites')->group(function() {
+    Route::get('/', [VisiteController::class, 'index']);
+    Route::get('/{id}', [VisiteController::class, 'show']);
+    Route::post('/', [VisiteController::class, 'store']);
+    Route::delete('/{id}', [VisiteController::class, 'destroy']);
+    Route::get('/user/{userId}', [VisiteController::class, 'getUserVisites']);
+    Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
+    Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });
