@@ -11,7 +11,7 @@ class Spr extends Model
     use HasFactory;
 
      protected $table = 'spr';
-     
+
     /**
      * The attributes that should be cast.
      *
@@ -62,4 +62,13 @@ class Spr extends Model
     {
         return $this->hasMany(Avis::class, 'id_spr');
     }
+
+    /**
+     * Get the creneaux for the SPR.
+     */
+    public function creneaux()
+    {
+        return $this->hasMany(Creneaux::class, 'id_spr');
+    }
+
 }

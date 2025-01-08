@@ -253,6 +253,87 @@
                 ]
             }
         },
+        "/api/creneaux/{id_spr}": {
+            "get": {
+                "tags": [
+                    "Creneaux"
+                ],
+                "summary": "Retrieve the créneaux for the given SPR",
+                "operationId": "7d0db5dbd77ae1aaa9c6f957e04484a0",
+                "parameters": [
+                    {
+                        "name": "id_spr",
+                        "in": "path",
+                        "description": "The ID of the SPR whose créneaux are to be retrieved",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of créneaux for the specified SPR",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "ID of the creneau",
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "heure_debut": {
+                                                "description": "Start time of the creneau",
+                                                "type": "string",
+                                                "format": "time",
+                                                "example": "08:00:00"
+                                            },
+                                            "heure_fin": {
+                                                "description": "End time of the creneau",
+                                                "type": "string",
+                                                "format": "time",
+                                                "example": "09:00:00"
+                                            },
+                                            "id_spr": {
+                                                "description": "ID of the associated SPR",
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "SPR not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "SPR not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/reservations": {
             "get": {
                 "tags": [
@@ -948,8 +1029,8 @@
             "description": "Endpoints for spr"
         },
         {
-            "name": "Visite",
-            "description": "API Endpoints for Managing Visits"
+            "name": "Creneaux",
+            "description": "Creneaux"
         }
     ]
 }

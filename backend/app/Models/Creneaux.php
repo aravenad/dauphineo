@@ -9,6 +9,8 @@ class Creneaux extends Model
     // Désactiver les timestamps car les créneaux sont générés en base
     public $timestamps = false;
 
+    protected $table = 'creneaux';
+
     public function spr()
     {
         return $this->belongsTo(Spr::class, 'id_spr');
