@@ -67,5 +67,5 @@ Route::prefix('reservations')->group(function() {
 
 // Routes de CreneauxController
 Route::prefix('creneaux')->group(function() {
-    Route::get('/', [CreneauxController::class, 'index']);
+    Route::get('/{id_spr}', [CreneauxController::class, 'index']);
 });
