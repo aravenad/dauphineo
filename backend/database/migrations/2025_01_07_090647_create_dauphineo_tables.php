@@ -90,8 +90,8 @@ return new class extends Migration
         // Création de la table RESERVATION
         Schema::create('reservation', function (Blueprint $table) {
             $table->id();
-            $table->date('date')->notNullable();
-            $table->time('heure')->notNullable();
+            $table->date('date')->default(DB::raw('CURRENT_DATE'))->notNullable();
+            $table->time('heure')->default(DB::raw('CURRENT_TIME'))->notNullable();
             $table->double('prix')->notNullable();
             $table->enum('statut_reservation', ['confirmee', 'annulee', 'termine'])->notNullable();
             $table->enum('statut_paiement', ['payee', 'non reglee', 'en attente'])->notNullable();
