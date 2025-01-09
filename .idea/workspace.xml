@@ -4,8 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8330d964-16b3-4a7b-bee3-fd709988838e" name="Changes" comment="beggining of the model and controler for the creneaux table">
+    <list default="true" id="8330d964-16b3-4a7b-bee3-fd709988838e" name="Changes" comment="added the auth controller and started to create the methods">
+      <change afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/AuthController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/ReservationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/ReservationController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/UtilisateurController.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Http/Controllers/Api/UtilisateurController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/PersonalAccessTokens.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/app/Models/Utilisateur.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app/Models/Utilisateur.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/backend/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/storage/api-docs/api-docs.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/storage/api-docs/api-docs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bd_sae/insert_sae.sql" beforeDir="false" afterPath="$PROJECT_DIR$/bd_sae/insert_sae.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,22 +31,22 @@
     <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
-  <component name="GitLabMergeRequestFiltersHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPENED",
-    "assignee": {
-      "type": "org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue",
-      "username": "project_29398_bot_9bb24835e6cd649b88cc7e1ca2cffdc1",
-      "fullname": "axel"
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;project_29398_bot_9bb24835e6cd649b88cc7e1ca2cffdc1&quot;,
+      &quot;fullname&quot;: &quot;axel&quot;
     }
   }
-}]]></component>
-  <component name="GitLabMergeRequestsSettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "first": "https://gricad-gitlab.univ-grenoble-alpes.fr/iut2-info-stud/2024-s3/s3.01/team-08/rendus.git",
-    "second": "3fd540f2-226f-4bd8-bcea-b32ce90710f2"
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://gricad-gitlab.univ-grenoble-alpes.fr/iut2-info-stud/2024-s3/s3.01/team-08/rendus.git&quot;,
+    &quot;second&quot;: &quot;3fd540f2-226f-4bd8-bcea-b32ce90710f2&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 2
@@ -57,6 +66,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -82,7 +92,10 @@
       <updated>1736237717415</updated>
       <workItem from="1736237718978" duration="4396000" />
       <workItem from="1736242216369" duration="12959000" />
-      <workItem from="1736263815826" duration="1799000" />
+      <workItem from="1736263815826" duration="2361000" />
+      <workItem from="1736322365943" duration="10080000" />
+      <workItem from="1736340090893" duration="139000" />
+      <workItem from="1736340241097" duration="12867000" />
     </task>
     <task id="LOCAL-00001" summary="created the controller and model for SPR">
       <option name="closed" value="true" />
@@ -100,7 +113,15 @@
       <option name="project" value="LOCAL" />
       <updated>1736263001508</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="added the auth controller and started to create the methods">
+      <option name="closed" value="true" />
+      <created>1736332784148</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1736332784148</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -127,6 +148,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="created the controller and model for SPR" />
     <MESSAGE value="beggining of the model and controler for the creneaux table" />
-    <option name="LAST_COMMIT_MESSAGE" value="beggining of the model and controler for the creneaux table" />
+    <MESSAGE value="added the auth controller and started to create the methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="added the auth controller and started to create the methods" />
   </component>
 </project>

@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\ImagesController;
 use App\Http\Controllers\Api\SprController;
@@ -11,21 +11,26 @@ use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
 use App\Http\Controllers\Api\DisponibilitesController;
 use App\Http\Controllers\Api\VisiteController;
+use App\Http\Controllers\Api\AuthController;
 
 Route::get('/utilisateur', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// Route::prefix('auth')->group(function() {
+//  Route::post('/', [AuthController::class, 'register']);
+    //Route::post('/', [AuthController::class, 'login']);
+    //Route::post('/', [AuthController::class, 'logout']);
+// });
 
-// Routes de UserController
+
+// Routes de UtilisateurController
 Route::prefix('utilisateur')->group(function() {
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('{userId}', [UserController::class, 'show']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::put('{userId}', [UserController::class, 'update']);
-    Route::delete('{userId}', [UserController::class, 'destroy']);
+    Route::get('/', [UtilisateurController::class, 'index']);
+    Route::get('{id}', [UtilisateurController::class, 'show']);
+    Route::post('/', [UtilisateurController::class, 'store']);
+    //Route::put('{id}', [UtilisateurController::class, 'update']);
+    //Route::delete('{id}', [UtilisateurController::class, 'destroy']);
 });
 
 // Routes for ImagesController
