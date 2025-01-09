@@ -25,20 +25,20 @@ Route::get('/utilisateur', function (Request $request) {
 
 
 // Routes de UtilisateurController
-Route::prefix('utilisateur')->group(function() {
-    Route::get('/', [UtilisateurController::class, 'index']);
-    Route::get('{id}', [UtilisateurController::class, 'show']);
-    Route::post('/', [UtilisateurController::class, 'store']);
+// Route::prefix('utilisateur')->group(function() {
+//     Route::get('/', [UtilisateurController::class, 'index']);
+//     Route::get('{id}', [UtilisateurController::class, 'show']);
+//     Route::post('/', [UtilisateurController::class, 'store']);
     //Route::put('{id}', [UtilisateurController::class, 'update']);
     //Route::delete('{id}', [UtilisateurController::class, 'destroy']);
-});
+// });
 
 // Routes for ImagesController
 Route::prefix('images')->group(function() {
     Route::get('/', [ImagesController::class, 'index']);
     Route::get('{id}', [ImagesController::class, 'show']);
     Route::post('/', [ImagesController::class, 'store']);
-    Route::post('{id}', [ImagesController::class, 'update']);
+    Route::put('{id}', [ImagesController::class, 'update']);
     Route::delete('{id}', [ImagesController::class, 'destroy']);
 });
 
