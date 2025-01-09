@@ -334,6 +334,169 @@
                 ]
             }
         },
+        "/api/disponibilites": {
+            "get": {
+                "tags": [
+                    "Disponibilities"
+                ],
+                "summary": "Get all disponibilities",
+                "operationId": "183153e8e0ea5f0b7399d2f20e1acb43",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": "1"
+                                            },
+                                            "date_jour": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2025-01-07"
+                                            },
+                                            "id_guide": {
+                                                "type": "integer",
+                                                "example": "1"
+                                            },
+                                            "id_crenenaux": {
+                                                "type": "integer",
+                                                "example": "1"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/disponibilites/{id}": {
+            "get": {
+                "tags": [
+                    "Disponibilities"
+                ],
+                "summary": "Get specific disponibility",
+                "operationId": "7f4441361464dd96bd5787bd1c339af7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Disponibility details"
+                    },
+                    "404": {
+                        "description": "disponibility not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Disponibilities"
+                ],
+                "summary": "Update disponibility",
+                "operationId": "b13acf9e954c9600223611b0cd2fcb7b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "date_jour": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-01-07"
+                                    },
+                                    "id_guide": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "id_crenenaux": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "disponiility updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Disponibilities"
+                ],
+                "summary": "Delete disponibility",
+                "operationId": "ff8359f74b360bb47a1f5c6b28144a0f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Disponiility deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/reservations": {
             "get": {
                 "tags": [
@@ -1021,12 +1184,20 @@
             "description": "Endpoints for managing reviews"
         },
         {
+            "name": "Disponibilities",
+            "description": "Endpoints for disponibility management"
+        },
+        {
             "name": "Reservation",
             "description": "API Endpoints for Managing Reservations"
         },
         {
             "name": "SPR",
             "description": "Endpoints for spr"
+        },
+        {
+            "name": "Visite",
+            "description": "API Endpoints for Managing Visits"
         },
         {
             "name": "Creneaux",

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SprController;
 use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
+use App\Http\Controllers\Api\DisponibilitesController;
 use App\Http\Controllers\Api\VisiteController;
 
 Route::get('/utilisateur', function (Request $request) {
@@ -46,7 +47,6 @@ Route::prefix('spr')->group(function() {
 Route::prefix('guides')->group(function() {
     Route::get('/', [GuideController::class, 'index']);
     Route::get('{id}', [GuideController::class, 'show']);
-    Route::post('/', [GuideController::class, 'store']);
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
 });
@@ -69,6 +69,14 @@ Route::prefix('reservations')->group(function() {
 // Routes de CreneauxController
 Route::prefix('creneaux')->group(function() {
     Route::get('/{id_spr}', [CreneauxController::class, 'index']);
+});
+
+// Routes de DisponibilitesController
+Route::prefix('disponibilites')->group(function() {  // Correction du préfixe
+    Route::get('/', [DisponibilitesController::class, 'index']);
+    Route::get('{id}', [DisponibilitesController::class, 'show']);
+    Route::put('{id}', [DisponibilitesController::class, 'update']);
+    Route::delete('{id}', [DisponibilitesController::class, 'destroy']);
 });
 
 // Routes for VisiteController
