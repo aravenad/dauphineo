@@ -37,8 +37,6 @@ Route::get('/utilisateur', function (Request $request) {
 Route::prefix('images')->group(function() {
     Route::get('/', [ImagesController::class, 'index']);
     Route::get('{id}', [ImagesController::class, 'show']);
-    Route::post('/', [ImagesController::class, 'store']);
-    Route::put('{id}', [ImagesController::class, 'update']);
     Route::delete('{id}', [ImagesController::class, 'destroy']);
 });
 
@@ -79,10 +77,9 @@ Route::prefix('creneaux')->group(function() {
 });
 
 // Routes de DisponibilitesController
-Route::prefix('disponibilites')->group(function() {  // Correction du préfixe
-    Route::get('/', [DisponibilitesController::class, 'index']);
-    Route::get('{id}', [DisponibilitesController::class, 'show']);
-    Route::put('{id}', [DisponibilitesController::class, 'update']);
+Route::prefix('disponibilites')->group(function() {
+    Route::get('{id_guide}/{id_spr}', [DisponibilitesController::class, 'index']);
+    Route::post('/{date_jour}/{id_guide}/{id_creneaux}', [DisponibilitesController::class, 'store']);
     Route::delete('{id}', [DisponibilitesController::class, 'destroy']);
 });
 
@@ -94,5 +91,5 @@ Route::prefix('visites')->group(function() {
     Route::delete('/{id}', [VisiteController::class, 'destroy']);
     Route::get('/user/{userId}', [VisiteController::class, 'getUserVisites']);
     Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
-    Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
+    //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });

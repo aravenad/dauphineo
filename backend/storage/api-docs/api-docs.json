@@ -334,16 +334,39 @@
                 ]
             }
         },
-        "/api/disponibilites": {
+        "/api/disponibilites/{id_guide}/{id_spr}": {
             "get": {
                 "tags": [
                     "Disponibilities"
                 ],
-                "summary": "Get all disponibilities",
-                "operationId": "183153e8e0ea5f0b7399d2f20e1acb43",
+                "summary": "Get disponibilites filtered by guide and SPR",
+                "description": "Retrieve disponibilites for a specific guide and SPR based on their IDs.",
+                "operationId": "getDisponibilitesByGuideAndSPR",
+                "parameters": [
+                    {
+                        "name": "id_guide",
+                        "in": "path",
+                        "description": "The ID of the guide",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "id_spr",
+                        "in": "path",
+                        "description": "The ID of the SPR",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "List of filtered disponibilites",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -352,20 +375,20 @@
                                         "properties": {
                                             "id": {
                                                 "type": "integer",
-                                                "example": "1"
+                                                "example": 1
                                             },
                                             "date_jour": {
                                                 "type": "string",
                                                 "format": "date",
-                                                "example": "2025-01-07"
+                                                "example": "2025-01-09"
                                             },
                                             "id_guide": {
                                                 "type": "integer",
-                                                "example": "1"
+                                                "example": 3
                                             },
-                                            "id_crenenaux": {
+                                            "id_creneaux": {
                                                 "type": "integer",
-                                                "example": "1"
+                                                "example": 5
                                             }
                                         },
                                         "type": "object"
@@ -373,102 +396,27 @@
                                 }
                             }
                         }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/disponibilites/{id}": {
-            "get": {
-                "tags": [
-                    "Disponibilities"
-                ],
-                "summary": "Get specific disponibility",
-                "operationId": "7f4441361464dd96bd5787bd1c339af7",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Disponibility details"
                     },
                     "404": {
-                        "description": "disponibility not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Disponibilities"
-                ],
-                "summary": "Update disponibility",
-                "operationId": "b13acf9e954c9600223611b0cd2fcb7b",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "id": {
-                                        "type": "integer",
-                                        "example": "1"
+                        "description": "No disponibilites found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No disponibilites found for the given guide and SPR"
+                                        }
                                     },
-                                    "date_jour": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-01-07"
-                                    },
-                                    "id_guide": {
-                                        "type": "integer",
-                                        "example": "1"
-                                    },
-                                    "id_crenenaux": {
-                                        "type": "integer",
-                                        "example": "1"
-                                    }
-                                },
-                                "type": "object"
+                                    "type": "object"
+                                }
                             }
                         }
                     }
-                },
-                "responses": {
-                    "200": {
-                        "description": "disponiility updated successfully"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
+                }
+            }
+        },
+        "/api/disponibilites/{id}": {
             "delete": {
                 "tags": [
                     "Disponibilities"
@@ -495,6 +443,96 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/disponibilites/{date_jour}/{id_guide}/{id_creneaux}": {
+            "post": {
+                "tags": [
+                    "Disponibilities"
+                ],
+                "summary": "Create a new disponibilite",
+                "description": "Endpoint to create a new disponibilite with explicit parameters",
+                "operationId": "createDisponibiliteWithParams",
+                "parameters": [
+                    {
+                        "name": "date_jour",
+                        "in": "path",
+                        "description": "The date for the disponibilite",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2025-01-10"
+                        }
+                    },
+                    {
+                        "name": "id_guide",
+                        "in": "path",
+                        "description": "The ID of the guide",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "id_creneaux",
+                        "in": "path",
+                        "description": "The ID of the creneaux",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Disponibilite created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "date_jour": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "example": "2025-01-10"
+                                        },
+                                        "id_guide": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "id_creneaux": {
+                                            "type": "integer",
+                                            "example": 3
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data provided",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/guides": {
@@ -813,81 +851,6 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "post": {
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Create a new image record",
-                "description": "Stores an image associated with a specific SPR. The image URL is dynamically generated and returned in the response.",
-                "operationId": "7e5cc7cd738f2b38d1ad7551d0531e5c",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "image",
-                                    "id_spr"
-                                ],
-                                "properties": {
-                                    "image": {
-                                        "description": "Image file (JPEG, PNG, JPG) with a minimum resolution of 300x300 pixels.",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "id_spr": {
-                                        "description": "ID of the SPR to associate with the image.",
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Image created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "description": "ID of the created image.",
-                                            "type": "integer"
-                                        },
-                                        "image_url": {
-                                            "description": "Dynamically generated URL of the stored image.",
-                                            "type": "string"
-                                        },
-                                        "id_spr": {
-                                            "description": "ID of the associated SPR.",
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "description": "Details of the validation error.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
             }
         },
         "/api/images/{id}": {
@@ -933,104 +896,6 @@
                     },
                     "404": {
                         "description": "Image not found"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Images"
-                ],
-                "summary": "Update an existing image",
-                "description": "Updates the details of an existing image. Supports updating the file and/or the associated SPR. The image must meet the resolution and file type requirements.",
-                "operationId": "8254b7c3601a249b8834e437667d6fb5",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the image to update.",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "image": {
-                                        "description": "Image file (JPEG, PNG, JPG) with a minimum resolution of 300x300 pixels.",
-                                        "type": "string",
-                                        "format": "binary"
-                                    },
-                                    "id_spr": {
-                                        "description": "ID of the SPR to associate with the image.",
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Image updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "description": "ID of the updated image.",
-                                            "type": "integer"
-                                        },
-                                        "image_url": {
-                                            "description": "URL of the updated image.",
-                                            "type": "string"
-                                        },
-                                        "id_spr": {
-                                            "description": "ID of the associated SPR.",
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "description": "Details of the validation error.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Image not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "description": "Error message when the image is not found.",
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
                     }
                 }
             },

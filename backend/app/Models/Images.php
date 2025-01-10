@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Images extends Model
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
     protected $table = 'images';
@@ -38,6 +39,9 @@ class Images extends Model
         'id_spr'
     ];
     
+    // Explicitly enable timestamps
+    public $timestamps = false; //Pause probleme pour la méthode GET /api/images/{id} 
+    
     /**
      * The attributes that should be cast.
      *
@@ -46,6 +50,8 @@ class Images extends Model
     protected $casts = [
         'id_spr' => 'integer'
     ];
+
+    
 
     /**
      * Get the Spr that owns the image.
