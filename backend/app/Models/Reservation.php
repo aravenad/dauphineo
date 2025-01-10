@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     use HasFactory;
-
     protected $table = 'reservation';
+
 
     /**
      * The attributes that are fillable by the user.

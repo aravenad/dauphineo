@@ -9,23 +9,23 @@ use App\Http\Controllers\Api\SprController;
 use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
-
+use App\Http\Controllers\Api\DisponibilitesController;
+use App\Http\Controllers\Api\VisiteController;
 
 // Routes de UserController
-// Route::prefix('users')->group(function() {
-//     Route::get('/', [UserController::class, 'index']);
-//     Route::get('{userId}', [UserController::class, 'show']);
-//     Route::post('/', [UserController::class, 'store']);
-//     Route::put('{userId}', [UserController::class, 'update']);
-//     Route::delete('{userId}', [UserController::class, 'destroy']);
-// });
+Route::prefix('utilisateur')->group(function() {
+    Route::post('/register', [UtilisateurController::class, 'register']);
+    Route::post('/login', [UtilisateurController::class, 'login']);
+    Route::post('/logout', [UtilisateurController::class, 'logout']);
+    Route::get('{id}', [UtilisateurController::class, 'show']);
+    Route::put('{id}', [UtilisateurController::class, 'update']);
+    Route::delete('{id}', [UtilisateurController::class, 'destroy']);
+});
 
 // Routes for ImagesController
 Route::prefix('images')->group(function() {
     Route::get('/', [ImagesController::class, 'index']);
     Route::get('{id}', [ImagesController::class, 'show']);
-    Route::post('/', [ImagesController::class, 'store']);
-    Route::post('{id}', [ImagesController::class, 'update']);
     Route::delete('{id}', [ImagesController::class, 'destroy']);
 });
 
@@ -42,9 +42,12 @@ Route::prefix('spr')->group(function() {
 Route::prefix('guides')->group(function() {
     Route::get('/', [GuideController::class, 'index']);
     Route::get('{id}', [GuideController::class, 'show']);
-    Route::post('/', [GuideController::class, 'store']);
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
+    Route::post('/', [GuideController::class, 'store']);
+    
+    // Get guide disponibilites route
+    Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide']);
 });
 
 // Routes for AvisController
@@ -63,5 +66,23 @@ Route::prefix('reservations')->group(function() {
 
 // Routes de CreneauxController
 Route::prefix('creneaux')->group(function() {
-    Route::get('/', [CreneauxController::class, 'index']);
+    Route::get('/{id_spr}', [CreneauxController::class, 'index']);
+});
+
+// Routes de DisponibilitesController
+Route::prefix('disponibilites')->group(function() {
+    Route::get('{id_guide}/{id_spr}', [DisponibilitesController::class, 'index']);
+    Route::post('/{date_jour}/{id_guide}/{id_creneaux}', [DisponibilitesController::class, 'store']);
+    Route::delete('{id}', [DisponibilitesController::class, 'destroy']);
+});
+
+// Routes for VisiteController
+Route::prefix('visites')->group(function() {
+    Route::get('/', [VisiteController::class, 'index']);
+    Route::get('/{id}', [VisiteController::class, 'show']);
+    Route::post('/', [VisiteController::class, 'store']);
+    Route::delete('/{id}', [VisiteController::class, 'destroy']);
+    Route::get('/user/{userId}', [VisiteController::class, 'getUserVisites']);
+    Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
+    //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });
