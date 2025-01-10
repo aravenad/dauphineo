@@ -98,7 +98,6 @@ class AvisController extends Controller
             return response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 400);
         }
 
-        $data['date_de_publication'] = now();
 
         // Création de l'avis
         $avis = Avis::create($data);
