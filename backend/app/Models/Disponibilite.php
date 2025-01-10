@@ -22,6 +22,8 @@ class Disponibilite extends Model
         'id_creneaux',
     ];
 
+    public $timestamps = false;
+
     /**
      * Get the guide that belongs to.
      */
@@ -39,7 +41,7 @@ class Disponibilite extends Model
         return $this->belongsTo(Creneaux::class, 'id_creneaux');
     }
 
-  
+
 
 }
 

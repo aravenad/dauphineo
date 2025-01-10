@@ -77,10 +77,9 @@ Route::prefix('creneaux')->group(function() {
 });
 
 // Routes de DisponibilitesController
-Route::prefix('disponibilites')->group(function() {  // Correction du préfixe
-    Route::get('/', [DisponibilitesController::class, 'index']);
-    Route::get('{id}', [DisponibilitesController::class, 'show']);
-    Route::put('{id}', [DisponibilitesController::class, 'update']);
+Route::prefix('disponibilites')->group(function() {
+    Route::get('{id_guide}/{id_spr}', [DisponibilitesController::class, 'index']);
+    Route::post('/{date_jour}/{id_guide}/{id_creneaux}', [DisponibilitesController::class, 'store']);
     Route::delete('{id}', [DisponibilitesController::class, 'destroy']);
 });
 

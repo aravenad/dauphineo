@@ -15,115 +15,68 @@ use App\Http\Controllers\Controller;
 
 class DisponibilitesController extends Controller
 {
-     /**
+
+    /**
      * @OA\Get(
-     *     path="/api/disponibilites",
+     *     path="/api/disponibilites/{id_guide}/{id_spr}",
      *     tags={"Disponibilities"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Get all disponibilities",
+     *     operationId="getDisponibilitesByGuideAndSPR",
+     *     summary="Get disponibilites filtered by guide and SPR",
+     *     description="Retrieve disponibilites for a specific guide and SPR based on their IDs.",
+     *     @OA\Parameter(
+     *         name="id_guide",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the guide",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="id_spr",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the SPR",
+     *         @OA\Schema(type="integer", example=2)
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Success",
+     *         description="List of filtered disponibilites",
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
      *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example="1"),
-     *                 @OA\Property(property="date_jour", type="string", format="date",example="2025-01-07"),
-     *                 @OA\Property(property="id_guide", type="integer", example="1"),
-     *                 @OA\Property(property="id_crenenaux", type="integer", example="1"),
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="date_jour", type="string", format="date", example="2025-01-09"),
+     *                 @OA\Property(property="id_guide", type="integer", example=3),
+     *                 @OA\Property(property="id_creneaux", type="integer", example=5)
      *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No disponibilites found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="No disponibilites found for the given guide and SPR")
      *         )
      *     )
      * )
      */
-
-    public function index()
+    public function index($id_guide, $id_spr)
     {
-        try {
-            $dispo = Disponibilite::with(['visite', 'creneaux','guide'])->get();
-            return response()->json($dispo, 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Une erreur est survenue lors de la récupération des diponibiltés',
-                'error' => $e->getMessage()
-            ], 500);
+        $disponibilites = Disponibilite::where('id_guide', $id_guide)
+            ->whereHas('creneaux', function ($query) use ($id_spr) {
+                $query->where('id_spr', $id_spr);
+            })
+            ->get();
+
+        if ($disponibilites->isEmpty()) {
+            return response()->json(['message' => 'No disponibilites found for the given guide and SPR'], 404);
         }
-        
+
+        return response()->json($disponibilites, 200);
     }
 
 
-    /**
-     * @OA\Get(
-     *     path="/api/disponibilites/{id}",
-     *     tags={"Disponibilities"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Get specific disponibility",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Disponibility details"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="disponibility not found"
-     *     )
-     * )
-     */
-    public function show(string $id)
-    {
-        $dispo = Disponibilite::with(['visite', 'creneaux', 'guide'])->findOrFail($id);
-        return response()->json($dispo);
-    }
-
-   
-
-
-    /**
-     * @OA\Put(
-     *     path="/api/disponibilites/{id}",
-     *     tags={"Disponibilities"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Update disponibility",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *                 @OA\Property(property="id", type="integer", example="1"),
-     *                 @OA\Property(property="date_jour", type="string", format="date",example="2025-01-07"),
-     *                 @OA\Property(property="id_guide", type="integer", example="1"),
-     *                 @OA\Property(property="id_crenenaux", type="integer", example="1")
-     *           )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="disponiility updated successfully"
-     *     )
-     * )
-     */
-    public function update(Request $request, string $id)
-    {
-        $dispo = Disponibilite::findOrFail($id);
-        
-        $validated = $request->validate([
-            'date_jour' => 'date',
-            'id_guide' => 'exists:spr,id',
-            'id_creneaux' => 'exists:creneaux,id'
-        ]);
-
-        $dispo->update($validated);
-        return response()->json($dispo);
-    }
 
       /**
      * @OA\Delete(
@@ -148,5 +101,80 @@ class DisponibilitesController extends Controller
         $dispo = Disponibilite::findOrFail($id);
         $dispo->delete();
         return response()->json(null, 204);
+    }
+
+
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/disponibilites/{date_jour}/{id_guide}/{id_creneaux}",
+     *     tags={"Disponibilities"},
+     *     summary="Create a new disponibilite",
+     *     description="Endpoint to create a new disponibilite with explicit parameters",
+     *     operationId="createDisponibiliteWithParams",
+     *     @OA\Parameter(
+     *         name="date_jour",
+     *         in="path",
+     *         required=true,
+     *         description="The date for the disponibilite",
+     *         @OA\Schema(type="string", format="date", example="2025-01-10")
+     *     ),
+     *     @OA\Parameter(
+     *         name="id_guide",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the guide",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="id_creneaux",
+     *         in="path",
+     *         required=true,
+     *         description="The ID of the creneaux",
+     *         @OA\Schema(type="integer", example=3)
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Disponibilite created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="date_jour", type="string", format="date", example="2025-01-10"),
+     *             @OA\Property(property="id_guide", type="integer", example=1),
+     *             @OA\Property(property="id_creneaux", type="integer", example=3)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid data provided",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Validation failed")
+     *         )
+     *     )
+     * )
+     */
+    public function store($date_jour, $id_guide, $id_creneaux)
+    {
+        $validatedData = [
+            'date_jour' => $date_jour,
+            'id_guide' => $id_guide,
+            'id_creneaux' => $id_creneaux,
+        ];
+
+        $validator = \Validator::make($validatedData, [
+            'date_jour' => 'required|date',
+            'id_guide' => 'required|exists:guide,id',
+            'id_creneaux' => 'required|exists:creneaux,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'Validation failed', 'errors' => $validator->errors()], 400);
+        }
+
+        $disponibilite = Disponibilite::create($validatedData);
+
+        return response()->json($disponibilite, 201);
     }
 }
