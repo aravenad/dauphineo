@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Guide;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Tag(
@@ -220,6 +221,73 @@ class GuideController extends Controller
         $guide = Guide::create($validated);
         return response()->json($guide, 201);
     }
+
+    /**
+ * @OA\Get(
+ *     path="/api/guides/{idGuide}/disponibilites",
+ *     tags={"Guides"},
+ *     summary="Get guide's disponibilites by guide ID",
+ *     @OA\Parameter(
+ *         name="idGuide",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Guide not found"
+ *     )
+ * )
+ */
+public function disponibilitesGuide($idGuide)
+{
+    // Récupérer d'abord les informations du guide
+    $guide = DB::table('guide')
+        ->select('id', 'nom', 'prenom')
+        ->where('id', '=', $idGuide)
+        ->first();
+
+    if (!$guide) {
+        return response()->json(['message' => 'Guide non trouvé'], 404);
+    }
+
+    // Récupérer les disponibilités avec les créneaux
+    $disponibilites = DB::table('disponibilite')
+        ->join('creneaux', 'disponibilite.id_creneaux', '=', 'creneaux.id')
+        ->select(
+            'disponibilite.id',
+            'disponibilite.date_jour',
+            'creneaux.heure_debut',
+            'creneaux.heure_fin'
+        )
+        ->where('disponibilite.id_guide', '=', $idGuide)
+        ->orderBy('disponibilite.date_jour')
+        ->orderBy('creneaux.heure_debut')
+        ->get();
+
+    if ($disponibilites->isEmpty()) {
+        return response()->json([
+            'guide' => [
+                'nom' => $guide->nom,
+                'prenom' => $guide->prenom
+            ],
+            'message' => 'Aucune disponibilité trouvée'
+        ], 404);
+    }
+
+    return response()->json([
+        'guide' => [
+            'id' => $guide->id,
+            'nom' => $guide->nom,
+            'prenom' => $guide->prenom
+        ],
+        'disponibilites' => $disponibilites
+    ], 200);
+}
 
 
 }
