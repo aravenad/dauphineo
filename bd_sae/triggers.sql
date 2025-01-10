@@ -13,22 +13,24 @@
 CREATE OR REPLACE FUNCTION create_visit_on_guide_availability()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Vérifier si une visite existe déjà pour cette disponibilité
-    IF NOT EXISTS (
-        SELECT 1 FROM VISITE WHERE id_disponibilite = NEW.id
-    ) THEN
-        INSERT INTO VISITE (capacite_actuelle, capacite_max, date_visite, id_spr, id_disponibilite)
-        VALUES (0, (SELECT capacite_de_visite FROM SPR WHERE id = NEW.id_spr), 
-                NEW.date_jour, NEW.id_spr, NEW.id);
-    END IF;
-    RETURN NEW;
+INSERT INTO VISITE (
+    capacite_actuelle,
+    capacite_max,
+    date_visite,
+    id_spr,
+    id_disponibilite
+)
+VALUES (
+           0,
+           (SELECT capacite_de_visite FROM SPR WHERE id =
+                                                     (SELECT id_spr FROM CRENEAUX WHERE id = NEW.id_creneaux)),
+           NEW.date_jour,
+           (SELECT id_spr FROM CRENEAUX WHERE id = NEW.id_creneaux),
+           NEW.id
+       );
+RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE TRIGGER trigger_create_visit_on_availability
-AFTER INSERT ON DISPONIBILITE
-FOR EACH ROW
-EXECUTE FUNCTION create_visit_on_guide_availability();
 
 
 
