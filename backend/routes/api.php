@@ -53,7 +53,9 @@ Route::prefix('guides')->group(function() { // /api/guides
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
     Route::post('/', [GuideController::class, 'store']); // api/guides/guides
-    //Route::get('/guides/{id}/disponibilites', [GuideController::class, 'getDisponibilites']);
+    
+    // Get guide disponibilites route
+    Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide']);
 });
 
 // Routes for AvisController

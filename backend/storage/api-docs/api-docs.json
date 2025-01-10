@@ -834,6 +834,33 @@
                 ]
             }
         },
+        "/api/guides/{idGuide}/disponibilites": {
+            "get": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Get guide's disponibilites by guide ID",
+                "operationId": "02e9314782ae053c63e127752b7198cb",
+                "parameters": [
+                    {
+                        "name": "idGuide",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Guide not found"
+                    }
+                }
+            }
+        },
         "/api/images": {
             "get": {
                 "tags": [
