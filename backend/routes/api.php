@@ -49,11 +49,13 @@ Route::prefix('spr')->group(function() {
 });
 
 // Routes for GuideController
-Route::prefix('guides')->group(function() {
-    Route::get('/', [GuideController::class, 'index']);
-    Route::get('{id}', [GuideController::class, 'show']);
+Route::prefix('guides')->group(function() { // /api/guides
+    Route::get('/', [GuideController::class, 'index']); //api/guides
+    Route::get('{id}', [GuideController::class, 'show']); // api/guides/{id}
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
+    Route::post('/', [GuideController::class, 'store']); // api/guides/guides
+    //Route::get('/guides/{id}/disponibilites', [GuideController::class, 'getDisponibilites']);
 });
 
 // Routes for AvisController

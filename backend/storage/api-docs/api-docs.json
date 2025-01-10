@@ -497,6 +497,305 @@
                 ]
             }
         },
+        "/api/guides": {
+            "get": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Get all guides",
+                "operationId": "fe1ed82809914df8899dcedb2ce9cfc8",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": "1"
+                                            },
+                                            "nom": {
+                                                "type": "string",
+                                                "example": "Dupont"
+                                            },
+                                            "prenom": {
+                                                "type": "string",
+                                                "example": "Jean"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "jean.dupont@example.com"
+                                            },
+                                            "pseudo": {
+                                                "type": "string",
+                                                "example": "jdupont"
+                                            },
+                                            "verif_age": {
+                                                "type": "boolean",
+                                                "example": "true"
+                                            },
+                                            "derniere_activite": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "example": "2025-01-07T00:00:00Z"
+                                            },
+                                            "id_spr": {
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Create a guide",
+                "operationId": "515b2b4b125bc305909b67c8bf4e5dd3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Dupont"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "Jean"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "jean.dupont@example.com"
+                                    },
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "jdupont"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "example": "securepassword123"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    },
+                                    "derniere_activite": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-01-07T00:00:00Z"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "guide created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "nom": {
+                                            "type": "string",
+                                            "example": "Dupont"
+                                        },
+                                        "prenom": {
+                                            "type": "string",
+                                            "example": "Jean"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "jean.dupont@example.com"
+                                        },
+                                        "pseudo": {
+                                            "type": "string",
+                                            "example": "jdupont"
+                                        },
+                                        "verif_age": {
+                                            "type": "boolean",
+                                            "example": "true"
+                                        },
+                                        "derniere_activite": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2025-01-07T00:00:00Z"
+                                        },
+                                        "id_spr": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/guides/{id}": {
+            "get": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Get specific guide",
+                "operationId": "b5e28f5e61a230f277e66237e624bd4a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Guide details"
+                    },
+                    "404": {
+                        "description": "Guide not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Update guide",
+                "operationId": "0da0bff6a392f3a27f28c82be761b8e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Dupont"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "Jean"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "example": "securepassword123"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "jean.dupont@example.com"
+                                    },
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "jdupont"
+                                    },
+                                    "verif_age": {
+                                        "type": "boolean",
+                                        "example": "true"
+                                    },
+                                    "derniere_activite": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-01-07T00:00:00Z"
+                                    },
+                                    "id_spr": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Guide updated successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Guides"
+                ],
+                "summary": "Delete guide",
+                "operationId": "95e5a0413d0cc74096227fb30170906d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Guide deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/images": {
             "get": {
                 "tags": [
@@ -1451,6 +1750,10 @@
         {
             "name": "Disponibilities",
             "description": "Endpoints for disponibility management"
+        },
+        {
+            "name": "Guides",
+            "description": "Endpoints for Guide management"
         },
         {
             "name": "Images",

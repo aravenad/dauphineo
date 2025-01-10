@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Guide extends Model
 {
     use HasFactory;
+
     protected $table = 'guide';
+
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -22,8 +25,8 @@ class Guide extends Model
         'email',
         'pseudo',
         'verif_age',
-        'derniere_activite',
-        'id_spr'
+        'id_spr',
+        'derniere_activite'
     ];
 
     /**
@@ -60,11 +63,4 @@ class Guide extends Model
         return $this->hasMany(Disponibilite::class, 'id_guide');
     }
 
-    /**
-     * Get the reservations for the guide.
-     */
-    public function reservations(): HasMany
-    {
-        return $this->hasMany(Reservation::class, 'id_guide');
-    }
 }
