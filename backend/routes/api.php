@@ -12,24 +12,25 @@ use App\Http\Controllers\Api\CreneauxController;
 use App\Http\Controllers\Api\VisiteController;
 use App\Http\Controllers\Api\AuthController;
 
-Route::get('/utilisateur', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// Route::get('/utilisateur', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
 // Route::prefix('auth')->group(function() {
-//  Route::post('/', [AuthController::class, 'register']);
-    //Route::post('/', [AuthController::class, 'login']);
-    //Route::post('/', [AuthController::class, 'logout']);
+//     Route::post('/register', [AuthController::class, 'register']);
+//     //Route::post('/login', [AuthController::class, 'login']);
+//     //Route::post('/logout', [AuthController::class, 'logout']);
 // });
 
 
-// Routes de UtilisateurController
+// Routes de UserController
 Route::prefix('utilisateur')->group(function() {
-    Route::get('/', [UtilisateurController::class, 'index']);
+    Route::post('/register', [UtilisateurController::class, 'register']);
+    Route::post('/login', [UtilisateurController::class, 'login']);
+    Route::post('/logout', [UtilisateurController::class, 'logout']);
     Route::get('{id}', [UtilisateurController::class, 'show']);
-    Route::post('/', [UtilisateurController::class, 'store']);
-    //Route::put('{id}', [UtilisateurController::class, 'update']);
-    //Route::delete('{id}', [UtilisateurController::class, 'destroy']);
+    Route::put('{id}', [UtilisateurController::class, 'update']);
+    Route::delete('{id}', [UtilisateurController::class, 'destroy']);
 });
 
 // Routes for ImagesController

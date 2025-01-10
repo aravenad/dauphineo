@@ -4,17 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class Utilisateur extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
 
-    protected $table='utilisateur';
-    // Désactiver les timestamps
-    public $timestamps = false;
+    use HasFactory, Notifiable, HasApiTokens;
+    protected $table = 'utilisateur';
+
 
     /**
      * The attributes that are mass assignable.
@@ -24,10 +24,11 @@ class Utilisateur extends Authenticatable
     protected $fillable = [
         'nom',
         'prenom',
-        'pseudo',
-        'email',
         'mot_de_passe',
-        'verif_age'
+        'email',
+        'pseudo',
+        'verif_age',
+        'derniere_activite',
     ];
 
     /**
@@ -36,7 +37,12 @@ class Utilisateur extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'mot_de_passe'
+        'mot_de_passe',
+        'remember_token',
+        'created_at',
+        'updated_at',
+        'derniere_activite',
+        'verif_age'
     ];
 
     /**
@@ -50,5 +56,9 @@ class Utilisateur extends Authenticatable
             'mot_de_passe' => 'hashed',
         ];
     }
-}
 
+    public function avis(): HasMany
+    {
+        return $this->hasMany(Avis::class, 'id_utilisateur');
+    }
+}

@@ -67,20 +67,20 @@ EXECUTE FUNCTION manage_visit_capacity();
 
 
 -- Supprimer un commentaire si son statut est "supprimé" (vérifié)
-CREATE OR REPLACE FUNCTION delete_comment_on_status()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.status_avis = 'supprime' THEN
-        DELETE FROM AVIS WHERE id = NEW.id;
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION delete_comment_on_status()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     IF NEW.status_avis = 'supprime' THEN
+--         DELETE FROM AVIS WHERE id = NEW.id;
+--     END IF;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER trg_delete_comment_on_status
-AFTER UPDATE ON AVIS
-FOR EACH ROW
-EXECUTE FUNCTION delete_comment_on_status();
+-- CREATE OR REPLACE TRIGGER trg_delete_comment_on_status
+-- AFTER UPDATE ON AVIS
+-- FOR EACH ROW
+-- EXECUTE FUNCTION delete_comment_on_status();
 
 
 -- Supprimer une réservation si son statut est "annulée" (vérifié)

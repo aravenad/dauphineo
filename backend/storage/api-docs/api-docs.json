@@ -335,6 +335,23 @@
             }
         },
         "/api/reservations": {
+            "get": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Fetch all reservations",
+                "operationId": "f10e68ff0ce263ef754b2f640eda8d93",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Reservation"
@@ -819,16 +836,57 @@
                 ]
             }
         },
-        "/api/utilisateur": {
-            "get": {
+        "/api/utilisateur/login": {
+            "post": {
                 "tags": [
                     "utilisateur"
                 ],
-                "summary": "Fetch all users",
-                "operationId": "8a28f6d8d71d411de84c3959602f35b0",
+                "summary": "User login",
+                "operationId": "463d344173361981a7e22e4552633c85",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@gmail.com"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "example": "securepassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "User authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login successful"
+                                        },
+                                        "utilisateur": {
+                                            "type": "string",
+                                            "example": "..."
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -836,13 +894,15 @@
                         "bearerAuth": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/utilisateur/register": {
             "post": {
                 "tags": [
                     "utilisateur"
                 ],
-                "summary": "Create a new user",
-                "operationId": "481c526ab19ffb2e9397efee961d0192",
+                "summary": "User registration",
+                "operationId": "35d859171ef18b285b0e80fa43a26d7d",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -851,20 +911,19 @@
                                 "properties": {
                                     "nom": {
                                         "type": "string",
-                                        "example": "Dupont"
+                                        "example": "Doe"
                                     },
                                     "prenom": {
                                         "type": "string",
-                                        "example": "Jean"
+                                        "example": "John"
                                     },
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "jean.dupont@example.com"
+                                        "example": "lilya.doe@example.com"
                                     },
                                     "mot_de_passe": {
                                         "type": "string",
-                                        "format": "password",
                                         "example": "securepassword123"
                                     },
                                     "pseudo": {
@@ -872,8 +931,8 @@
                                         "example": "Jdu59"
                                     },
                                     "verif_age": {
-                                        "type": "boolean",
-                                        "example": "true"
+                                        "type": "string",
+                                        "example": true
                                     }
                                 },
                                 "type": "object"
@@ -883,39 +942,30 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "User created successfully",
+                        "description": "User registered successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
                                         "nom": {
                                             "type": "string",
-                                            "example": "Dupont"
+                                            "example": "Doe"
                                         },
                                         "prenom": {
                                             "type": "string",
-                                            "example": "Jean"
+                                            "example": "John"
                                         },
                                         "email": {
                                             "type": "string",
-                                            "example": "jean.dupont@example.com"
+                                            "example": "john.doe@example.com"
                                         },
                                         "pseudo": {
                                             "type": "string",
                                             "example": "Jdu59"
                                         },
-                                        "verif_age": {
-                                            "type": "boolean",
-                                            "example": "true"
-                                        },
-                                        "derniere_activite": {
+                                        "token": {
                                             "type": "string",
-                                            "format": "date-time",
-                                            "example": "2025-01-01T12:00:00Z"
+                                            "example": "..."
                                         }
                                     },
                                     "type": "object"
@@ -936,7 +986,7 @@
                 "tags": [
                     "utilisateur"
                 ],
-                "summary": "Get specific user details",
+                "summary": "Show one user",
                 "operationId": "0873a0f9719ccfad3ddaf09d472f55fc",
                 "parameters": [
                     {
@@ -944,16 +994,261 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "minimum": 1
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Utilisateur details"
+                        "description": "User found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "nom": {
+                                            "type": "string",
+                                            "example": "Doe"
+                                        },
+                                        "prenom": {
+                                            "type": "string",
+                                            "example": "John"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "john.doe@example.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "404": {
-                        "description": "Utilisateur not found"
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Update user",
+                "operationId": "c3ce9c4edf3be31d6bf73e7591a666f0",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "pseudo": {
+                                        "type": "string",
+                                        "example": "john.doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@gmail.com"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "example": "securepassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "prenom": {
+                                            "type": "string",
+                                            "example": "John"
+                                        },
+                                        "pseudo": {
+                                            "type": "string",
+                                            "example": "john.doe"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "john.doe@gmail.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Delete one user",
+                "operationId": "11d1b4ffb1d4208a4e6f338b0e80591d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "User deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User deleted"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/utilisateur/logout": {
+            "post": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "User logout",
+                "operationId": "49e12cd51ac6b7630336cd4ebeda9364",
+                "responses": {
+                    "200": {
+                        "description": "User logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Déconnexion réussie"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No user logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Aucun utilisateur connecté"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -1157,7 +1452,11 @@
         },
         {
             "name": "utilisateur",
-            "description": "Endpoints for managing users"
+            "description": "Endpoints for spr"
+        },
+        {
+            "name": "Visite",
+            "description": "API Endpoints for Managing Visits"
         },
         {
             "name": "Creneaux",

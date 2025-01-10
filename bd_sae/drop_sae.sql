@@ -12,5 +12,5 @@ DROP TABLE IF EXISTS SPR;
 -- Suppression des types ENUM
 DROP TYPE IF EXISTS statut_reservation;
 DROP TYPE IF EXISTS statut_paiement;
-DROP TYPE IF EXISTS statut_avis;
+--DROP TYPE IF EXISTS statut_avis;
 
