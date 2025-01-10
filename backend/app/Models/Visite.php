@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Visite extends Model
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory;
+    
     protected $table = 'visite';  // Spécifier le nom exact de la table
     public $timestamps = false;    // Désactiver les timestamps si non utilisés
 

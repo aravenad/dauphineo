@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
+
 /* ImagesController is a class that handles the CRUD operations for the Image model 
  * To be more specific, it handles the following operations:
  * 1. Fetch all images
@@ -40,7 +41,7 @@ class ImagesController extends Controller
      */
     public function index() 
     {
-        return Images::paginate(10);
+        return Images::all();
     }
 
     /**
@@ -75,89 +76,15 @@ class ImagesController extends Controller
     public function show(string $id) 
     {
         $image = Images::findOrFail($id);
-        return $image;
+    
+        return response()->json([
+            'data' => $image
+        ]);
+
+    
     }
 
-    /**
-     * @OA\Post(
-     *     path="/api/images",
-     *     tags={"Images"},
-     *     summary="Create a new image record",
-     *     description="Stores an image associated with a specific SPR. The image URL is dynamically generated and returned in the response.",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"image", "id_spr"},
-     *             @OA\Property(property="image", type="string", format="binary", description="Image file (JPEG, PNG, JPG) with a minimum resolution of 300x300 pixels."),
-     *             @OA\Property(property="id_spr", type="integer", description="ID of the SPR to associate with the image.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Image created successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer", description="ID of the created image."),
-     *             @OA\Property(property="image_url", type="string", description="Dynamically generated URL of the stored image."),
-     *             @OA\Property(property="id_spr", type="integer", description="ID of the associated SPR.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", description="Details of the validation error.")
-     *         )
-     *     )
-     * )
-     */
-    public function store(Request $request)
-    {
-        try {
-            // Validate file presence and type
-            $validated = $request->validate([
-                'image' => 'required|file|image|mimes:jpeg,png,jpg|max:2048',
-                'id_spr' => 'required|integer|exists:spr,id'
-            ]);
-
-            $file = $request->file('image');
-            
-            // Retrieve image metadata
-            $imageInfo = getimagesize($file);
-            if (!$imageInfo) {
-                return response()->json(['error' => 'Invalid image file.'], 422);
-            }
-
-            // Validate metadata
-            $width = $imageInfo[0];
-            $height = $imageInfo[1];
-            $minWidth = 300;
-            $minHeight = 300;
-            if ($width < $minWidth || $height < $minHeight) {
-                return response()->json([
-                    'error' => "Image resolution must be at least {$minWidth}x{$minHeight} pixels."
-                ], 422);
-            }
-
-            // Store the file and get the URL
-            $path = $file->store('images', 'public');
-            $imageUrl = Storage::url($path); // Dynamically generate the URL
-
-            // Save to database
-            $image = Images::create([
-                'image_url' => $imageUrl,
-                'id_spr' => $validated['id_spr']
-            ]);
-
-            return response()->json($image, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Create image error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to create image'], 500);
-        }
-    }
+    
 
     /**
      * @OA\Put(
@@ -263,7 +190,6 @@ class ImagesController extends Controller
             return response()->json(['error' => 'Failed to update image'], 500);
         }
     }
-
     /**
      * @OA\Delete(
      *     path="/api/images/{id}",
@@ -297,5 +223,60 @@ class ImagesController extends Controller
         });
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * @OA\Get(
+     *     tags={"Images"},
+     *     path="/api/images/spr/{idSPR}",
+     *     summary="Get all images related to a specific SPR",
+     *     description="Returns all images associated with the specified SPR ID",
+     *     @OA\Parameter(
+     *         name="idSPR",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the SPR to fetch images for",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="image_url", type="string"),
+     *                 @OA\Property(property="id_spr", type="integer")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No images found"
+     *     )
+     * )
+     */
+    public function getSprImages($idSPR)
+    {
+        try {
+            // First check if SPR exists
+            if (!DB::table('spr')->where('id', $idSPR)->exists()) {
+                return response()->json(['message' => 'SPR not found'], 404);
+            }
+
+            $images = Images::where('id_spr', $idSPR)->get();
+
+
+            if ($images->isEmpty()) {
+                return response()->json(['message' => 'No images found for this SPR'], 404);
+            }
+
+            return response()->json($images, 200);
+            
+        } catch (\Exception $e) {
+            Log::error('Error fetching SPR images: ' . $e->getMessage());
+            return response()->json(['message' => 'Error fetching images'], 500);
+        }
     }
 }

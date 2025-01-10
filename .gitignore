@@ -3,3 +3,5 @@
 /.idea/workspace.xml
 /backend/package-lock.json
 bd_sae/insert_sae.sql
+bd_sae/insert_sae.sql
+backend/.env.testing

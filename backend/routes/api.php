@@ -36,8 +36,8 @@ Route::get('/utilisateur', function (Request $request) {
 // Routes for ImagesController
 Route::prefix('images')->group(function() {
     Route::get('/', [ImagesController::class, 'index']);
+    Route::get('/spr/{idSPR}', [ImagesController::class, 'getSprImages']); // Move this route before the {id} route
     Route::get('{id}', [ImagesController::class, 'show']);
-    Route::post('/', [ImagesController::class, 'store']);
     Route::put('{id}', [ImagesController::class, 'update']);
     Route::delete('{id}', [ImagesController::class, 'destroy']);
 });
@@ -92,5 +92,5 @@ Route::prefix('visites')->group(function() {
     Route::delete('/{id}', [VisiteController::class, 'destroy']);
     Route::get('/user/{userId}', [VisiteController::class, 'getUserVisites']);
     Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
-    Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
+    //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });
