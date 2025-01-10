@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  */
 class Images extends Model
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
     protected $table = 'images';
@@ -49,6 +50,8 @@ class Images extends Model
     protected $casts = [
         'id_spr' => 'integer'
     ];
+
+    
 
     /**
      * Get the Spr that owns the image.

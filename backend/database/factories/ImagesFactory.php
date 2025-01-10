@@ -19,6 +19,7 @@ class ImagesFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->unique()->randomNumber(),
             'image_url' => $this->faker->imageUrl(),
             'id_spr' => $this->faker->numberBetween(1, 20)
         ];

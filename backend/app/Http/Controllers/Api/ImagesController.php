@@ -79,117 +79,13 @@ class ImagesController extends Controller
     
         return response()->json([
             'data' => $image
-        ]);
+        ], 200);
 
     
     }
 
     
 
-    /**
-     * @OA\Put(
-     *     path="/api/images/{id}",
-     *     tags={"Images"},
-     *     summary="Update an existing image",
-     *     description="Updates the details of an existing image. Supports updating the file and/or the associated SPR. The image must meet the resolution and file type requirements.",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of the image to update.",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="image", type="string", format="binary", description="Image file (JPEG, PNG, JPG) with a minimum resolution of 300x300 pixels."),
-     *             @OA\Property(property="id_spr", type="integer", description="ID of the SPR to associate with the image.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Image updated successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer", description="ID of the updated image."),
-     *             @OA\Property(property="image_url", type="string", description="URL of the updated image."),
-     *             @OA\Property(property="id_spr", type="integer", description="ID of the associated SPR.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", description="Details of the validation error.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Image not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", description="Error message when the image is not found.")
-     *         )
-     *     )
-     * )
-     */
-    public function update(Request $request, $id)
-    {
-        try {
-            $image = Images::findOrFail($id);
-
-            $validated = $request->validate([
-                'image' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
-                'id_spr' => 'nullable|integer|exists:spr,id'
-            ]);
-
-            if ($request->hasFile('image')) {
-                $file = $request->file('image');
-
-                // Retrieve image metadata
-                $imageInfo = getimagesize($file);
-                if (!$imageInfo) {
-                    return response()->json(['error' => 'Invalid image file.'], 422);
-                }
-
-                // Validate metadata
-                $width = $imageInfo[0];
-                $height = $imageInfo[1];
-                $minWidth = 300;
-                $minHeight = 300;
-
-                if ($width < $minWidth || $height < $minHeight) {
-                    return response()->json([
-                        'error' => "Image resolution must be at least {$minWidth}x{$minHeight} pixels."
-                    ], 422);
-                }
-
-                // Delete old file
-                $oldPath = str_replace('/storage/', '', $image->image_url);
-                if (Storage::disk('public')->exists($oldPath)) {
-                    Storage::disk('public')->delete($oldPath);
-                }
-
-                // Store new file
-                $path = $file->store('images', 'public');
-                $image->image_url = '/storage/' . $path;
-            }
-
-            if ($request->has('id_spr')) {
-                $image->id_spr = $validated['id_spr'];
-            }
-
-            $image->save();
-
-            return response()->json($image, 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['error' => 'Image not found'], 404);
-        } catch (\Exception $e) {
-            Log::error('Update image error: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to update image'], 500);
-        }
-    }
     /**
      * @OA\Delete(
      *     path="/api/images/{id}",
@@ -223,60 +119,5 @@ class ImagesController extends Controller
         });
 
         return response()->json(null, 204);
-    }
-
-    /**
-     * @OA\Get(
-     *     tags={"Images"},
-     *     path="/api/images/spr/{idSPR}",
-     *     summary="Get all images related to a specific SPR",
-     *     description="Returns all images associated with the specified SPR ID",
-     *     @OA\Parameter(
-     *         name="idSPR",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the SPR to fetch images for",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="image_url", type="string"),
-     *                 @OA\Property(property="id_spr", type="integer")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="No images found"
-     *     )
-     * )
-     */
-    public function getSprImages($idSPR)
-    {
-        try {
-            // First check if SPR exists
-            if (!DB::table('spr')->where('id', $idSPR)->exists()) {
-                return response()->json(['message' => 'SPR not found'], 404);
-            }
-
-            $images = Images::where('id_spr', $idSPR)->get();
-
-
-            if ($images->isEmpty()) {
-                return response()->json(['message' => 'No images found for this SPR'], 404);
-            }
-
-            return response()->json($images, 200);
-            
-        } catch (\Exception $e) {
-            Log::error('Error fetching SPR images: ' . $e->getMessage());
-            return response()->json(['message' => 'Error fetching images'], 500);
-        }
     }
 }

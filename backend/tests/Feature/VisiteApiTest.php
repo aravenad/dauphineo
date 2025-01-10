@@ -90,13 +90,15 @@ test('delete a visite' , function(){
  * @author nael
  * @category test n°5 - Get all visit associated to one user
  */
-
-/*  test('fetching all visit associated to one user' , function(){
+/* 
+test('fetching all visit associated to one user' , function(){
     //We create a visite 
-    $visite = Visite::factory()->create();
+    $visite = Visite::factory()->make();
+    //Create a user
+    $user = User::factory()->make();
 
     $user = User::factory()->create();
-    $response = $this->get("/api/visites/utilisateurs/{$user->id}");
+    $response = $this->get("/api/visites/utilisateur/{$user->id}");
 
     $response->assertStatus(200);
 

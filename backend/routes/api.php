@@ -36,9 +36,7 @@ Route::get('/utilisateur', function (Request $request) {
 // Routes for ImagesController
 Route::prefix('images')->group(function() {
     Route::get('/', [ImagesController::class, 'index']);
-    Route::get('/spr/{idSPR}', [ImagesController::class, 'getSprImages']); // Move this route before the {id} route
     Route::get('{id}', [ImagesController::class, 'show']);
-    Route::put('{id}', [ImagesController::class, 'update']);
     Route::delete('{id}', [ImagesController::class, 'destroy']);
 });
 
