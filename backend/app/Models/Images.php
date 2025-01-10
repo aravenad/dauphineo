@@ -38,6 +38,9 @@ class Images extends Model
         'id_spr'
     ];
     
+    // Explicitly enable timestamps
+    public $timestamps = false; //Pause probleme pour la méthode GET /api/images/{id} 
+    
     /**
      * The attributes that should be cast.
      *
