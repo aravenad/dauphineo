@@ -9,6 +9,8 @@ class Reservation extends Model
 {
     use HasFactory;
 
+    protected $table = 'reservation';
+
     /**
      * The attributes that are fillable by the user.
      * Ces champs peuvent être modifiés en masse par l'utilisateur.
@@ -20,10 +22,20 @@ class Reservation extends Model
         'heure',
         'statut_reservation',
         'statut_paiement',
+        'taille',
         'id_utilisateur',
         'id_visite',
         'id_spr',
         'id_guide',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'taille',
     ];
 
     /**
@@ -48,4 +60,19 @@ class Reservation extends Model
         'prix' => 'float',
         'taille' => 'integer',
     ];
+
+    public function guide()
+    {
+        return $this->belongsTo(Guide::class, 'id_guide');
+    }
+
+    public function spr()
+    {
+        return $this->belongsTo(Spr::class, 'id_spr');
+    }
+
+    public function visite()
+    {
+        return $this->belongsTo(Visite::class, 'id_visite');
+    }
 }

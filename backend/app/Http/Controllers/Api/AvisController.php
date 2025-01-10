@@ -19,7 +19,7 @@ class AvisController extends Controller
      *     path="/api/avis",
      *     tags={"avis"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Fetch all reviews",
+     *     summary="Fetch all reviews from all reviews",
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -41,7 +41,7 @@ class AvisController extends Controller
      */
     public function index()
     {
-        return Avis::with(['utilisateur'])->get();
+        return Avis::all();
     }
 
     /**
@@ -80,18 +80,29 @@ class AvisController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $data = $request->validate([
             'titre' => 'required|string|max:255',
             'commentaire' => 'required|string',
             'note' => 'required|integer|between:0,5',
-            // 'id_utilisateur' => 'required|integer',
-            // 'id_spr' => 'required|integer',
+            'id_utilisateur' => 'required|integer',
+            'id_spr' => 'required|integer',
         ]);
 
-        $validated['date_de_publication'] = now();
-        // $validated['status_avis'] = $validated['status_avis'] ?? true;
+        // Vérification si l'utilisateur a déjà laissé un avis pour ce SPR
+        $existingAvis = Avis::where('id_utilisateur', $data['id_utilisateur'])
+            ->where('id_spr', $data['id_spr'])
+            ->first();
 
-        $avis = Avis::create($validated);
+        // Si un avis existe déjà, retourner une erreur
+        if ($existingAvis) {
+            return response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 400);
+        }
+
+        $data['date_de_publication'] = now();
+
+        // Création de l'avis
+        $avis = Avis::create($data);
+
         return response()->json($avis, 201);
     }
 
@@ -135,7 +146,6 @@ class AvisController extends Controller
         $avis = Avis::findOrFail($id);
         return response()->json($avis);
     }
-
 
     /**
      * @OA\Delete(

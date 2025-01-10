@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\Api\ReservationController;
 use App\Http\Controllers\Api\ImagesController;
 use App\Http\Controllers\Api\SprController;
@@ -10,18 +10,15 @@ use App\Http\Controllers\Api\GuideController;
 use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
 
-Route::get('/users', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
 // Routes de UserController
-Route::prefix('users')->group(function() {
-    Route::get('/', [UserController::class, 'index']);
-    Route::get('{userId}', [UserController::class, 'show']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::put('{userId}', [UserController::class, 'update']);
-    Route::delete('{userId}', [UserController::class, 'destroy']);
-});
+// Route::prefix('users')->group(function() {
+//     Route::get('/', [UserController::class, 'index']);
+//     Route::get('{userId}', [UserController::class, 'show']);
+//     Route::post('/', [UserController::class, 'store']);
+//     Route::put('{userId}', [UserController::class, 'update']);
+//     Route::delete('{userId}', [UserController::class, 'destroy']);
+// });
 
 // Routes for ImagesController
 Route::prefix('images')->group(function() {
@@ -36,6 +33,9 @@ Route::prefix('images')->group(function() {
 Route::prefix('spr')->group(function() {
     Route::get('/', [SprController::class, 'index']);
     Route::get('{id}', [SprController::class, 'show']);
+    Route::get('{id}/images', [SprController::class, 'getImagesBySpr']);
+    Route::get('{id}/guides', [SprController::class, 'getGuidesBySpr']);
+    Route::get('{id}/avis', [SprController::class, 'getAvisBySpr']);
 });
 
 // Routes for GuideController
@@ -57,9 +57,8 @@ Route::prefix('avis')->group(function() {
 
 // Routes for ReservationController
 Route::prefix('reservations')->group(function() {
-    Route::get('/', [ReservationController::class, 'index']);
     Route::post('/', [ReservationController::class, 'store']);
-    Route::patch('{reservationId}', [ReservationController::class, 'updateStatus']);
+    // Route::patch('{reservationId}', [ReservationController::class, 'updateStatus']);
 });
 
 // Routes de CreneauxController

@@ -19,8 +19,8 @@ class Avis extends Model
         'titre',
         'commentaire',
         'note',
-        // 'id_utilisateur',
-        // 'id_spr',
+        'id_utilisateur',
+        'id_spr',
     ];
 
     /**
@@ -33,7 +33,7 @@ class Avis extends Model
         'titre',
         'commentaire',
         'note',
-        'date_de_publication',
+        'created_at',
         'id_spr',
         'utilisateur'
     ];
@@ -52,7 +52,7 @@ class Avis extends Model
      */
     public function utilisateur(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'id_utilisateur');
+        return $this->belongsTo(Utilisateur::class, 'id_utilisateur');
     }
 
     /**
