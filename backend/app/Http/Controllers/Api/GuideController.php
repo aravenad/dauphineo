@@ -258,11 +258,13 @@ public function disponibilitesGuide($idGuide)
     // Récupérer les disponibilités avec les créneaux
     $disponibilites = DB::table('disponibilite')
         ->join('creneaux', 'disponibilite.id_creneaux', '=', 'creneaux.id')
+        ->join('spr', 'creneaux.id_spr', '=', 'spr.id')
         ->select(
             'disponibilite.id',
             'disponibilite.date_jour',
             'creneaux.heure_debut',
-            'creneaux.heure_fin'
+            'creneaux.heure_fin',
+            'spr.nom_commune as nom_spr'
         )
         ->where('disponibilite.id_guide', '=', $idGuide)
         ->orderBy('disponibilite.date_jour')
@@ -287,7 +289,5 @@ public function disponibilitesGuide($idGuide)
         ],
         'disponibilites' => $disponibilites
     ], 200);
-}
+}}
 
-
-}
