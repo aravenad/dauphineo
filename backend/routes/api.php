@@ -12,20 +12,29 @@ use App\Http\Controllers\Api\DisponibilitesController;
 use App\Http\Controllers\Api\VisiteController;
 use App\Http\Middleware\EnsureTokenIsValid;
 
+// Route::middleware([EnsureTokenIsValid::class])->group(function () {
+//     Route::post('/register', [UtilisateurController::class, 'register']);
+//     Route::post('/login', [UtilisateurController::class, 'login']);
+//     Route::get('/', [SprController::class, 'index']);
+//     Route::get('{id}', [SprController::class, 'show']);
+//     Route::get('{id}', [AvisController::class, 'show']);
+//     Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide']);
+// });
+
 // Routes for UtilisateurController
 Route::prefix('utilisateur')->group(function() {
-    Route::post('/register', [UtilisateurController::class, 'register']);//->withoutMiddleware([EnsureTokenIsValid::class]);
-    Route::post('/login', [UtilisateurController::class, 'login']);//->withoutMiddleware([EnsureTokenIsValid::class]);
+    Route::post('/register', [UtilisateurController::class, 'register'])->withoutMiddleware([EnsureTokenIsValid::class]);
+    Route::post('/login', [UtilisateurController::class, 'login'])->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::post('/logout', [UtilisateurController::class, 'logout']);
     Route::get('{id}', [UtilisateurController::class, 'show']);
     Route::put('{id}', [UtilisateurController::class, 'update']);
     Route::delete('{id}', [UtilisateurController::class, 'destroy']);
-});//->middleware(EnsureTokenIsValid::class);
+});
 
 // Routes for SprController
 Route::prefix('spr')->group(function() {
-    Route::get('/', [SprController::class, 'index']);
-    Route::get('{id}', [SprController::class, 'show']);
+    Route::get('/', [SprController::class, 'index'])->withoutMiddleware([EnsureTokenIsValid::class]);
+    Route::get('{id}', [SprController::class, 'show'])->withoutMiddleware([EnsureTokenIsValid::class]);
 });
 
 // Routes for GuideController
@@ -37,12 +46,12 @@ Route::prefix('guides')->group(function() {
     Route::post('/', [GuideController::class, 'store']);
     
     // Get guide disponibilites route
-    Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide']);
+    Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide'])->withoutMiddleware([EnsureTokenIsValid::class]);
 });
 
 // Routes for AvisController
 Route::prefix('avis')->group(function() {
-    Route::get('{id}', [AvisController::class, 'show']);
+    Route::get('{id}', [AvisController::class, 'show'])->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::post('/', [AvisController::class, 'store']);
     Route::delete('{id}', [AvisController::class, 'destroy']);
 });

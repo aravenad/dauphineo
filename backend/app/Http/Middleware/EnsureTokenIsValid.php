@@ -15,9 +15,13 @@ class EnsureTokenIsValid
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->input('token') !== 'my-secret-token') {
-            return redirect('/home');
+        $token = $request->header('Authorization'); // Récupérer le token de l'en-tête Authorization
+
+        // Vérifiez si le token correspond à 'my-secret-token'
+        if (!$token ) {
+            return redirect('/');
         }
+
         return $next($request);
     }
 }

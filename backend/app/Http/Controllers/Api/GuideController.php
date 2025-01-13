@@ -226,6 +226,7 @@ class GuideController extends Controller
  * @OA\Get(
  *     path="/api/guides/{idGuide}/disponibilites",
  *     tags={"Guides"},
+ *     security={{"bearerAuth": {}}},
  *     summary="Get guide's disponibilites by guide ID",
  *     @OA\Parameter(
  *         name="idGuide",
