@@ -1,8 +1,7 @@
 <?php
 use App\Models\Visite;
-use App\Models\User;
-
-
+use App\Models\Utilisateur;
+use Database\Factories\UserFactory;
 
 /**
  * Tests for the Visite API
@@ -90,20 +89,20 @@ test('delete a visite' , function(){
  * @author nael
  * @category test n°5 - Get all visit associated to one user
  */
-/* 
+
 test('fetching all visit associated to one user' , function(){
     //We create a visite 
     $visite = Visite::factory()->make();
     //Create a user
-    $user = User::factory()->make();
+    $user = Utilisateur::factory()->make();
 
-    $user = User::factory()->create();
+    $user = Utilisateur::factory()->create();
     $response = $this->get("/api/visites/utilisateur/{$user->id}");
 
     $response->assertStatus(200);
 
 
- }); */
+ });
 
 
 

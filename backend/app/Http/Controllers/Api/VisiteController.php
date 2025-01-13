@@ -178,7 +178,7 @@ class VisiteController extends Controller
             // On commence par récupérer toutes les réservations de l'utilisateur
             $reservations = DB::table('reservation')
                 ->select([
-                    'reservation.date',
+                    'visite.date_visite',
                     'spr.nom_commune as nom_spr',
                     'guide.prenom as prenom_guide'
                 ])
