@@ -38,11 +38,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'utilisateur',
+            'provider' => 'utilisateur','guide',
         ],
         'api' => [
             'driver' => 'sanctum',
-            'provider' => 'utilisateur',
+            'provider' => 'utilisateur','guide',
         ],
     ],
 
@@ -67,6 +67,11 @@ return [
         'utilisateur' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\Utilisateur::class),
+        ],
+
+        'guide' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_MODEL', App\Models\Guide::class),
         ],
 
         // 'users' => [
