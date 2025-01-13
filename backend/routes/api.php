@@ -11,16 +11,17 @@ use App\Http\Controllers\Api\AvisController;
 use App\Http\Controllers\Api\CreneauxController;
 use App\Http\Controllers\Api\DisponibilitesController;
 use App\Http\Controllers\Api\VisiteController;
+use App\Http\Middleware\EnsureTokenIsValid;
 
 // Routes de UserController
 Route::prefix('utilisateur')->group(function() {
-    Route::post('/register', [UtilisateurController::class, 'register']);
-    Route::post('/login', [UtilisateurController::class, 'login']);
+    Route::post('/register', [UtilisateurController::class, 'register']);//->withoutMiddleware([EnsureTokenIsValid::class]);
+    Route::post('/login', [UtilisateurController::class, 'login']);//->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::post('/logout', [UtilisateurController::class, 'logout']);
     Route::get('{id}', [UtilisateurController::class, 'show']);
     Route::put('{id}', [UtilisateurController::class, 'update']);
     Route::delete('{id}', [UtilisateurController::class, 'destroy']);
-});
+});//->middleware(EnsureTokenIsValid::class);
 
 // Routes for ImagesController
 Route::prefix('images')->group(function() {
