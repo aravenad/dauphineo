@@ -34,6 +34,9 @@ class Guide extends Model
      */
     protected $hidden = [
         'mot_de_passe',
+        'remember_token',
+        'derniere_activite',
+        'verif_age',
         'created_at',
         'updated_at'
     ];
