@@ -17,7 +17,6 @@ class EnsureTokenIsValid
     {
         $token = $request->header('Authorization'); // Récupérer le token de l'en-tête Authorization
 
-        // Vérifiez si le token correspond à 'my-secret-token'
         if (!$token ) {
             return redirect('/');
         }

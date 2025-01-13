@@ -39,12 +39,12 @@ Route::prefix('spr')->group(function() {
 
 // Routes for GuideController
 Route::prefix('guides')->group(function() {
-    Route::post('/login', [GuideController::class, 'login']);
+    Route::post('/login', [GuideController::class, 'login'])->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::post('/logout', [GuideController::class, 'logout']);
     Route::get('{id}', [GuideController::class, 'show']);
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
-    Route::post('/', [GuideController::class, 'store']);
+    Route::post('/', [GuideController::class, 'store'])->withoutMiddleware([EnsureTokenIsValid::class]);
     
     // Get guide disponibilites route
     Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide'])->withoutMiddleware([EnsureTokenIsValid::class]);
