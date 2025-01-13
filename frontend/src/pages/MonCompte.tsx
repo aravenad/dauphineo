@@ -1,14 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShieldIcon from "@mui/icons-material/Shield";
 import {useState} from "react";
 import {ButtonCustom} from "../components/mui_custom";
+import Profil from "../components/Profil.tsx";
 
-const Sidebar = () => {
 
-    const [selected, setSelected] = useState("profil"); // "profil" par défaut
-
-    return (
+const Sidebar = ({ selected, setSelected }: { selected: string; setSelected: (value: string) => void }) => {    return (
         <Box
             sx={{
                 width: "40%",
@@ -17,7 +15,7 @@ const Sidebar = () => {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "50px",
+                gap: "35px",
                 borderRight: "1px solid #e0e0e0",
             }}
         >
@@ -67,24 +65,37 @@ const Sidebar = () => {
 };
 
 const MainPage = () => {
+    const [selected, setSelected] = useState("profil");
+
     return (
         <Box
             sx={{
                 width: "75%",
-                height: "500px",
+                height: "600px",
                 margin: "0 auto",
                 display: "flex",
+                justifyContent: "center",
             }}
         >
 
-            <Sidebar />
+            <Sidebar selected={selected} setSelected={setSelected} />
 
             <Box
                 sx={{
-                    width: "60%",
+                    width: "80%",
                     height: "100%",
+                    padding: "20px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                 }}
-            ></Box>
+            >
+                {selected === "profil" ? (
+                    <Profil />
+                ) : selected === "confidentialite" ? (
+                    <Profil />
+                ) : null}
+            </Box>
         </Box>
     );
 };
