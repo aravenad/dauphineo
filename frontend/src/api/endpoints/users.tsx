@@ -19,3 +19,14 @@ export const createUser = async (userData: any) => {
     throw error;
   }
 };
+
+// Fonction pour connecter un utilisateur
+export const loginUser = async (userData: { email: string; password: string }) => {
+  try {
+    const response = await axiosInstance.post("/api/utilisateur/login", userData);
+    // Traite et retourne les données si la requête réussit
+    return response.data;
+  } catch (error) {
+    throw error; // Relève l'erreur pour être gérée dans le composant
+  }
+};
