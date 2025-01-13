@@ -7,3 +7,4 @@ backend/.env.testing
 backend/storage/api-docs/api-docs.json
 .env
 
+backend/.env.testing

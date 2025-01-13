@@ -154,7 +154,7 @@ class VisiteController extends Controller
     /**
      * @OA\Get(
      *     tags={"Visite"},
-     *     path="/api/visites/user/{userId}",
+     *     path="/api/visites/utilisateur/{userId}",
      *     summary="Get all visits associated with a specific user",
      *     @OA\Parameter(
      *         name="userId",

@@ -70,7 +70,7 @@ Route::prefix('visites')->group(function() {
     Route::get('/{id}', [VisiteController::class, 'show']);
     Route::post('/', [VisiteController::class, 'store']);
     Route::delete('/{id}', [VisiteController::class, 'destroy']);
-    Route::get('/user/{userId}', [VisiteController::class, 'getUserVisites']);
+    Route::get('/utilisateur/{userId}', [VisiteController::class, 'getUserVisites']);
     Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
     //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });

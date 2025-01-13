@@ -1,7 +1,10 @@
 <?php
+
+use App\Models\Guide;
 use App\Models\Visite;
 use App\Models\Utilisateur;
-use Database\Factories\UserFactory;
+use App\Models\Spr;
+use App\Models\Reservation;
 
 /**
  * Tests for the Visite API
@@ -91,14 +94,27 @@ test('delete a visite' , function(){
  */
 
 test('fetching all visit associated to one user' , function(){
-    //We create a visite 
-    $visite = Visite::factory()->make();
-    //Create a user
-    $user = Utilisateur::factory()->make();
 
     $user = Utilisateur::factory()->create();
-    $response = $this->get("/api/visites/utilisateur/{$user->id}");
 
+    $guide = Guide::where('id', '=' , 38 )->first(); // GuideFactory doesn't exist for the moment 
+    $spr = Spr::where('id', '=' , 1 )->first(); //SPRFactory doesn't exist for the moment
+    $visite = Visite::factory()->create();
+    
+    // Création d'une réservation avec le prix explicitement défini
+    $reservation = Reservation::create([
+        'prix' => 10.50,
+        'taille' => 2,
+        'id_utilisateur' => $user->id,
+        'id_visite' => $visite->id,
+        'id_spr' => $spr->id,
+        'id_guide' => $guide->id,      
+        'statut_reservation' => 'confirmee',
+        'statut_paiement' => 'payee',
+    ]);
+    
+    $response = $this->get("/api/visites/utilisateur/{$user->id}"); // Utilisation de l'ID dynamique
+    
     $response->assertStatus(200);
 
 
