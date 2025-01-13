@@ -40,7 +40,8 @@ Route::prefix('spr')->group(function() {
 
 // Routes for GuideController
 Route::prefix('guides')->group(function() {
-    Route::get('/', [GuideController::class, 'index']);
+    Route::post('/login', [GuideController::class, 'login']);
+    Route::post('/logout', [GuideController::class, 'logout']);
     Route::get('{id}', [GuideController::class, 'show']);
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);

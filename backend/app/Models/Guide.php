@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Guide extends Model
+class Guide extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = 'guide';
 
@@ -39,13 +43,16 @@ class Guide extends Model
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
      */
-    protected $casts = [
-        'verif_age' => 'boolean',
-        'derniere_activite' => 'datetime',
-        'mot_de_passe' => 'hashed'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'mot_de_passe' => 'hashed',
+        ];
+    }
 
     /**
      * Get the SPR that the guide belongs to.
