@@ -1,6 +1,6 @@
 import { Header, Footer } from "./components/index";
 import { Routes, Route } from "react-router";
-import { Home, Reglementation, FAQ } from "./pages";
+import { Home, Reglementation, FAQ, SPR } from "./pages";
 import { Container } from "@mui/material";
 
 function App() {
@@ -12,6 +12,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/reglementation" element={<Reglementation />} />
         <Route path="/faq" element={<FAQ/>} />
+            <Route path="/spr" element={<SPR />} />
         </Routes>
       </Container>
       <Footer />
