@@ -12,7 +12,7 @@ use Carbon\Carbon;
 /**
  * @OA\Tag(
  *     name="utilisateur",
- *     description="Endpoints for spr"
+ *     description="Endpoints for utilisateur"
  * )
  */
 class UtilisateurController extends Controller
