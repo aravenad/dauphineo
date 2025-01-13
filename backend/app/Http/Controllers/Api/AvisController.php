@@ -15,36 +15,6 @@ use App\Http\Controllers\Controller;
 class AvisController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/avis",
-     *     tags={"avis"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Fetch all reviews from all reviews",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example="1"),
-     *                 @OA\Property(property="titre", type="string", example="Super visite"),
-     *                 @OA\Property(property="commentaire", type="string", example="Très belle expérience, guide au top !"),
-     *                 @OA\Property(property="note", type="integer", example="5"),
-     *                 @OA\Property(property="date_de_publication", type="string", format="date-time", example="2025-01-07 09:06:47"),
-     *                 @OA\Property(property="id_spr", type="integer", example="1"),
-     *                 @OA\Property(property="utilisateur", type="object", example={"nom": "Dupont", "prenom": "Jean", "pseudo": "jean.dupont"}),
-     *)
-     *         )
-     *     )
-     * )
-     */
-    public function index()
-    {
-        return Avis::all();
-    }
-
-    /**
      * @OA\Post(
      *     path="/api/avis",
      *     tags={"avis"},
@@ -97,8 +67,6 @@ class AvisController extends Controller
         if ($existingAvis) {
             return response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 400);
         }
-
-        $data['date_de_publication'] = now();
 
         // Création de l'avis
         $avis = Avis::create($data);
@@ -169,6 +137,6 @@ class AvisController extends Controller
     {
         $avis = Avis::findOrFail($id);
         $avis->delete();
-        return response()->json(["message" => "Avis supprimé avec succès", 204]);
+        return response()->noContent();
     }
 }

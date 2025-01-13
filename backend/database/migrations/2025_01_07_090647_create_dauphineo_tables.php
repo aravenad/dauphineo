@@ -112,7 +112,6 @@ return new class extends Migration
             $table->text('titre')->notNullable();
             $table->text('commentaire')->notNullable();
             $table->integer('note')->notNullable()->check('note >= 1 AND note <= 5');
-            $table->timestamp('date_de_publication')->notNullable();
             $table->foreignId('id_utilisateur')->constrained('utilisateur')->onDelete('cascade');
             $table->foreignId('id_spr')->constrained('spr')->onDelete('cascade');
             $table->timestamps();

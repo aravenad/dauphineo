@@ -10,7 +10,26 @@ class Spr extends Model
 {
     use HasFactory;
 
-     protected $table = 'spr';
+    protected $table = 'spr';
+
+    public $timestamps = false;
+
+
+     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+
+    protected $fillable=[
+        'code_departement',
+        'nom_du_departement',
+        'nom_commune',
+        'capacite_de_visite',
+        'mot_cle',
+        'is_pmr',
+        'temps_de_visite'
+    ];
 
     /**
      * The attributes that should be cast.

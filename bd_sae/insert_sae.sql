@@ -40,10 +40,10 @@ VALUES
 (15.5, 'confirmee', 'payee', 3, 1, 1, 1, 1),
 ( 12.0, 'confirmee', 'non_reglee', 2, 2, 2, 2, 2);
 
-INSERT INTO AVIS (titre, commentaire, note, date_de_publication, id_utilisateur, id_spr)
+INSERT INTO AVIS (titre, commentaire, note, id_utilisateur, id_spr, created_at)
 VALUES 
-('Super visite', 'Très belle expérience, guide au top !', 5, '2024-03-02 18:00:00', 1, 1),
-('Moyen', 'Beaucoup de monde, difficile à apprécier.', 3, '2024-03-03 10:00:00', 2, 2);
+('Super visite', 'Très belle expérience, guide au top !', 5, 1, 1, CURRENT_TIMESTAMP),
+('Moyen', 'Beaucoup de monde, difficile à apprécier.', 3, 2, 2, CURRENT_TIMESTAMP);
 
 
 

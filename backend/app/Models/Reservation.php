@@ -19,6 +19,7 @@ class Reservation extends Model
      */
     protected $fillable = [
         'date',
+        'prix',
         'heure',
         'statut_reservation',
         'statut_paiement',
@@ -38,15 +39,6 @@ class Reservation extends Model
         'taille',
     ];
 
-    /**
-     * The attributes that are not fillable (guarded).
-     * Les champs non mentionnés dans $fillable sont automatiquement protégés.
-     *
-     * @var array<int, string>
-     */
-    protected $guarded = [
-        'prix', // Par exemple, le prix pourrait être calculé et non modifiable par l'utilisateur.
-    ];
 
     /**
      * Casts for specific attributes.
