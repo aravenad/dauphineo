@@ -4,6 +4,7 @@ import ShieldIcon from "@mui/icons-material/Shield";
 import {useState} from "react";
 import {ButtonCustom} from "../components/mui_custom";
 import Profil from "../components/Profil.tsx";
+import Confidentialite from "../components/Confidentialite.tsx";
 
 
 const Sidebar = ({ selected, setSelected }: { selected: string; setSelected: (value: string) => void }) => {    return (
@@ -93,7 +94,7 @@ const MainPage = () => {
                 {selected === "profil" ? (
                     <Profil />
                 ) : selected === "confidentialite" ? (
-                    <Profil />
+                    <Confidentialite />
                 ) : null}
             </Box>
         </Box>
