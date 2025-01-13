@@ -16,7 +16,7 @@ const Sidebar = ({ selected, setSelected }: { selected: string; setSelected: (va
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: "35px",
+                gap: "25px",
                 borderRight: "1px solid #e0e0e0",
             }}
         >
@@ -72,7 +72,7 @@ const MainPage = () => {
         <Box
             sx={{
                 width: "75%",
-                height: "600px",
+                height: "550px",
                 margin: "0 auto",
                 display: "flex",
                 justifyContent: "center",

@@ -12,11 +12,15 @@ const Confidentialite = () => {
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
     const [isEightChars, setIsEightChars] = useState(false);
     const [hasUppercase, setHasUppercase] = useState(false);
+    const [hasDigit, setHasDigit] = useState(false);
+    const [hasSpecialChar, setHasSpecialChar] = useState(false);
 
     // Validation dynamique du nouveau mot de passe
     const validatePassword = (value: string) => {
         setIsEightChars(value.length >= 8);
         setHasUppercase(/[A-Z]/.test(value));
+        setHasDigit(/\d/.test(value)); // Vérifie au moins un chiffre
+        setHasSpecialChar(/[!@#$%^&*(),.?":{}|<>]/.test(value)); // Vérifie au moins un caractère spécial
     };
 
     // Gestion du changement du champ "nouveau mot de passe"
@@ -28,8 +32,15 @@ const Confidentialite = () => {
         // Validation des erreurs spécifiques
         if (/\s/.test(value)) {
             setNewPasswordError("Le mot de passe ne doit pas contenir d'espaces.");
-        } else if (value.length < 8 || !/[A-Z]/.test(value)) {
-            setNewPasswordError("Le mot de passe doit contenir au moins 8 caractères et une majuscule.");
+        } else if (
+            value.length < 8 ||
+            !/[A-Z]/.test(value) ||
+            !/\d/.test(value) ||
+            !/[!@#$%^&*(),.?":{}|<>]/.test(value)
+        ) {
+            setNewPasswordError(
+                "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial."
+            );
         } else {
             setNewPasswordError("");
         }
@@ -56,6 +67,8 @@ const Confidentialite = () => {
         setConfirmPasswordError("");
         setIsEightChars(false);
         setHasUppercase(false);
+        setHasDigit(false);
+        setHasSpecialChar(false);
     };
 
     return (
@@ -111,10 +124,12 @@ const Confidentialite = () => {
             <Box
                 sx={{
                     display: "flex",
+                    flexDirection: "column",
                     backgroundColor: "#f8f8f8",
                     padding: "10px 15px",
                     borderRadius: "8px",
                     marginTop: "10px",
+                    gap: "10px",
                 }}
             >
                 <Box
@@ -122,22 +137,62 @@ const Confidentialite = () => {
                         display: "flex",
                         alignItems: "center",
                         gap: "8px",
-                        width: "50%", // Chaque condition occupe 50% du conteneur parent
+                        width: "100%",
                     }}
                 >
-                    {isEightChars ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
-                    <Typography variant="body2">8 caractères</Typography>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            width: "50%",
+                        }}
+                    >
+                        {isEightChars ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
+                        <Typography variant="body2">8 caractères</Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            width: "50%",
+                        }}
+                    >
+                        {hasUppercase ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
+                        <Typography variant="body2">1 majuscule</Typography>
+                    </Box>
                 </Box>
                 <Box
                     sx={{
                         display: "flex",
                         alignItems: "center",
                         gap: "8px",
-                        width: "50%",
+                        width: "100%",
                     }}
                 >
-                    {hasUppercase ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
-                    <Typography variant="body2">1 majuscule</Typography>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            width: "50%",
+                        }}
+                    >
+                        {hasDigit ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
+                        <Typography variant="body2">1 chiffre</Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            width: "50%",
+                        }}
+                    >
+                        {hasSpecialChar ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
+                        <Typography variant="body2">1 caractère spécial</Typography>
+                    </Box>
                 </Box>
             </Box>
 
@@ -155,7 +210,9 @@ const Confidentialite = () => {
                 <ButtonCustom
                     variant="contained"
                     color="primary"
-                    disabled={!isEightChars || !hasUppercase || Boolean(newPasswordError) || Boolean(confirmPasswordError)}
+                    disabled={
+                        !isEightChars || !hasUppercase || !hasDigit || !hasSpecialChar || Boolean(newPasswordError) || Boolean(confirmPasswordError)
+                    }
                 >
                     Mettre à jour
                 </ButtonCustom>
