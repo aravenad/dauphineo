@@ -18,12 +18,8 @@ function SPR() {
                 }}
             />
             <GuideSection/>
-<<<<<<< Updated upstream
-
-
-=======
             <AvisSection/>
->>>>>>> Stashed changes
+
         </>
 
     );
