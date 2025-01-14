@@ -1,6 +1,6 @@
 import {Box} from "@mui/material";
 
-import {CardGuide} from "./index.ts";
+import {CardGuide, ChoixVisite} from "./index.ts";
 
 // Composant principal
 function GuideSection() {
@@ -20,6 +20,7 @@ function GuideSection() {
                 <CardGuide />
                 <CardGuide />
                 <CardGuide />
+                <ChoixVisite/>
             </Box>
         </>
 

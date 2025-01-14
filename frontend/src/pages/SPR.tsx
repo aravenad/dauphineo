@@ -1,5 +1,6 @@
 import GuideSection from "../components/GuideSection.tsx";
 import FormulaireAvis from "../components/FormulaireAvis.tsx";
+import AvisSection from "../components/AvisSection.tsx";
 
 
 function SPR() {
@@ -21,6 +22,7 @@ function SPR() {
             />
             <GuideSection />
             <FormulaireAvis/>
+            <AvisSection/>
         </>
 
     );
