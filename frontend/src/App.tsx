@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <Header />
-      <Container sx={{ padding:"2em 6em" }} disableGutters={true}>
+      <Container sx={{ padding:"2em 2em" }} disableGutters={true}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/reglementation" element={<Reglementation />} />
