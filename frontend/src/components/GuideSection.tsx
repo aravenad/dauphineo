@@ -1,44 +1,38 @@
-import {useEffect, useState} from "react";
+import  { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CardGuide from "./CardGuide";
-import {getAllGuides} from "../api/endpoints/guides.tsx";
-
-interface Guide {
-    name: string;
-    role: string;
-    photo: string;
-}
 
 const GuideSection = () => {
     const [selectedDate, setSelectedDate] = useState("");
     const [validatedDate, setValidatedDate] = useState("");
     const [dateError, setDateError] = useState("");
     const [isSearchTriggered, setIsSearchTriggered] = useState(false);
-    const [guides, setGuides] = useState<Guide[]>([]); // Initialisation correcte
-    const [error, setError] = useState("");
-
-    useEffect(() => {
-        const fetchGuides = async () => {
-            try {
-                const data = await getAllGuides(); // Appel de l'API
-                console.log("Réponse de l'API :", data);
-
-                setGuides(data); // Mise à jour des guides
-            } catch (error) {
-                setError("Erreur lors de la récupération des guides.");
-            }
-        };
-
-        fetchGuides();
-    }, []);
 
     const sprId = "1"; // Exemple d'id du SPR (statique pour cet exemple)
+
+    const guides = [
+        {
+            name: "Naps le vrai",
+            role: "Tarpin serein",
+            photo: "https://raplume.eu/wp-content/uploads/2021/04/Capture-decran-2021-04-06-a-16.52.05.png",
+        },
+        {
+            name: "Soso Maness",
+            role: "Marseillais du futur",
+            photo: "https://example.com/soso.jpg",
+        },
+        {
+            name: "Jul",
+            role: "le J",
+            photo: "https://example.com/jul.jpg",
+        },
+    ];
 
     const validateDate = (date: string): string => {
         const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
         if (!dateRegex.test(date)) {
-            return "La date doit être au format JJ/MM/AAAA.";
+            return "La date doit être au format JJ/MM/YYYY.";
         }
 
         const [day, month, year] = date.split("/").map(Number);
@@ -69,13 +63,6 @@ const GuideSection = () => {
 
     return (
         <>
-            <h1>Liste des guides</h1>
-            {error && <p>{error}</p>}
-            <ul>
-                {guides.map((guide, index) => (
-                    <li key={index}>{guide.name}</li>
-                ))}
-            </ul>
             <Typography variant="h4" align="center" gutterBottom>
                 Sélectionnez une date pour afficher les guides disponibles
             </Typography>
@@ -110,7 +97,7 @@ const GuideSection = () => {
                         flexShrink: 0,
                     }}
                 >
-                    <SearchIcon/>
+                    <SearchIcon />
                 </Button>
             </Box>
 
