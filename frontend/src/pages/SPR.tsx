@@ -1,4 +1,5 @@
 import GuideSection from "../components/GuideSection.tsx";
+import AvisSection from "../components/AvisSection.tsx";
 
 
 function SPR() {
@@ -17,8 +18,12 @@ function SPR() {
                 }}
             />
             <GuideSection/>
+<<<<<<< Updated upstream
 
 
+=======
+            <AvisSection/>
+>>>>>>> Stashed changes
         </>
 
     );
