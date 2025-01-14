@@ -7,10 +7,9 @@ import React, { useState } from "react";
 import {useNavigate} from "react-router";
 
 
-// Définition des props du composant
 interface SearchBarCustomProps {
     placeholder?: string;
-    sprList: any[]; // Liste des SPR passée depuis SearchSection
+    sprList: any[];
 }
 
 const Search = styled("div")(({ theme }) => ({
@@ -45,16 +44,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-// Fonction pour normaliser les chaînes
 const normalizeString = (str: string) => {
     return str
         .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Supprimer les accents
-        .replace(/-/g, " ") // Remplacer les tirets par des espaces
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/-/g, " ")
         .toLowerCase();
 };
 
-// Fonction pour mettre en majuscule la première lettre de chaque mot
 const capitalizeWords = (str: string) => {
     return str
         .toLowerCase()
@@ -63,7 +60,6 @@ const capitalizeWords = (str: string) => {
         .join("");
 };
 
-// Fonction pour trouver les SPR correspondants
 const findMatchingSPR = (input: string, sprList: any[]) => {
     if (input.trim().length < 1) return []; // Minimum 3 caractères pour la recherche
 
@@ -75,36 +71,41 @@ const findMatchingSPR = (input: string, sprList: any[]) => {
             normalizeString(spr.nom_commune).includes(normalizedInput)
     );
 
-    return matchingSPR.slice(0, 3); // Retourner maximum 3 résultats
+    return matchingSPR.slice(0, 3);
 };
 
-// Dans le composant SearchBarCustom
 const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Rechercher...", sprList }) => {
-    const [query, setQuery] = useState(""); // Input de recherche
-    const [filteredResults, setFilteredResults] = useState<any[]>([]); // Résultats filtrés
-    const navigate = useNavigate(); // Hook pour la navigation
+    const [query, setQuery] = useState("");
+    const [filteredResults, setFilteredResults] = useState<any[]>([]);
+    const navigate = useNavigate();
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setQuery(value);
 
-        // Trouver les SPR correspondants
         const matchingSPR = findMatchingSPR(value, sprList);
         setFilteredResults(matchingSPR);
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter" && filteredResults.length > 0) {
+            const firstResult = filteredResults[0];
+            navigate(`/spr`, { state: { jsonSPR: JSON.stringify([firstResult]) } });
+        }
+    };
+
     const handleResultClick = (id: number) => {
-        const filteredSPR = sprList.filter(spr => spr.id === id);
+        const filteredSPR = sprList.filter((spr) => spr.id === id);
         const jsonSPR = JSON.stringify(filteredSPR);
-        navigate(`/spr`, { state: {jsonSPR} });
+        navigate(`/spr`, { state: { jsonSPR } });
     };
 
     return (
         <Box
             sx={{
                 position: "relative",
-                width: "500px", // Largeur fixe de la barre de recherche
-                maxWidth: "100%", // Adaptable
+                width: "500px",
+                maxWidth: "100%",
             }}
         >
             <Search>
@@ -115,6 +116,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                     placeholder={placeholder}
                     value={query}
                     onChange={handleSearch}
+                    onKeyDown={handleKeyDown}
                     inputProps={{ "aria-label": "search" }}
                 />
                 <Box sx={{ marginLeft: "10px" }}>
@@ -135,6 +137,8 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                         flexDirection: "column",
                         gap: "5px",
                     }}
+
+
                 >
                     {filteredResults.map((result) => (
                         <Box
@@ -151,9 +155,12 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
                                 fontSize: "0.9rem",
                                 textAlign: "left",
-                                transition : "transform 0.2s ease, background-color 0.2s ease",
+                                transition: "transform 0.2s ease, background-color 0.2s ease",
                                 animation: `${filteredResults.length !== sprList.length ? "fadeIn" : "none"} 0.3s ease`,
                                 width: "fit-content",
+                                "&:first-of-type": {
+                                    // maelys faudra que tu regardes ici j'ai envie de mettre la font plus épaisse
+                                },
                                 "&:hover": {
                                     backgroundColor: "#f9f9f9",
                                     cursor: "pointer",

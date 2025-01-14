@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "../utils/axiosInstance";
+import { fetchSPR } from "../api/endpoints/spr";
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import SearchSection from "../components/SearchSection";
 
@@ -9,11 +9,11 @@ function Home() {
   const [error, setError] = useState<null | Error>(null);
 
   useEffect(() => {
-    const fetchSPR = async () => {
+    const loadSPR = async () => {
       try {
-        const response = await axios.get("/spr");
-        console.log("SPR récupérés :", response.data);
-        setSprList(response.data);
+        const data = await fetchSPR(); // Appel à l’endpoint
+        console.log("SPR récupérés :", data);
+        setSprList(data);
       } catch (err) {
         setError(err as Error);
         console.error("Erreur lors de la récupération des SPR :", err);
@@ -22,7 +22,7 @@ function Home() {
       }
     };
 
-    fetchSPR();
+    loadSPR(); // Appel de la fonction au chargement du composant
   }, []);
 
   return (
