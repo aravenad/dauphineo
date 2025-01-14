@@ -5,6 +5,7 @@ import CardSPR from "./CardSPR";
 import AccordionFAQ from "./AccordionFAQ";
 import CardGuide from "./CardGuide";
 import GuideSection from "./GuideSection.tsx";
+import ChoixVisite from "./ChoixVisite.tsx";
 
 export {
   Header,
@@ -14,4 +15,5 @@ export {
   AccordionFAQ,
   CardGuide,
     GuideSection,
+    ChoixVisite
 };

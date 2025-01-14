@@ -6,7 +6,8 @@ function CardGuide() {
     <>
         <Card
             sx={{
-                maxWidth: 200,
+                width: 200,
+                maxWidth: 400,
                 padding: 2,
                 borderRadius: 4,
                 boxShadow: 3,

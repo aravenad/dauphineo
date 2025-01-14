@@ -14,6 +14,7 @@ import {
 import { ButtonCustom } from "./mui_custom";
 import { CloseRounded, VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
 import React, { useState } from "react";
+import {createUser} from "../api/endpoints/users.tsx";
 
 interface InscriptionDialogProps {
     open: boolean; // Contrôle l'ouverture du dialog
@@ -150,6 +151,35 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
 
 
     };
+    const handleInscription = async () => {
+        if (!formData.nom || !formData.prenom || !formData.email || !formData.password) {
+            setFormErrors((prev) => ({
+                ...prev,
+                global: "Veuillez remplir tous les champs.",
+            }));
+            return;
+        }
+        try {
+            // Appel à la méthode createUser
+            const response = await createUser(formData);
+            console.log("Inscription réussie :", response);
+
+            // Réinitialise les erreurs
+            setFormErrors((prev) => ({
+                ...prev,
+                global: "",
+            }));
+
+            // Ferme la modal après succès
+            if (onClose) onClose();
+        } catch (error) {
+            console.error("Erreur lors de l'inscription :", error);
+            setFormErrors((prev) => ({
+                ...prev,
+                global: "Une erreur est survenue lors de l'inscription. Veuillez réessayer.",
+            }));
+        }
+    };
 
     const [isChecked, setIsChecked] = useState(false);
 
@@ -160,6 +190,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
+
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -240,7 +271,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
                                 variant="contained"
                                 fullWidth
                                 disabled={!isChecked || !NomValide || !PrenomValide || !EmailValide || !PwdValide}
-
+                                onClick={handleInscription}
                             >
                               Inscrivez-vous
                             </ButtonCustom>
