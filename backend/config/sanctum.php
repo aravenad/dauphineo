@@ -33,7 +33,7 @@ return [
     |
     */
 
-    'guard' => ['web'],
+    'guard' => ['api'],
 
     /*
     |--------------------------------------------------------------------------
@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => 240,
 
     /*
     |--------------------------------------------------------------------------
@@ -79,5 +79,11 @@ return [
         'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
         'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
+    //'personal_access_token' => Laravel\Sanctum\PersonalAccessToken::class,
+    //'personal_access_token_model' => Laravel\Sanctum\PersonalAccessToken::class,
+
+    //'personal_access_token' => App\Models\PersonalAccessToken::class,
+
+
 
 ];

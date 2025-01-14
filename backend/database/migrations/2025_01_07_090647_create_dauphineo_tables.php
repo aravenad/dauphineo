@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -13,8 +14,7 @@ return new class extends Migration
     {
         // Création des types ENUM
         DB::statement("CREATE TYPE statut_reservation AS ENUM ('confirmee', 'annulee', 'termine')");
-        DB::statement("CREATE TYPE statut_paiement AS ENUM ('payee', 'non reglee', 'en attente')");
-        DB::statement("CREATE TYPE statut_avis AS ENUM ('supprime', 'publie')");
+        DB::statement("CREATE TYPE statut_paiement AS ENUM ('payee', 'non_reglee', 'en_attente')");
 
         // Création de la table SPR
         Schema::create('spr', function (Blueprint $table) {
@@ -26,7 +26,6 @@ return new class extends Migration
             $table->text('mot_cle')->notNullable();
             $table->boolean('is_pmr')->notNullable();
             $table->time('temps_de_visite')->notNullable();
-            $table->text('image')->nullable();
         });
 
         // Création de la table IMAGES
@@ -46,6 +45,8 @@ return new class extends Migration
             $table->string('pseudo', 50)->unique()->notNullable();
             $table->boolean('verif_age')->notNullable();
             $table->timestamp('derniere_activite')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
         });
 
         // Création de la table GUIDE
@@ -58,6 +59,9 @@ return new class extends Migration
             $table->string('pseudo', 50)->unique()->notNullable();
             $table->boolean('verif_age')->notNullable();
             $table->timestamp('derniere_activite')->nullable();
+            $table->boolean('is_certif')->default(false)->notNullable();
+            $table->rememberToken();
+            $table->timestamps();
             $table->foreignId('id_spr')->constrained('spr');
         });
 
@@ -90,17 +94,17 @@ return new class extends Migration
         // Création de la table RESERVATION
         Schema::create('reservation', function (Blueprint $table) {
             $table->id();
-            $table->date('date')->notNullable();
-            $table->time('heure')->notNullable();
             $table->double('prix')->notNullable();
-            $table->enum('statut_reservation', ['confirmee', 'annulee', 'termine'])->notNullable();
-            $table->enum('statut_paiement', ['payee', 'non reglee', 'en attente'])->notNullable();
             $table->integer('taille')->notNullable();
             $table->foreignId('id_utilisateur')->constrained('utilisateur')->onDelete('cascade');
             $table->foreignId('id_visite')->constrained('visite')->onDelete('cascade');
             $table->foreignId('id_spr')->constrained('spr')->onDelete('cascade');
             $table->foreignId('id_guide')->constrained('guide')->onDelete('cascade');
+            $table->timestamps();
         });
+
+        DB::statement("ALTER TABLE reservation ADD statut_reservation statut_reservation NOT NULL DEFAULT 'confirmee'");
+        DB::statement("ALTER TABLE reservation ADD statut_paiement statut_paiement NOT NULL DEFAULT 'en_attente'");
 
         // Création de la table AVIS
         Schema::create('avis', function (Blueprint $table) {
@@ -108,10 +112,9 @@ return new class extends Migration
             $table->text('titre')->notNullable();
             $table->text('commentaire')->notNullable();
             $table->integer('note')->notNullable()->check('note >= 1 AND note <= 5');
-            $table->timestamp('date_de_publication')->notNullable();
-            $table->enum('status_avis', ['supprime', 'publie'])->notNullable();
             $table->foreignId('id_utilisateur')->constrained('utilisateur')->onDelete('cascade');
             $table->foreignId('id_spr')->constrained('spr')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

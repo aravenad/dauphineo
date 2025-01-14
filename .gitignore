@@ -6,3 +6,4 @@ bd_sae/insert_sae.sql
 backend/.env.testing
 backend/storage/api-docs/api-docs.json
 .env
+
