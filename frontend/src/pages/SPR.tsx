@@ -1,10 +1,13 @@
 import GuideSection from "../components/GuideSection.tsx";
+import FormulaireAvis from "../components/FormulaireAvis.tsx";
 
 
 function SPR() {
     return (
         <>
             <h1>Saint Antoine l'Abbaye</h1>
+            
+
             <img
                 src="https://tourisme.saintmarcellin-vercors-isere.fr/wp-content/apidae/objects/134787/photos/saa515-cnossos-_-musee-de-saint-antoine-labbaye-lr_19595610.jpg"
                 alt="Saint Antoine l'Abbaye"
@@ -16,7 +19,8 @@ function SPR() {
                     margin: "0 auto 20px", // Centre l'image horizontalement et ajoute un espacement en bas
                 }}
             />
-            <GuideSection/>
+            <GuideSection />
+            <FormulaireAvis/>
         </>
 
     );
