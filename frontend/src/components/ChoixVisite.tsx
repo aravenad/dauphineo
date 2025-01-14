@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
     Card,
     Avatar,
@@ -6,66 +5,39 @@ import {
     Button,
     Divider,
     Stack,
-    Box,
-    TextField,
+    Box
 } from "@mui/material";
 
-const ChoixVisite: React.FC = () => {
-    const [selectedDate, setSelectedDate] = useState("");
-    const [dateError, setDateError] = useState("");
+interface ChoixVisiteProps {
+    guide: {
+        name: string;
+        role: string;
+        photo: string;
+    };
+    date: string; // Date validée
+    sprId: string; // Id du SPR
+    onClose: () => void;
+}
 
-    // Créneaux statiques
+const ChoixVisite: React.FC<ChoixVisiteProps> = ({ guide, date, sprId, onClose }) => {
+    if (!guide) {
+        return <Typography>Erreur : Guide introuvable.</Typography>;
+    }
+
+    const handleRetour = () => {
+        onClose();
+    };
+
     const slots = [
         { start: "14:00", end: "15:00" },
         { start: "16:00", end: "17:00" },
+        { start: "13:00", end: "17:00" }
     ];
-
-    // Validation de la date au format JJ/MM/YYYY
-    const validateDate = (date: string): string => {
-        const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/; // Vérifie le format
-        if (!dateRegex.test(date)) {
-            return "La date doit être au format JJ/MM/YYYY.";
-        }
-
-        const [day, month, year] = date.split("/").map(Number);
-        const validDate = new Date(year, month - 1, day);
-
-        // Vérifie si la date est cohérente
-        if (
-            validDate.getDate() !== day ||
-            validDate.getMonth() + 1 !== month ||
-            validDate.getFullYear() !== year
-        ) {
-            return "La date saisie est invalide.";
-        }
-
-        return ""; // Aucun problème
-    };
-
-    // Gère le changement dans le champ de date
-    const handleDateChange = (value: string) => {
-        setSelectedDate(value);
-        const error = validateDate(value);
-        setDateError(error);
-    };
-
-    const handleSearch = () => {
-        if (!dateError && selectedDate) {
-            console.log("Recherche pour la date :", selectedDate);
-            alert(`Recherche effectuée pour le ${selectedDate}`);
-        } else {
-            alert("Veuillez corriger la date avant de continuer.");
-        }
-    };
-
-    const handleRetour = () => {
-        alert("Retour à la page précédente !");
-    };
 
     return (
         <Card
             sx={{
-                maxWidth: 300, // Réduction de la largeur
+                maxWidth: 250,
                 padding: 2,
                 borderRadius: 4,
                 boxShadow: 3,
@@ -73,82 +45,41 @@ const ChoixVisite: React.FC = () => {
             }}
         >
             <Stack direction="row" alignItems="center" spacing={2}>
-                {/* Avatar du guide */}
-                <Avatar
-                    alt="Nicolas Rousseau"
-                    src="https://via.placeholder.com/150"
-                    sx={{
-                        width: 60,
-                        height: 60,
-                    }}
-                />
-                {/* Informations du guide */}
+                <Avatar alt={guide.name} src={guide.photo} sx={{ width: 60, height: 60 }} />
                 <Stack>
                     <Typography variant="h6" fontWeight="bold">
-                        Nicolas Rousseau
+                        {guide.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        Guide touristique
+                        {guide.role}
                     </Typography>
                 </Stack>
             </Stack>
 
             <Divider sx={{ width: "100%", margin: "16px 0" }} />
-            <Typography variant="h6" fontWeight="bold">
-                Date de visite souhaitée :
+
+            <Typography>
+                Réservation pour le SPR ID: {sprId} à la date {date}
             </Typography>
-            {/* Sélection de date et bouton de recherche */}
-            <Stack
-                direction="row"
-                spacing={2}
-                alignItems="center"
-                sx={{ marginTop: 2 }}
-            >
 
-                <TextField
-                    variant="outlined"
-                    value={selectedDate}
-                    onChange={(e) => handleDateChange(e.target.value)}
-                    placeholder="JJ/MM/YYYY"
-                    error={!!dateError}
-                    helperText={dateError}
-                    fullWidth
-                    sx={{ flex: 1 }}
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSearch}
-                    sx={{
-                        height: "56px", // Aligné avec la hauteur du champ texte
-                        flexShrink: 0,
-                    }}
-                    disabled={!!dateError || !selectedDate}
-                >
-                    Rechercher
-                </Button>
-            </Stack>
-
-            {/* Créneaux statiques (clicables) */}
             <Stack spacing={2} sx={{ marginTop: 3 }}>
                 <Typography variant="body2" color="text.secondary">
-                    Le {selectedDate || "3 mai 2025"}
+                    Créneaux réservables
                 </Typography>
                 {slots.map((slot, index) => (
                     <Box
                         key={index}
-                        //onClick={() => handleSlotClick(slot)} // Rend chaque créneau cliquable
                         sx={{
                             backgroundColor: "",
                             padding: 1,
                             borderRadius: 2,
                             textAlign: "center",
                             fontWeight: "bold",
-                            border: "2px solid", // Bordure
-                            cursor: "pointer", // Curseur de clic
+                            border: "2px solid",
+                            cursor: "pointer",
                             transition: "all 0.3s ease",
                             "&:hover": {
-                                backgroundColor: "rgba(0, 200, 150, 0.3)", // Couleur au survol
+                                backgroundColor: "rgba(0, 200, 150, 0.3)",
                             },
                         }}
                     >
@@ -157,17 +88,14 @@ const ChoixVisite: React.FC = () => {
                 ))}
             </Stack>
 
-            {/* Nouveau séparateur */}
-            <Divider sx={{ width: "100%", margin: "16px 0" }} />
-
-            {/* Bouton retour */}
             <Button
                 variant="outlined"
                 color="primary"
-                //onClick={handleRetour}
+                onClick={handleRetour}
                 sx={{
                     width: "100%",
                     fontWeight: "bold",
+                    marginTop: 3
                 }}
             >
                 Retour
