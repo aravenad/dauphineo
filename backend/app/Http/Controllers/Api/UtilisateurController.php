@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -334,7 +335,13 @@ class UtilisateurController extends Controller
                 'message' => 'Utilisateur non trouvé'
             ], 404);
         }
-        $user->currentAccessToken()->delete();
+        DB::table('personal_access_tokens')->where('tokenable_id', $user->id)->delete();
+        //$token = $user->currentAccessToken();
+
+        // if ($token) {
+        //     // Supprimer le token actif
+        //     $token->delete();
+        // }
         $user->delete();
 
         return response()->json([
@@ -375,7 +382,8 @@ class UtilisateurController extends Controller
             $user->save();
     
             // Supprimer le token actuel de l'utilisateur
-            $user->currentAccessToken()->delete();
+            DB::table('personal_access_tokens')->where('tokenable_id', $user->id)->delete();
+            //$user->currentAccessToken()->delete();
     
             return response()->json(['message' => 'Déconnexion réussie']);
         }
