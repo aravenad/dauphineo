@@ -1,42 +1,53 @@
 import React from "react";
 import { useLocation } from "react-router";
-import GuideSection from "../components/GuideSection";
-import AvisSection from "../components/AvisSection";
+import { Box, Typography, Card, CardMedia } from "@mui/material";
+import {AvisSection, GuideSection} from "../components";
 
 const SPR: React.FC = () => {
     const location = useLocation();
-    const sprData = location.state?.jsonSPR ? JSON.parse(location.state.jsonSPR) : null; // Récupération et parsing des données JSON
+    const sprData = location.state?.spr; // Récupère directement l'objet SPR passé dans le state
 
     if (!sprData) {
-        return <p>Aucune donnée disponible</p>;
+        return <Typography>Aucune donnée disponible pour ce SPR.</Typography>;
     }
 
-    // Assurez-vous que `sprData` contient un seul objet pour un SPR
-    const spr = sprData[0];
-
     return (
-        <>
-            <h1>{spr.nom_commune}</h1>
-            <img
-                src={spr.image_url} // Ajout d'une propriété dynamique pour l'image
-                alt={spr.nom_commune}
-                style={{
-                    width: "80%", // Limite la largeur à 80% du conteneur parent
-                    maxWidth: "500px", // Limite maximale pour la largeur
-                    height: "auto", // Conserve les proportions
-                    display: "block", // Centre l'image
-                    margin: "0 auto 20px", // Centre l'image horizontalement et ajoute un espacement en bas
-                }}
-            />
-            <div>
-                <p><strong>Capacité maximale :</strong> {spr.capacite_de_visite}</p>
-                <p><strong>Accessibilité PMR :</strong> {spr.is_pmr ? "Oui" : "Non"}</p>
-                <p><strong>Temps de visite :</strong> {spr.temps_de_visite}</p>
-            </div>
+        <Box sx={{ padding: "2em" }}>
+            <Typography variant="h4" gutterBottom>
+                {sprData.nom_commune}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Département : {sprData.nom_du_departement} ({sprData.code_departement})
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Capacité de visite maximale : {sprData.capacite_de_visite}
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+                Mots-clés : {sprData.mot_cle}
+            </Typography>
+
+            {/* Affichage des images */}
+            {sprData.images && sprData.images.length > 0 ? (
+                <Box sx={{ display: "flex", gap: "1em", flexWrap: "wrap", marginTop: "1em" }}>
+                    {sprData.images.map((image: any) => (
+                        <Card key={image.id} sx={{ maxWidth: 300 }}>
+                            <CardMedia
+                                component="img"
+                                height="200"
+                                image={image.image_url}
+                                alt={`Image de ${sprData.nom_commune}`}
+                            />
+                        </Card>
+                    ))}
+                </Box>
+            ) : (
+                <Typography>Aucune image disponible pour ce SPR.</Typography>
+            )}
             <GuideSection />
             <AvisSection />
-        </>
+        </Box>
     );
 };
+
 
 export default SPR;
