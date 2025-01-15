@@ -33,8 +33,9 @@ Route::prefix('utilisateur')->group(function() {
 
 // Routes for SprController
 Route::prefix('spr')->group(function() {
-    Route::get('/', [SprController::class, 'index'])->withoutMiddleware([EnsureTokenIsValid::class]);
+    Route::get('top', [SprController::class, 'topSpr'])->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::get('{id}', [SprController::class, 'show'])->withoutMiddleware([EnsureTokenIsValid::class]);
+    Route::get('/', [SprController::class, 'index'])->withoutMiddleware([EnsureTokenIsValid::class]);
 });
 
 // Routes for GuideController
@@ -45,7 +46,7 @@ Route::prefix('guides')->group(function() {
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
     Route::post('/', [GuideController::class, 'store'])->withoutMiddleware([EnsureTokenIsValid::class]);
-    
+
     // Get guide disponibilites route
     Route::get('/{id}/disponibilites', [GuideController::class, 'disponibilitesGuide'])->withoutMiddleware([EnsureTokenIsValid::class]);
 });
