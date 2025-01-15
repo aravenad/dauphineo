@@ -5,11 +5,11 @@ import CardSPR from "./CardSPR";
 import AccordionFAQ from "./AccordionFAQ";
 import CardGuide from "./CardGuide";
 import GuideSection from "./GuideSection.tsx";
-import ChoixVisite from "./ChoixVisite.tsx";
 import CardAvis from "./CardAvis.tsx";
 import AvisBox from "./AvisBox.tsx";
 import Rating from "./Rating.tsx";
 import AvisSection from "./AvisSection.tsx";
+import SliderReservation from "./SliderReservation.tsx";
 
 export {
   Header,
@@ -19,9 +19,9 @@ export {
   AccordionFAQ,
   CardGuide,
     GuideSection,
-    ChoixVisite,
   CardAvis,
   AvisBox,
   Rating,
-  AvisSection
+  AvisSection,
+    SliderReservation,
 };

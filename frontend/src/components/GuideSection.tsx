@@ -1,65 +1,68 @@
-import  { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState, useEffect } from "react";
+import { Box, TextField, Typography } from "@mui/material";
 import CardGuide from "./CardGuide";
 
-const GuideSection = () => {
+interface GuideSectionProps {
+    guides: any[]; // Liste de tous les guides
+    sprId: number; // ID du SPR courant
+}
+
+const GuideSection: React.FC<GuideSectionProps> = ({ guides, sprId }) => {
     const [selectedDate, setSelectedDate] = useState("");
-    const [validatedDate, setValidatedDate] = useState("");
     const [dateError, setDateError] = useState("");
-    const [isSearchTriggered, setIsSearchTriggered] = useState(false);
+    const [filteredGuides, setFilteredGuides] = useState<any[]>([]);
 
-    const sprId = "1"; // Exemple d'id du SPR (statique pour cet exemple)
+    // Filtrer les guides liés au SPR courant
+    const guidesForSPR = guides.filter((guide) => guide.id_spr === sprId);
 
-    const guides = [
-        {
-            name: "Naps le vrai",
-            role: "Tarpin serein",
-            photo: "https://raplume.eu/wp-content/uploads/2021/04/Capture-decran-2021-04-06-a-16.52.05.png",
-        },
-        {
-            name: "Soso Maness",
-            role: "Marseillais du futur",
-            photo: "https://example.com/soso.jpg",
-        },
-        {
-            name: "Jul",
-            role: "le J",
-            photo: "https://example.com/jul.jpg",
-        },
-    ];
-
-    const validateDate = (date: string): string => {
-        const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
-        if (!dateRegex.test(date)) {
-            return "La date doit être au format JJ/MM/YYYY.";
+    // Validation et filtrage dynamique à chaque changement de la date
+    useEffect(() => {
+        if (selectedDate === "") {
+            setDateError("");
+            setFilteredGuides([]); // Ne pas afficher de guides si la date est vide
+            return;
         }
 
-        const [day, month, year] = date.split("/").map(Number);
-        const validDate = new Date(year, month - 1, day);
+        const validateDate = (date: string): string => {
+            const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+            if (!dateRegex.test(date)) {
+                return "La date doit être au format JJ/MM/YYYY.";
+            }
 
-        if (
-            validDate.getDate() !== day ||
-            validDate.getMonth() + 1 !== month ||
-            validDate.getFullYear() !== year
-        ) {
-            return "La date saisie est invalide.";
-        }
-        setValidatedDate(date);
-        return "";
-    };
+            const [day, month, year] = date.split("/").map(Number);
+            const validDate = new Date(year, month - 1, day);
 
-    const handleSearch = () => {
+            if (
+                validDate.getDate() !== day ||
+                validDate.getMonth() + 1 !== month ||
+                validDate.getFullYear() !== year
+            ) {
+                return "La date saisie est invalide.";
+            }
+
+            return ""; // Pas d'erreur
+        };
+
         const error = validateDate(selectedDate);
         setDateError(error);
 
         if (!error) {
-            setValidatedDate(selectedDate);
-            setIsSearchTriggered(true); // Active l'affichage des guides
+            const formattedDate = selectedDate.split("/").reverse().join("-"); // Format attendu : AAAA-MM-JJ
+
+            // Filtrer les guides avec des disponibilités pour la date sélectionnée
+            const filtered = guidesForSPR.filter((guide) =>
+                guide.disponibilites.some(
+                    (dispo: any) => dispo.date_jour === formattedDate
+                )
+            );
+
+            setFilteredGuides(filtered);
         } else {
-            setIsSearchTriggered(false);
+            setFilteredGuides([]); // Réinitialiser si erreur
         }
-    };
+    }, [selectedDate, guidesForSPR]);
+
+    const formattedDate = selectedDate.split("/").reverse().join("-"); // Format attendu : AAAA-MM-JJ
 
     return (
         <>
@@ -70,8 +73,7 @@ const GuideSection = () => {
                 sx={{
                     display: "flex",
                     justifyContent: "center",
-                    alignItems: "flex-start", // Fixe les éléments en haut
-                    gap: 2,
+                    alignItems: "center",
                     marginBottom: 4,
                 }}
             >
@@ -82,26 +84,12 @@ const GuideSection = () => {
                     placeholder="JJ/MM/YYYY"
                     error={!!dateError}
                     helperText={dateError}
-                    sx={{
-                        flex: 1,
-                        maxWidth: 300,
-                        height: "56px", // Fixe la hauteur pour s'aligner avec le bouton
-                    }}
+                    sx={{ flex: 1, maxWidth: 300 }}
                 />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSearch}
-                    sx={{
-                        height: "56px", // Fixe la hauteur
-                        flexShrink: 0,
-                    }}
-                >
-                    <SearchIcon />
-                </Button>
             </Box>
 
-            {isSearchTriggered && (
+            {/* Affichage des guides filtrés */}
+            {filteredGuides.length > 0 ? (
                 <Box
                     sx={{
                         display: "flex",
@@ -111,16 +99,15 @@ const GuideSection = () => {
                         padding: 3,
                     }}
                 >
-                    {guides.map((guide, index) => (
-                        <CardGuide
-                            key={index}
-                            guide={guide}
-                            date={validatedDate} // Passe la date validée
-                            sprId={sprId} // Passe l'id du SPR
-                        />
+                    {filteredGuides.map((guide) => (
+                        <CardGuide key={guide.id} guide={guide} date={formattedDate} />
                     ))}
                 </Box>
-            )}
+            ) : selectedDate && !dateError ? (
+                <Typography align="center" color="error">
+                    Aucun guide disponible pour cette date.
+                </Typography>
+            ) : null}
         </>
     );
 };

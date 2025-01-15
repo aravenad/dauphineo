@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 import { Box, Typography, Card, CardMedia } from "@mui/material";
 import {AvisSection, GuideSection} from "../components";
 
+
 const SPR: React.FC = () => {
     const location = useLocation();
     const sprData = location.state?.spr; // Récupère directement l'objet SPR passé dans le state
@@ -43,7 +44,7 @@ const SPR: React.FC = () => {
             ) : (
                 <Typography>Aucune image disponible pour ce SPR.</Typography>
             )}
-            <GuideSection />
+            <GuideSection sprId={sprData.id} guides={sprData.guides}/>
             <AvisSection />
         </Box>
     );
