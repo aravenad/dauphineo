@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8330d964-16b3-4a7b-bee3-fd709988838e" name="Changes" comment="fixed the inscription component to check the age condition">
+      <change beforePath="$PROJECT_DIR$/bd_sae/triggers.sql" beforeDir="false" afterPath="$PROJECT_DIR$/bd_sae/triggers.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/SPR.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/SPR.tsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
+  </component>
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;project_29398_bot_9bb24835e6cd649b88cc7e1ca2cffdc1&quot;,
+      &quot;fullname&quot;: &quot;axel&quot;
+    }
+  }
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://gricad-gitlab.univ-grenoble-alpes.fr/iut2-info-stud/2024-s3/s3.01/team-08/rendus.git&quot;,
+    &quot;second&quot;: &quot;3fd540f2-226f-4bd8-bcea-b32ce90710f2&quot;
+  }
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2rIDULaMbIdZyYNwq0tmafJ7LUg" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;inscription&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/axelt/WebstormProjects/rendus/frontend/src/api/endpoints&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\axelt\\WebstormProjects\\rendus\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\axelt\WebstormProjects\rendus\frontend\src\api\endpoints" />
+      <recent name="C:\Users\axelt\WebstormProjects\rendus\frontend\src\components" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\axelt\WebstormProjects\rendus\frontend\src\components" />
+      <recent name="C:\Users\axelt\WebstormProjects\rendus\backend\app\Http\Controllers\Api" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-WS-243.21565.180" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8330d964-16b3-4a7b-bee3-fd709988838e" name="Changes" comment="" />
+      <created>1736237717415</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1736237717415</updated>
+      <workItem from="1736237718978" duration="4396000" />
+      <workItem from="1736242216369" duration="12959000" />
+      <workItem from="1736263815826" duration="2361000" />
+      <workItem from="1736322365943" duration="10080000" />
+      <workItem from="1736340090893" duration="139000" />
+      <workItem from="1736340241097" duration="12867000" />
+      <workItem from="1736753391252" duration="22436000" />
+      <workItem from="1736838721703" duration="10730000" />
+      <workItem from="1736858656051" duration="10972000" />
+      <workItem from="1736874098097" duration="3203000" />
+      <workItem from="1736929800526" duration="620000" />
+      <workItem from="1736930794961" duration="6511000" />
+    </task>
+    <task id="LOCAL-00001" summary="created the controller and model for SPR">
+      <option name="closed" value="true" />
+      <created>1736239413841</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1736239413841</updated>
+    </task>
+    <task id="LOCAL-00002" summary="beggining of the model and controler for the creneaux table">
+      <option name="closed" value="true" />
+      <created>1736263001508</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1736263001508</updated>
+    </task>
+    <task id="LOCAL-00003" summary="added the auth controller and started to create the methods">
+      <option name="closed" value="true" />
+      <created>1736332784148</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1736332784148</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add gitignore">
+      <option name="closed" value="true" />
+      <created>1736756253778</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1736756253778</updated>
+    </task>
+    <task id="LOCAL-00005" summary="components for login and register with the logic (not tested), with api methodes">
+      <option name="closed" value="true" />
+      <created>1736780325107</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1736780325107</updated>
+    </task>
+    <task id="LOCAL-00006" summary="components for the guide section, the guide card, and the spr page (all static)">
+      <option name="closed" value="true" />
+      <created>1736785597899</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1736785597899</updated>
+    </task>
+    <task id="LOCAL-00007" summary="added the link between inscription and axios methods, created the files for the guide section (they are not correctly linked yet)">
+      <option name="closed" value="true" />
+      <created>1736846531018</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1736846531018</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix merge issues">
+      <option name="closed" value="true" />
+      <created>1736858876324</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1736858876324</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fixed file issues">
+      <option name="closed" value="true" />
+      <created>1736859143691</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1736859143691</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Fix merge conflicts">
+      <option name="closed" value="true" />
+      <created>1736860413677</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1736860413677</updated>
+    </task>
+    <task id="LOCAL-00011" summary="change the logic of the guide booking and added the props between all components and created the creneau endpoint">
+      <option name="closed" value="true" />
+      <created>1736869338088</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1736869338088</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fixed the inscription component to check the age condition">
+      <option name="closed" value="true" />
+      <created>1736935111689</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1736935111689</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ID_WIDTH">
+                <map>
+                  <entry key="Table.Default.Author.ColumnIdWidth" value="135" />
+                  <entry key="Table.Default.Date.ColumnIdWidth" value="124" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="created the controller and model for SPR" />
+    <MESSAGE value="beggining of the model and controler for the creneaux table" />
+    <MESSAGE value="added the auth controller and started to create the methods" />
+    <MESSAGE value="add gitignore" />
+    <MESSAGE value="components for login and register with the logic (not tested), with api methodes" />
+    <MESSAGE value="components for the guide section, the guide card, and the spr page (all static)" />
+    <MESSAGE value="added the link between inscription and axios methods, created the files for the guide section (they are not correctly linked yet)" />
+    <MESSAGE value="fix merge issues" />
+    <MESSAGE value="fixed file issues" />
+    <MESSAGE value="Fix merge conflicts" />
+    <MESSAGE value="change the logic of the guide booking and added the props between all components and created the creneau endpoint" />
+    <MESSAGE value="fixed the inscription component to check the age condition" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed the inscription component to check the age condition" />
+  </component>
+</project>

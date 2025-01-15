@@ -32,6 +32,10 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE TRIGGER create_visit_trigger
+    AFTER INSERT ON DISPONIBILITE
+    FOR EACH ROW
+    EXECUTE FUNCTION create_visit_on_guide_availability();
 
 
 --gere la capacité de visite (vérifié)
