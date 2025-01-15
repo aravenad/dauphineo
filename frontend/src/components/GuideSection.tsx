@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, TextField, Typography, InputAdornment, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import CardGuide from "./CardGuide";
 
 interface GuideSectionProps {
@@ -85,6 +86,18 @@ const GuideSection: React.FC<GuideSectionProps> = ({ guides, sprId }) => {
                     error={!!dateError}
                     helperText={dateError}
                     sx={{ flex: 1, maxWidth: 300 }}
+                    InputProps={{
+                        endAdornment: selectedDate && (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    onClick={() => setSelectedDate("")} // Vider le champ
+                                    edge="end"
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
             </Box>
 
