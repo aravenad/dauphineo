@@ -5,6 +5,7 @@ import TuneIcon from "@mui/icons-material/Tune";
 import { Box, IconButton, Typography } from "@mui/material";
 import React, { useState } from "react";
 import {useNavigate} from "react-router";
+import {fetchSPRById} from "../../api/endpoints/spr.tsx";
 
 
 interface SearchBarCustomProps {
@@ -86,7 +87,7 @@ const emojiMap: Record<string, string> = {
     urbain: '🏙️',
 };
 
-const formatKeywords = (keywords: string) => {
+export const formatKeywords = (keywords: string) => {
     return keywords
         .split(' ')
         .map(keyword => {
@@ -118,10 +119,13 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
         }
     };
 
-    const handleResultClick = (id: number) => {
-        const filteredSPR = sprList.filter((spr) => spr.id === id);
-        const jsonSPR = JSON.stringify(filteredSPR);
-        navigate(`/spr`, { state: { jsonSPR } });
+    const handleResultClick = async (id: number) => {
+        try {
+            const spr = await fetchSPRById(id); // Appel direct à l'endpoint pour récupérer le SPR
+            navigate(`/spr`, { state: { spr: spr.spr } }); // Passe les données SPR directement dans le state
+        } catch (error) {
+            console.error("Erreur lors de la récupération du SPR :", error);
+        }
     };
 
 
