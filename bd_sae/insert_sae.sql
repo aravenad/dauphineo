@@ -10,8 +10,8 @@
 --DELIMITER ';' CSV HEADER;
 
 
-\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite) FROM 'C:/Users/ferya/Documents/rendus-2/bd_sae/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER;
-\copy IMAGES(id,image_url,id_spr) FROM 'C:/Users/ferya/Documents/rendus-2/bd_sae/images.csv' DELIMITER ';' CSV HEADER;
+\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite) FROM '/Users/tim/Developer/Web/SAE/bd_sae/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER;
+\copy IMAGES(id,image_url,id_spr) FROM '/Users/tim/Developer/Web/SAE/bd_sae/images.csv' DELIMITER ';' CSV HEADER;
 
 INSERT INTO UTILISATEUR (nom, prenom, mot_de_passe, email, pseudo, verif_age, derniere_activite)
 VALUES 

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UtilisateurController;
 use App\Http\Controllers\Api\ReservationController;
@@ -12,7 +11,7 @@ use App\Http\Controllers\Api\CreneauxController;
 use App\Http\Controllers\Api\DisponibilitesController;
 use App\Http\Controllers\Api\VisiteController;
 
-// Routes de UserController
+// Routes for UtilisateurController
 Route::prefix('utilisateur')->group(function() {
     Route::post('/register', [UtilisateurController::class, 'register']);
     Route::post('/login', [UtilisateurController::class, 'login']);
@@ -22,25 +21,16 @@ Route::prefix('utilisateur')->group(function() {
     Route::delete('{id}', [UtilisateurController::class, 'destroy']);
 });
 
-// Routes for ImagesController
-Route::prefix('images')->group(function() {
-    Route::get('/', [ImagesController::class, 'index']);
-    Route::get('{id}', [ImagesController::class, 'show']);
-    Route::delete('{id}', [ImagesController::class, 'destroy']);
-});
-
 // Routes for SprController
 Route::prefix('spr')->group(function() {
     Route::get('/', [SprController::class, 'index']);
     Route::get('{id}', [SprController::class, 'show']);
-    Route::get('{id}/images', [SprController::class, 'getImagesBySpr']);
-    Route::get('{id}/guides', [SprController::class, 'getGuidesBySpr']);
-    Route::get('{id}/avis', [SprController::class, 'getAvisBySpr']);
 });
 
 // Routes for GuideController
 Route::prefix('guides')->group(function() {
-    Route::get('/', [GuideController::class, 'index']);
+    Route::post('/login', [GuideController::class, 'login']);
+    Route::post('/logout', [GuideController::class, 'logout']);
     Route::get('{id}', [GuideController::class, 'show']);
     Route::put('{id}', [GuideController::class, 'update']);
     Route::delete('{id}', [GuideController::class, 'destroy']);
@@ -52,7 +42,6 @@ Route::prefix('guides')->group(function() {
 
 // Routes for AvisController
 Route::prefix('avis')->group(function() {
-    Route::get('/', [AvisController::class, 'index']);
     Route::get('{id}', [AvisController::class, 'show']);
     Route::post('/', [AvisController::class, 'store']);
     Route::delete('{id}', [AvisController::class, 'destroy']);
@@ -69,10 +58,10 @@ Route::prefix('creneaux')->group(function() {
     Route::get('/{id_spr}', [CreneauxController::class, 'index']);
 });
 
-// Routes de DisponibilitesController
+// Routes for DisponibilitesController
 Route::prefix('disponibilites')->group(function() {
     Route::get('{id_guide}/{id_spr}', [DisponibilitesController::class, 'index']);
-    Route::post('/{date_jour}/{id_guide}/{id_creneaux}', [DisponibilitesController::class, 'store']);
+    Route::post('/', [DisponibilitesController::class, 'store']);
     Route::delete('{id}', [DisponibilitesController::class, 'destroy']);
 });
 
@@ -82,7 +71,7 @@ Route::prefix('visites')->group(function() {
     Route::get('/{id}', [VisiteController::class, 'show']);
     Route::post('/', [VisiteController::class, 'store']);
     Route::delete('/{id}', [VisiteController::class, 'destroy']);
-    Route::get('/user/{userId}', [VisiteController::class, 'getUserVisites']);
+    Route::get('/utilisateur/{userId}', [VisiteController::class, 'getUserVisites']);
     Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
     //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });

@@ -29,7 +29,7 @@ function Header() {
       }}
     >
       <Box>
-        <Link href="#">
+        <Link href="/#">
           <Box
             component="img"
             src={LogoVert}
