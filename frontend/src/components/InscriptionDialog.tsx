@@ -34,6 +34,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
         mot_de_passe: "",
         nom: "",
         prenom: "",
+        verif_age: false
     });
 
     const [formErrors, setFormErrors] = useState({
@@ -84,7 +85,6 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
         }
 
         return ""; // Aucun
-
     };
 
     //fonction pour vérifier la validité du nom
@@ -105,7 +105,6 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
 
 
         return ""; // Aucun problème
-
     };
 
     //fonction pour vérifier la validité du prénom
@@ -152,7 +151,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
 
     };
     const handleInscription = async () => {
-        if (!formData.nom || !formData.prenom || !formData.email || !formData.mot_de_passe) {
+        if (!formData.nom || !formData.prenom || !formData.email || !formData.mot_de_passe || !isChecked) {
             setFormErrors((prev) => ({
                 ...prev,
                 global: "Veuillez remplir tous les champs.",
@@ -190,6 +189,11 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
+
+    const IlAQuinzeAns = () => {
+        formData.verif_age = true;
+        setIsChecked(true);
+    }
 
 
     return (
@@ -259,7 +263,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
                     >
                         <FormControlLabel control={<Checkbox
                             checked={isChecked}
-                            onChange={(event) => setIsChecked(event.target.checked)}
+                            onChange={IlAQuinzeAns}
                         />} label="Je certifie avoir 15 ans ou plus" />
                         <Tooltip
                             title={!isChecked ? "Vous devez avoir 15 ans ou plus pour continuer" : ""}
