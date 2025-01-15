@@ -1,44 +1,72 @@
 import { useState, useEffect } from "react";
-import { fetchSPR } from "../api/endpoints/spr";
+import { fetchSPR, fetchTopSPR } from "../api/endpoints/spr";
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import SearchSection from "../components/SearchSection";
-import {CardSPR} from "../components";
+import MostBookedSPR from "../components/MostBookedSPR";
+import MostRatedSPR from "../components/MostRatedSPR.tsx"; // Assurez-vous que l'import est correct
 
 function Home() {
   const [sprList, setSprList] = useState<any[]>([]);
+  const [topSPR, setTopSPR] = useState<any>(null); // Stocke le résultat de fetchTopSPR
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
 
   useEffect(() => {
-    const loadSPR = async () => {
+    const loadSPRData = async () => {
       try {
-        const data = await fetchSPR(); // Appel à l’endpoint
-        console.log("SPR récupérés :", data);
-        setSprList(data);
+        // Récupération de tous les SPR
+        const allSPR = await fetchSPR();
+        setSprList(allSPR);
+
+        // Récupération des données les plus visitées et mieux notées
+        const topSPRData = await fetchTopSPR();
+        setTopSPR(topSPRData);
       } catch (err) {
         setError(err as Error);
-        console.error("Erreur lors de la récupération des SPR :", err);
+        console.error("Erreur lors de la récupération des données SPR :", err);
       } finally {
         setLoading(false);
       }
     };
 
-    loadSPR(); // Appel de la fonction au chargement du composant
+    loadSPRData();
   }, []);
 
   return (
       <>
+        <Box
+            sx={{
+              textAlign: "center",
+              marginBottom: "2em",
+              animation: "fadeIn 0.4s ease-in-out",
+              "@keyframes fadeIn": {
+                from: { opacity: 0, transform: "translateY(-20px)" },
+                to: { opacity: 1, transform: "translateY(0)" },
+              },
+            }}
+        >
+          <Typography variant="h2" component="h1" fontWeight={800} margin="0.1em 0 0">
+            Que souhaitez-vous visiter ?
+          </Typography>
+          <Typography
+              variant="subtitle1"
+              fontWeight={400}
+              color="text.secondary"
+              marginBottom="2em"
+              fontSize="1.4em"
+          >
+            Accédez à tous les sites patrimoniaux de l'Isère
+          </Typography>
+        </Box>
+
         {/* Section Recherche */}
-        <SearchSection sprList={sprList}/>
+        <SearchSection sprList={sprList} />
 
         {/* Section des plus visités */}
-        <div>
-          <h1>Exemple d'utilisation de CardSPR</h1>
-          <CardSPR id={7}/>
-        </div>
+        {topSPR && <MostBookedSPR />}
 
         {/* Section des mieux notés */}
-
+        {topSPR && <MostRatedSPR />}
 
         {/* Affichage du chargement ou des erreurs */}
         {loading && <Typography>Chargement des SPR...</Typography>}
@@ -55,7 +83,7 @@ function Home() {
                   <Typography>Aucun site patrimonial trouvé.</Typography>
               ) : (
                   sprList.map((spr) => (
-                      <Card key={spr.id} sx={{mb: 2}}>
+                      <Card key={spr.id} sx={{ mb: 2 }}>
                         <CardContent>
                           <Typography variant="h6">{spr.nom}</Typography>
                           <Typography variant="body2">{spr.description}</Typography>

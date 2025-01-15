@@ -1,8 +1,7 @@
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 import {useNavigate} from "react-router";
 import {fetchSPRById} from "../../api/endpoints/spr.tsx";
@@ -185,7 +184,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 "&:hover": {
                                     backgroundColor: "#f9f9f9",
                                     cursor: "pointer",
-                                    transform: "scale(1.05)",
+                                    transform: "scale(1.05) translateX(10px)",
                                     transition: "transform 0.2s ease, background-color 0.2s ease",
                                 },
                                 "@keyframes fadeIn": {
