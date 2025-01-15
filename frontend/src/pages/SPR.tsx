@@ -7,7 +7,7 @@ function SPR() {
     return (
         <>
             <h1>Saint Antoine l'Abbaye</h1>
-            
+
 
             <img
                 src="https://tourisme.saintmarcellin-vercors-isere.fr/wp-content/apidae/objects/134787/photos/saa515-cnossos-_-musee-de-saint-antoine-labbaye-lr_19595610.jpg"
@@ -21,8 +21,7 @@ function SPR() {
                 }}
             />
             <GuideSection />
-            <FormulaireAvis/>
-            <AvisSection/>
+            <AvisSection />
         </>
 
     );
