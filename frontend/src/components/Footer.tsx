@@ -12,15 +12,16 @@ import LogoVert from "../assets/dauphineo_logo_vert.png";
 import { ButtonCustom } from "./mui_custom";
 
 
+
 function Footer() {
 
   const footerSections = [
     {
       title:'Informations',
       links:[
-        {text:'Mentions légales', href:''},
-        {text:'Politique de confidentialité', href:''},
-        {text:"Conditions générales d'utilisation", href:''},
+        {text:'Mentions légales', href:'/MentionsLeg'},
+        {text:'Politique de confidentialité', href:'/reglementation'},
+        {text:"Conditions générales d'utilisation", href:'/CGU'},
       ],
     },
     {
@@ -103,14 +104,6 @@ function Footer() {
           <Typography variant="body1" color="common.white">
             2024 Dauphinéo - Tous droits réservés.
           </Typography>
-          <Link
-            href="#"
-            variant="body1"
-            color="common.white"
-            sx={{ textDecoration: "none" }}
-          >
-            Politique de confidentialité
-          </Link>
         </Stack>
       </Stack>
     </Box>
