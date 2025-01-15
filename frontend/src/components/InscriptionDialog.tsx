@@ -31,14 +31,14 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
 
     const [formData, setFormData] = useState({
         email: "",
-        password: "",
+        mot_de_passe: "",
         nom: "",
         prenom: "",
     });
 
     const [formErrors, setFormErrors] = useState({
         email: "",
-        password: "",
+        mot_de_passe: "",
         nom: "",
         prenom: "",
     });
@@ -65,7 +65,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
             error = validateEmail(value);
             setEmailValide(error === ""); // Email valide si aucune erreur
         }
-        if (field === "password") {
+        if (field === "mot_de_passe") {
             error = validatePassword(value);
             setPwdValide(error === ""); // Mot de passe valide si aucune erreur
         }
@@ -130,20 +130,20 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
     };
 
     //fonction pour vérifier la validité du mot de passe
-    const validatePassword = (password: string): string => {
-        if (password.length < 6) {
+    const validatePassword = (mot_de_passe: string): string => {
+        if (mot_de_passe.length < 6) {
             return "Le mot de passe doit contenir au moins 6 caractères.";
         }
-        if (!/[A-Z]/.test(password)) {
+        if (!/[A-Z]/.test(mot_de_passe)) {
             return "Le mot de passe doit contenir au moins une lettre majuscule.";
         }
-        if (!/[a-z]/.test(password)) {
+        if (!/[a-z]/.test(mot_de_passe)) {
             return "Le mot de passe doit contenir au moins une lettre minuscule.";
         }
-        if (!/[0-9]/.test(password)) {
+        if (!/[0-9]/.test(mot_de_passe)) {
             return "Le mot de passe doit contenir au moins un chiffre.";
         }
-        if (!/[^A-Za-z0-9]/.test(password)) {
+        if (!/[^A-Za-z0-9]/.test(mot_de_passe)) {
             return "Le mot de passe doit contenir au moins un caractère spécial.";
         }
 
@@ -152,7 +152,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
 
     };
     const handleInscription = async () => {
-        if (!formData.nom || !formData.prenom || !formData.email || !formData.password) {
+        if (!formData.nom || !formData.prenom || !formData.email || !formData.mot_de_passe) {
             setFormErrors((prev) => ({
                 ...prev,
                 global: "Veuillez remplir tous les champs.",
@@ -228,10 +228,10 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
                             </InputLabel>
                             <Input
                                 id="standard-adornment-password"
-                                type={showPassword ? "text" : "password"}
-                                value={formData.password} // Associe la valeur au champ
-                                onChange={(e) => handleChange("password", e.target.value)} // Met à jour et valide
-                                error={!!formErrors.password} // Affiche l'erreur si elle existe
+                                type={showPassword ? "text" : "mot_de_passe"}
+                                value={formData.mot_de_passe} // Associe la valeur au champ
+                                onChange={(e) => handleChange("mot_de_passe", e.target.value)} // Met à jour et valide
+                                error={!!formErrors.mot_de_passe} // Affiche l'erreur si elle existe
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -244,7 +244,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin }: InscriptionDialog
                                 }
                             />
                             <Typography variant="caption" color="error">
-                                {formErrors.password} {/* Affiche le message d'erreur */}
+                                {formErrors.mot_de_passe} {/* Affiche le message d'erreur */}
                             </Typography>
                         </FormControl>
 

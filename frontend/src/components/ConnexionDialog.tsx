@@ -29,7 +29,7 @@ function ConnexionDialog() {
 
   const [formData, setFormData] = useState({
     email: "", // Valeur initiale pour l'email
-    password: "", // Valeur initiale pour le mot de passe
+    mot_de_passe: "", // Valeur initiale pour le mot de passe
   });
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -59,7 +59,7 @@ function ConnexionDialog() {
   };
 
   const handleLogin = async () => {
-    if (!formData.email || !formData.password) {
+    if (!formData.email || !formData.mot_de_passe) {
       setErrorMessage("Veuillez remplir tous les champs.");
       return;
     }
@@ -110,9 +110,9 @@ function ConnexionDialog() {
                 </InputLabel>
                 <Input
                     id="standard-adornment-password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password} // Associe la valeur saisie au champ password
-                    onChange={(e) => handleChange("password", e.target.value)} // Met à jour formData.password
+                    type={showPassword ? "text" : "mot_de_passe"}
+                    value={formData.mot_de_passe} // Associe la valeur saisie au champ password
+                    onChange={(e) => handleChange("mot_de_passe", e.target.value)} // Met à jour formData.password
                     fullWidth={true}
                     endAdornment={
                       <InputAdornment position="end">

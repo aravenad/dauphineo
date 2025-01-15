@@ -13,7 +13,9 @@ export const getUsers = async () => {
 // Fonction pour créer un nouvel utilisateur
 export const createUser = async (userData: any) => {
   try {
-    const response = await axiosInstance.post("/users", userData);
+    console.log("Données envoyées :", userData);
+    const response = await axiosInstance.post("/utilisateur/register", userData);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -21,9 +23,11 @@ export const createUser = async (userData: any) => {
 };
 
 // Fonction pour connecter un utilisateur
-export const loginUser = async (userData: { email: string; password: string }) => {
+export const loginUser = async (userData: { email: string; mot_de_passe: string }) => {
   try {
-    const response = await axiosInstance.post("/api/utilisateur/login", userData);
+    console.log("Données envoyées :", userData);
+    const response = await axiosInstance.post("/utilisateur/login", userData);
+    console.log(response.data);
     // Traite et retourne les données si la requête réussit
     return response.data;
   } catch (error) {
