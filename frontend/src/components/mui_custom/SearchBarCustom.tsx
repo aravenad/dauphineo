@@ -71,7 +71,7 @@ const findMatchingSPR = (input: string, sprList: any[]) => {
             normalizeString(spr.nom_commune).includes(normalizedInput)
     );
 
-    return matchingSPR.slice(0, 3);
+    return matchingSPR.slice(0, 4);
 };
 
 const emojiMap: Record<string, string> = {
@@ -181,6 +181,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 transition: "transform 0.2s ease, background-color 0.2s ease",
                                 animation: `${filteredResults.length !== sprList.length ? "fadeIn" : "none"} 0.3s ease`,
                                 width: "fit-content",
+                                whiteSpace : "nowrap",
                                 "&:hover": {
                                     backgroundColor: "#f9f9f9",
                                     cursor: "pointer",

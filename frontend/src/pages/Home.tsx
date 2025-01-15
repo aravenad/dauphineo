@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { fetchSPR, fetchTopSPR } from "../api/endpoints/spr";
-import { Box, Typography, Card, CardContent } from "@mui/material";
+import { Box, Typography} from "@mui/material";
 import SearchSection from "../components/SearchSection";
 import MostBookedSPR from "../components/MostBookedSPR";
-import MostRatedSPR from "../components/MostRatedSPR.tsx"; // Assurez-vous que l'import est correct
+import MostRatedSPR from "../components/MostRatedSPR.tsx";
+import ExploreSection from "../components/ExploreSection.tsx";
 
 function Home() {
   const [sprList, setSprList] = useState<any[]>([]);
@@ -55,18 +56,18 @@ function Home() {
               marginBottom="2em"
               fontSize="1.4em"
           >
-            Accédez à tous les sites patrimoniaux de l'Isère
+            Accédez à tous les sites patrimoniaux de l'Isère et réservez votre guide
           </Typography>
         </Box>
 
         {/* Section Recherche */}
         <SearchSection sprList={sprList} />
 
-        {/* Section des plus visités */}
-        {topSPR && <MostBookedSPR />}
-
         {/* Section des mieux notés */}
         {topSPR && <MostRatedSPR />}
+
+          {/* Section des plus visités */}
+          {topSPR && <MostBookedSPR />}
 
         {/* Affichage du chargement ou des erreurs */}
         {loading && <Typography>Chargement des SPR...</Typography>}
@@ -77,22 +78,8 @@ function Home() {
         )}
 
         {/* Affichage des SPR */}
-        {!loading && !error && (
-            <Box component="div" mt={2}>
-              {sprList.length === 0 ? (
-                  <Typography>Aucun site patrimonial trouvé.</Typography>
-              ) : (
-                  sprList.map((spr) => (
-                      <Card key={spr.id} sx={{ mb: 2 }}>
-                        <CardContent>
-                          <Typography variant="h6">{spr.nom}</Typography>
-                          <Typography variant="body2">{spr.description}</Typography>
-                        </CardContent>
-                      </Card>
-                  ))
-              )}
-            </Box>
-        )}
+        <ExploreSection sprList={sprList} />
+
       </>
   );
 }
