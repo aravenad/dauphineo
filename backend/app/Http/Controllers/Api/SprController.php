@@ -63,4 +63,47 @@ class SprController extends Controller
             'moyenne_notes' => $repartitionNotes
         ]);
     }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/spr/top",
+     *     tags={"SPR"},
+     *     security={{"bearerAuth": {}}},
+     *     summary="Fetch top 3 visited and top 3 rated SPR",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     )
+     * )
+     */
+    public function topSpr()
+    {
+        try {
+            // Les 3 SPR les plus visités
+            $mostVisited = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
+                ->join('reservation', 'spr.id', '=', 'reservation.id_spr')
+                ->selectRaw('COUNT(reservation.id) as reservations_count')
+                ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
+                ->orderByDesc('reservations_count')
+                ->limit(3)
+                ->get();
+
+            // Les 3 SPR les mieux notés
+            $bestRated = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
+                ->join('avis', 'spr.id', '=', 'avis.id_spr')
+                ->selectRaw('AVG(avis.note) as average_note')
+                ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
+                ->orderByDesc('average_note')
+                ->limit(3)
+                ->get();
+
+            return response()->json([
+                'most_visited' => $mostVisited,
+                'best_rated' => $bestRated
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

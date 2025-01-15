@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchSPR } from "../api/endpoints/spr";
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import SearchSection from "../components/SearchSection";
+import {CardSPR} from "../components";
 
 function Home() {
   const [sprList, setSprList] = useState<any[]>([]);
@@ -28,16 +29,16 @@ function Home() {
   return (
       <>
         {/* Section Recherche */}
-        <SearchSection sprList={sprList} />
+        <SearchSection sprList={sprList}/>
 
-        <Box component="div">
-          <Typography variant="h6" fontWeight={700}>
-            Différentes façons de visiter l'Isère
-          </Typography>
-          <Typography variant="body1" component="span">
-            Nos sites les plus visités
-          </Typography>
-        </Box>
+        {/* Section des plus visités */}
+        <div>
+          <h1>Exemple d'utilisation de CardSPR</h1>
+          <CardSPR id={7}/>
+        </div>
+
+        {/* Section des mieux notés */}
+
 
         {/* Affichage du chargement ou des erreurs */}
         {loading && <Typography>Chargement des SPR...</Typography>}
@@ -54,7 +55,7 @@ function Home() {
                   <Typography>Aucun site patrimonial trouvé.</Typography>
               ) : (
                   sprList.map((spr) => (
-                      <Card key={spr.id} sx={{ mb: 2 }}>
+                      <Card key={spr.id} sx={{mb: 2}}>
                         <CardContent>
                           <Typography variant="h6">{spr.nom}</Typography>
                           <Typography variant="body2">{spr.description}</Typography>

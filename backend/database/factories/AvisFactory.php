@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Spr;
 use App\Models\Utilisateur;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,8 +22,8 @@ class AvisFactory extends Factory
             'titre' => fake()->sentence(),
             'commentaire' => fake()->paragraph(),
             'note' => fake()->numberBetween(1, 5),
-            'id_spr' => 1,
             'id_utilisateur' => Utilisateur::inRandomOrder()->first()->id ?? Utilisateur::factory()->create()->id,
+            'id_spr' => Spr::inRandomOrder()->first()->id ?? Spr::factory()->create()->id,
         ];
     }
 }

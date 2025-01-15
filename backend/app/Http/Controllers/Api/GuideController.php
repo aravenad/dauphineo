@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Tag(
@@ -184,7 +185,13 @@ class GuideController extends Controller
      */
     public function destroy(string $id)
     {
-        $guide = Guide::findOrFail($id);
+        $guide = Guide::find($id);
+        if (!$guide) {
+            return response()->json([
+                'message' => 'Utilisateur non trouvé'
+            ], 404);
+        }
+        DB::table('personal_access_tokens')->where('tokenable_id', $guide->id)->delete();
         $guide->delete();
         return response()->json(null, 204);
     }
@@ -241,6 +248,7 @@ class GuideController extends Controller
             'id_spr' => 'required|exists:spr,id',
             'derniere_activite' => 'nullable|date'
         ]);
+        
 
 
         $guide = Guide::create($validated);
@@ -251,6 +259,7 @@ class GuideController extends Controller
  * @OA\Get(
  *     path="/api/guides/{idGuide}/disponibilites",
  *     tags={"Guides"},
+ *     security={{"bearerAuth": {}}},
  *     summary="Get guide's disponibilites by guide ID",
  *     @OA\Parameter(
  *         name="idGuide",
@@ -349,7 +358,8 @@ public function disponibilitesGuide($idGuide)
             $guide->save();
     
             // Supprimer le token actuel du guide
-            $guide->currentAccessToken()->delete();
+            //$guide->currentAccessToken()->delete();
+            DB::table('personal_access_tokens')->where('tokenable_id', $guide->id)->delete();
     
             return response()->json(['message' => 'Déconnexion réussie']);
         }

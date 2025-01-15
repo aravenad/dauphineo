@@ -35,7 +35,7 @@ class Avis extends Model
         'note',
         'created_at',
         'id_spr',
-        'utilisateur'
+        'id_utilisateur'
     ];
 
     /**

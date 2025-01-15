@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 /**
@@ -79,6 +80,25 @@ class UtilisateurController extends Controller
     }
 
     /**
+     * Method to generate a unique pseudo based on User's name and firstname
+     * @author nael
+     * @return string
+     */
+    private function generatePseudo()
+{
+
+    $base = "user_";
+    
+    // Remove accents and special characters
+    $base = preg_replace('/[^A-Za-z0-9]/', '', $base);
+    
+    $pseudo = $base . substr(uniqid(), 0, 4);
+    
+    
+    return $pseudo;
+}
+
+    /**
      * @OA\Post(
      *     path="/api/utilisateur/register",
      *     tags={"utilisateur"},
@@ -94,7 +114,6 @@ class UtilisateurController extends Controller
      *                 @OA\Property(property="prenom", type="string", example="John"),
      *                 @OA\Property(property="email", type="string", format="email", example="lilya.doe@example.com"),
      *                 @OA\Property(property="mot_de_passe", type="string", example="securepassword123"),
-     *                 @OA\Property(property="pseudo", type="string", example="Jdu59"),
      *                 @OA\Property(property="verif_age", type="string", example=true)
      *             )
      *         )
@@ -116,21 +135,26 @@ class UtilisateurController extends Controller
 
     public function register(Request $request)
         {
-            $data=$request->validate([
+            $data = $request->validate([
                 'nom' => 'required|string|max:50',
                 'prenom' => 'required|string|max:50',
                 'email' => 'required|string|email|max:255|unique:utilisateur',
                 'mot_de_passe' => 'required|string',
-                'pseudo' => 'required|string|max:50',
                 'verif_age' => 'required|boolean'
             ]);
 
+
+
+            $data['pseudo'] = $this->generatePseudo();
+
+
             $user = Utilisateur::create($data);
             $user->derniere_activite = Carbon::now();
-            $user->save(); // Sauvegarde les modifications
+
+
             $expiration = Carbon::now()->addMinutes(60);
             $token = $user->createToken('auth_token')->plainTextToken;
-            $user->derniere_activite = Carbon::now();
+
             $accessToken = $user->tokens()->latest()->first();
             $accessToken->expires_at = $expiration;
             $accessToken->save();
@@ -311,7 +335,13 @@ class UtilisateurController extends Controller
                 'message' => 'Utilisateur non trouvé'
             ], 404);
         }
-        $user->currentAccessToken()->delete();
+        DB::table('personal_access_tokens')->where('tokenable_id', $user->id)->delete();
+        //$token = $user->currentAccessToken();
+
+        // if ($token) {
+        //     // Supprimer le token actif
+        //     $token->delete();
+        // }
         $user->delete();
 
         return response()->json([
@@ -352,7 +382,8 @@ class UtilisateurController extends Controller
             $user->save();
     
             // Supprimer le token actuel de l'utilisateur
-            $user->currentAccessToken()->delete();
+            DB::table('personal_access_tokens')->where('tokenable_id', $user->id)->delete();
+            //$user->currentAccessToken()->delete();
     
             return response()->json(['message' => 'Déconnexion réussie']);
         }
