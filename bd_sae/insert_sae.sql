@@ -10,8 +10,8 @@
 --DELIMITER ';' CSV HEADER;
 
 
-\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite, image) FROM 'C:/Users/ferya/Documents/SAE/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER;
-\copy IMAGES(id,image_url,id_spr) FROM 'C:/Users/ferya/Documents/SAE/images.csv' DELIMITER ';' CSV HEADER;
+\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite) FROM '/Users/tim/Developer/Web/SAE/bd_sae/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER;
+\copy IMAGES(id,image_url,id_spr) FROM '/Users/tim/Developer/Web/SAE/bd_sae/images.csv' DELIMITER ';' CSV HEADER;
 
 INSERT INTO UTILISATEUR (nom, prenom, mot_de_passe, email, pseudo, verif_age, derniere_activite)
 VALUES 
@@ -35,15 +35,15 @@ VALUES
 (20, 50, '2024-03-01', 1, 1),
 (10, 30, '2024-03-02', 2, 2);
 
-INSERT INTO RESERVATION (date, heure, prix, statut_reservation, statut_paiement, taille, id_utilisateur, id_visite, id_spr, id_guide)
+INSERT INTO RESERVATION (prix, statut_reservation, statut_paiement, taille, id_utilisateur, id_visite, id_spr, id_guide)
 VALUES 
-('2024-03-01', '09:00:00', 15.5, 'confirmee', 'payee', 3, 1, 1, 1, 1),
-('2024-03-02', '14:00:00', 12.0, 'confirmee', 'non reglee', 2, 2, 2, 2, 2);
+(15.5, 'confirmee', 'payee', 3, 1, 1, 1, 1),
+( 12.0, 'confirmee', 'non_reglee', 2, 2, 2, 2, 2);
 
-INSERT INTO AVIS (titre, commentaire, note, date_de_publication, status_avis, id_utilisateur, id_spr)
+INSERT INTO AVIS (titre, commentaire, note, id_utilisateur, id_spr, created_at)
 VALUES 
-('Super visite', 'Très belle expérience, guide au top !', 5, '2024-03-02 18:00:00', 'publie', 1, 1),
-('Moyen', 'Beaucoup de monde, difficile à apprécier.', 3, '2024-03-03 10:00:00', 'publie', 2, 2);
+('Super visite', 'Très belle expérience, guide au top !', 5, 1, 1, CURRENT_TIMESTAMP),
+('Moyen', 'Beaucoup de monde, difficile à apprécier.', 3, 2, 2, CURRENT_TIMESTAMP);
 
 
 
