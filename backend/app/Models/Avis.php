@@ -43,9 +43,8 @@ class Avis extends Model
      */
     protected $casts = [
         'note' => 'integer',
-        'date_de_publication' => 'datetime',
-        'status_avis' => 'boolean'
     ];
+
 
     /**
      * Get the user that owns the review.

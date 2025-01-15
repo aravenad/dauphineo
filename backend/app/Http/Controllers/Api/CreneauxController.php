@@ -7,19 +7,24 @@ use App\Models\Spr;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="creneaux",
+ *     description="Endpoints for slots management"
+ * )
+ */
 class CreneauxController extends Controller
 {
     /**
      * @OA\Get(
      *     path="/api/creneaux/{id_spr}",
-     *     tags={"Creneaux"},
+     *     tags={"creneaux"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Retrieve the créneaux for the given SPR",
+     *     summary="Retrieve slots for the given SPR",
      *     @OA\Parameter(
      *         name="id_spr",
      *         in="path",
      *         required=true,
-     *         description="The ID of the SPR whose créneaux are to be retrieved",
      *         @OA\Schema(
      *             type="integer",
      *             minimum=1
@@ -27,7 +32,7 @@ class CreneauxController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of créneaux for the specified SPR",
+     *         description="List of slots for the specified SPR",
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
@@ -57,6 +62,6 @@ class CreneauxController extends Controller
             return response()->json(['error' => 'No creneaux found for the given SPR'], 404);
         }
 
-        return response()->json($creneaux, 200);
+        return $creneaux;
     }
 }
