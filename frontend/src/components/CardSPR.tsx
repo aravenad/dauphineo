@@ -7,10 +7,10 @@ import {
     CardActionArea,
     Skeleton,
     Box,
+    Chip,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { fetchSPRById } from "../api/endpoints/spr";
-import { formatKeywords } from "./mui_custom/SearchBarCustom.tsx";
 import StarIcon from "@mui/icons-material/Star";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -19,6 +19,18 @@ type CardSPRProps = {
     variante?: "regular" | "booked" | "rated"; // Variante de la carte, par défaut "regular"
     reservationsCount?: number; // Nombre de réservations (pour "booked")
     averageRating?: number; // Note moyenne (pour "rated")
+};
+
+const emojiMap: Record<string, string> = {
+    archeologie: "🏺",
+    architecture: "🏛️",
+    nature: "🌳",
+    abbaye: "⛪",
+    chateau: "🏰",
+    medieval: "🛡️",
+    musee: "🖼️",
+    promenade: "🚶",
+    urbain: "🏙️",
 };
 
 const CardSPR: React.FC<CardSPRProps> = ({
@@ -107,6 +119,37 @@ const CardSPR: React.FC<CardSPRProps> = ({
         navigate("/spr", { state: { spr: sprData } });
     };
 
+    const renderPills = (keywords: string) => {
+        const keywordArray = keywords.split(" "); // Sépare les mots-clés
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1,
+                    marginTop: 1,
+                }}
+            >
+                {keywordArray.map((keyword) => (
+                    <Chip
+                        key={keyword}
+                        label={`${emojiMap[keyword] || ""} ${keyword.charAt(0).toUpperCase()}${keyword.slice(1)}`}
+                        sx={{
+                            backgroundColor: "#f5f5f5",
+                            borderRadius: "16px",
+                            padding: "0.3em",
+                            fontSize: "0.85rem",
+                            fontWeight: 500,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.5,
+                        }}
+                    />
+                ))}
+            </Box>
+        );
+    };
+
     const getSubtitle = () => {
         switch (variante) {
             case "booked":
@@ -141,11 +184,7 @@ const CardSPR: React.FC<CardSPRProps> = ({
                 );
             case "regular":
             default:
-                return (
-                    <Typography variant="body2" color="text.secondary">
-                        {formatKeywords(sprData.mot_cle)}
-                    </Typography>
-                );
+                return renderPills(sprData.mot_cle);
         }
     };
 
@@ -174,16 +213,10 @@ const CardSPR: React.FC<CardSPRProps> = ({
                     title={sprData.nom_commune}
                 />
                 <CardContent sx={{ padding: "1em 0 0 0.1em" }}>
-                    <Typography variant="body1" fontWeight={700} textAlign="left">
+                    <Typography variant="body1" fontWeight={700} textAlign="left" paddingLeft={0.5}>
                         {sprData.nom_commune}
                     </Typography>
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        textAlign="left"
-                    >
-                        {getSubtitle()}
-                    </Typography>
+                    {getSubtitle()}
                 </CardContent>
             </CardActionArea>
         </Card>

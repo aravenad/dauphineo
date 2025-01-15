@@ -147,14 +147,15 @@ const Explorer: React.FC = () => {
             </Box>
 
             {filteredSprList.length > 0 ? (
-                <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start", gap: "30px" }}>
+                <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", gap: "30px" }}>
                     {filteredSprList.map((spr) => (
                         <Box
                             key={spr.id}
                             sx={{
-                                flexBasis: "calc(25% - 30px)",
+                                flexBasis: "calc(25% - 20px)",
                                 flexGrow: 0,
                                 maxWidth: "calc(25% - 30px)",
+                                marginBottom: "30px"
                             }}
                         >
                             <CardSPR id={spr.id} variante="regular" />

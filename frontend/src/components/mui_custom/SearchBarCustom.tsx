@@ -1,11 +1,10 @@
+import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Typography } from "@mui/material";
-import React, { useState } from "react";
-import {useNavigate} from "react-router";
-import {fetchSPRById} from "../../api/endpoints/spr.tsx";
-
+import { useNavigate } from "react-router";
+import { fetchSPRById } from "../../api/endpoints/spr.tsx";
 
 interface SearchBarCustomProps {
     placeholder?: string;
@@ -61,72 +60,102 @@ const capitalizeWords = (str: string) => {
 };
 
 const findMatchingSPR = (input: string, sprList: any[]) => {
-    if (input.trim().length < 1) return []; // Minimum 3 caractères pour la recherche
-
+    if (input.trim().length < 1) return [];
     const normalizedInput = normalizeString(input);
-
-    const matchingSPR = sprList.filter(
-        (spr) =>
-            spr.nom_commune &&
-            normalizeString(spr.nom_commune).includes(normalizedInput)
-    );
-
-    return matchingSPR.slice(0, 4);
+    return sprList
+        .filter((spr) => normalizeString(spr.nom_commune).includes(normalizedInput))
+        .slice(0, 4);
 };
 
 const emojiMap: Record<string, string> = {
-    archeologie: '🏺',
-    architecture: '🏛️',
-    nature: '🌳',
-    abbaye: '⛪',
-    chateau: '🏰',
-    medieval: '🛡️',
-    musee: '🖼️',
-    promenade: '🚶',
-    urbain: '🏙️',
+    archeologie: "🏺",
+    architecture: "🏛️",
+    nature: "🌳",
+    abbaye: "⛪",
+    chateau: "🏰",
+    medieval: "🛡️",
+    musee: "🖼️",
+    promenade: "🚶",
+    urbain: "🏙️",
 };
 
 export const formatKeywords = (keywords: string) => {
     return keywords
-        .split(' ')
-        .map(keyword => {
-            const emoji = emojiMap[keyword] || '❓';
+        .split(" ")
+        .map((keyword) => {
+            const emoji = emojiMap[keyword] || "❓";
             const capitalizedKeyword = keyword.charAt(0).toUpperCase() + keyword.slice(1);
             return `${emoji} ${capitalizedKeyword}`;
         })
-        .join(', ');
-}
-
+        .join(", ");
+};
 
 const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Rechercher...", sprList }) => {
     const [query, setQuery] = useState("");
     const [filteredResults, setFilteredResults] = useState<any[]>([]);
+    const [highlightedResult, setHighlightedResult] = useState(0);
     const navigate = useNavigate();
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setQuery(value);
-
-        const matchingSPR = findMatchingSPR(value, sprList);
-        setFilteredResults(matchingSPR);
+        setFilteredResults(findMatchingSPR(value, sprList));
+        setHighlightedResult(0);
     };
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter" && filteredResults.length > 0) {
-            const firstResult = filteredResults[0];
-            navigate(`/spr`, { state: { jsonSPR: JSON.stringify([firstResult]) } });
+    const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const applyHighlight = (index: number) => {
+            filteredResults.forEach((result, idx) => {
+                const element = document.getElementById(`result-${result.id}`);
+                if (element) {
+                    if (idx + 1 === index) {
+                        element.style.transform = "scale(1.05) translateX(10px)";
+                        element.style.transition = "transform 0.2s ease";
+                    } else {
+                        element.style.transform = "scale(1) translateX(0)";
+                    }
+                }
+            });
+        };
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setHighlightedResult((prev) => {
+                const newIndex = Math.min(prev + 1, filteredResults.length);
+                applyHighlight(newIndex);
+                return newIndex;
+            });
+        } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            setHighlightedResult((prev) => {
+                const newIndex = Math.max(prev - 1, 0);
+                applyHighlight(newIndex);
+                return newIndex;
+            });
+        } else if (event.key === "Enter") {
+            const selectedResult = highlightedResult === 0 ? filteredResults[highlightedResult] : filteredResults[highlightedResult - 1];
+            if (selectedResult) {
+                try {
+                    const spr = await fetchSPRById(selectedResult.id);
+                    navigate(`/spr`, { state: { spr: spr.spr } });
+                } catch (error) {
+                    console.error("Erreur lors de la récupération du SPR :", error);
+                }
+            }
+        } else if (event.key === "Escape") {
+            setQuery("");
+            setFilteredResults([]);
         }
     };
 
     const handleResultClick = async (id: number) => {
         try {
-            const spr = await fetchSPRById(id); // Appel direct à l'endpoint pour récupérer le SPR
-            navigate(`/spr`, { state: { spr: spr.spr } }); // Passe les données SPR directement dans le state
+            const spr = await fetchSPRById(id);
+            navigate(`/spr`, { state: { spr: spr.spr } });
         } catch (error) {
             console.error("Erreur lors de la récupération du SPR :", error);
         }
     };
-
 
     return (
         <Box
@@ -160,12 +189,11 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                         flexDirection: "column",
                         gap: "5px",
                     }}
-
-
                 >
                     {filteredResults.map((result) => (
                         <Box
                             key={result.id}
+                            id={`result-${result.id}`}
                             onClick={() => handleResultClick(result.id)}
                             sx={{
                                 padding: "5px 15px",
@@ -181,12 +209,12 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 transition: "transform 0.2s ease, background-color 0.2s ease",
                                 animation: `${filteredResults.length !== sprList.length ? "fadeIn" : "none"} 0.3s ease`,
                                 width: "fit-content",
-                                whiteSpace : "nowrap",
+                                whiteSpace: "nowrap",
                                 "&:hover": {
                                     backgroundColor: "#f9f9f9",
                                     cursor: "pointer",
-                                    transform: "scale(1.05) translateX(10px)",
-                                    transition: "transform 0.2s ease, background-color 0.2s ease",
+                                    transform: "scale(1.05) translateX(10px) !important",
+                                    transition: "transform 0.2s ease, background-color 0.2s ease !important",
                                 },
                                 "@keyframes fadeIn": {
                                     from: { opacity: 0, transform: "translateY(-10px)" },
@@ -198,10 +226,13 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 },
                             }}
                         >
-                            <Typography variant="body1" sx={{ fontWeight: 500, fontSize : "1.15em"}}>
+                            <Typography variant="body1" sx={{ fontWeight: 500, fontSize: "1.15em" }}>
                                 {capitalizeWords(result.nom_commune)}&nbsp;&middot;&nbsp;
                             </Typography>
-                            <Typography variant={"body2"} sx={{ color: "dimgray", display: "flex", alignItems: "center", fontSize: "1em"}}>
+                            <Typography
+                                variant={"body2"}
+                                sx={{ color: "dimgray", display: "flex", alignItems: "center", fontSize: "1em" }}
+                            >
                                 {formatKeywords(result.mot_cle)}
                             </Typography>
                         </Box>
