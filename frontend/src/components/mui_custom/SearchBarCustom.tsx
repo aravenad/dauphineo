@@ -74,6 +74,30 @@ const findMatchingSPR = (input: string, sprList: any[]) => {
     return matchingSPR.slice(0, 3);
 };
 
+const emojiMap: Record<string, string> = {
+    archeologie: '🏺',
+    architecture: '🏛️',
+    nature: '🌳',
+    abbaye: '⛪',
+    chateau: '🏰',
+    medieval: '🛡️',
+    musee: '🖼️',
+    promenade: '🚶',
+    urbain: '🏙️',
+};
+
+const formatKeywords = (keywords: string) => {
+    return keywords
+        .split(' ')
+        .map(keyword => {
+            const emoji = emojiMap[keyword] || '❓';
+            const capitalizedKeyword = keyword.charAt(0).toUpperCase() + keyword.slice(1);
+            return `${emoji} ${capitalizedKeyword}`;
+        })
+        .join(', ');
+}
+
+
 const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Rechercher...", sprList }) => {
     const [query, setQuery] = useState("");
     const [filteredResults, setFilteredResults] = useState<any[]>([]);
@@ -100,6 +124,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
         navigate(`/spr`, { state: { jsonSPR } });
     };
 
+
     return (
         <Box
             sx={{
@@ -119,11 +144,6 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                     onKeyDown={handleKeyDown}
                     inputProps={{ "aria-label": "search" }}
                 />
-                <Box sx={{ marginLeft: "10px" }}>
-                    <IconButton onClick={() => console.log("Filtrage ouvert")}>
-                        <TuneIcon sx={{ color: "gray" }} />
-                    </IconButton>
-                </Box>
             </Search>
 
             {filteredResults.length > 0 && (
@@ -174,8 +194,11 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 },
                             }}
                         >
-                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                {capitalizeWords(result.nom_commune)}
+                            <Typography variant="body1" sx={{ fontWeight: 500, fontSize : "1.15em"}}>
+                                {capitalizeWords(result.nom_commune)}&nbsp;&middot;&nbsp;
+                            </Typography>
+                            <Typography variant={"body2"} sx={{ color: "dimgray", display: "flex", alignItems: "center", fontSize: "1em"}}>
+                                {formatKeywords(result.mot_cle)}
                             </Typography>
                         </Box>
                     ))}
