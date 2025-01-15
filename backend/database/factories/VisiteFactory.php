@@ -23,7 +23,7 @@ class VisiteFactory extends Factory
             'capacite_max' => $this->faker->randomNumber(2),
             'date_visite' => $this->faker->date(),
             'id_spr' => $this->faker->NumberBetween(1, 20),
-            'id_disponibilite' => $this->faker->NumberBetween(1, 14), //Between 13 and 14 because we have only 2 disponibilites id {13, 14}
+            'id_disponibilite' => Disponibilite::inRandomOrder()->first()->id ?? Disponibilite::factory()->create()->id //Between 13 and 14 because we have only 2 disponibilites id {13, 14}
         ];
     }
 }

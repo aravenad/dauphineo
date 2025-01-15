@@ -97,8 +97,8 @@ test('fetching all visit associated to one user' , function(){
 
     $user = Utilisateur::factory()->create();
 
-    $guide = Guide::where('id', '=' , 38 )->first(); // GuideFactory doesn't exist for the moment 
-    $spr = Spr::where('id', '=' , 1 )->first(); //SPRFactory doesn't exist for the moment
+    $guide = Guide::inRandomOrder()->first() ?? Guide::factory()->create(); // GuideFactory doesn't exist for the moment 
+    $spr = Spr::inRandomOrder()->first() ?? Spr::factory()->create(); //SPRFactory doesn't exist for the moment
     $visite = Visite::factory()->create();
     
     // Création d'une réservation avec le prix explicitement défini

@@ -14,9 +14,9 @@ use App\Models\Spr;
 
 it('creates a new review', function () {
 
-    $avisData = Avis::factory()->create()->toArray();
+    $avisData = Avis::factory()->make()->toArray();
 
-    // Envoyer une requête POST pour créer un nouvel avis
+
     $response = $this->postJson('/api/avis', $avisData);
 
     $response->assertStatus(201)
@@ -25,8 +25,9 @@ it('creates a new review', function () {
             'commentaire',
             'note',
             'id_utilisateur',
-            'id_spr'
+            'id_spr',
         ]);
+
 });
 
 /**
