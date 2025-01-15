@@ -1,21 +1,21 @@
 id;code_departement;nom_du_departement;nom_commune;capacite_de_visite;mot_cle;is_pmr;temps_de_visite
-1;38;ISÈRE;HIÈRES-SUR-AMBY;15;archeologie musee romain medieval nature randonnee histoire patrimoine;true;03:00:00
-2;38;ISÈRE;REVEL-TOURDAN;20;chateau medieval village eglise histoire architecture patrimoine;false;02:00:00
-3;38;ISÈRE;SAINT-ANTOINE-L'ABBAYE;12;medieval village abbaye histoire musee eglise promenade;true;03:00:00
-4;38;ISÈRE;BARRAUX;25;fort militaire histoire architecture bastion rempart;false;02:00:00
-5;38;ISÈRE;BEAUVOIR-EN-ROYANS;20;chateau couvent medieval ruine village histoire jardin;false;02:00:00
-6;38;ISÈRE;BESSE-EN-OISANS;10;medieval village montagne randonnee alpage patrimoine balade nature;false;02:00:00
-7;38;ISÈRE;LA COTE-SAINT-ANDRÉ;25;village histoire tradition architecture chateau;true;03:00:00
-8;38;ISÈRE;MENS;12;medieval village histoire patrimoine eglise temple musee;false;02:00:00
-9;38;ISÈRE;SAINT-BAUDILLE-DE-LA-TOUR;12;nature authentique randonnee riviere cascade faune flore;false;02:00:00
-10;38;ISÈRE;SAINT-CHEF;14;medieval village abbaye romain fresque religieux architecture;true;03:00:00
-11;38;ISÈRE;SAINT-ÉTIENNE-DE-SAINT-GEOIRS;15;eglise chapelle chateau fresque medieval patrimoine architecture;false;02:00:00
-12;38;ISÈRE;BRANGUES;5;chateau litterature patrimoine histoire village visite guidee;true;02:00:00
-13;38;ISÈRE;CRÉMIEU;30;medieval cite patrimoine architecture histoire halle couvent;true;02:00:00
-14;38;ISÈRE;SAINT-QUENTIN-FALLAVIER;20;chateau medieval forteresse histoire architecture nature patrimoine;false;02:00:00
-15;38;ISÈRE;GRENOBLE;30;fort musee architecture histoire patrimoine paysage urbain;true;04:00:00
-16;38;ISÈRE;LA VERPILLÈRE;20;medieval fort eglise religieux nature histoire patrimoine;true;03:00:00
-17;38;ISÈRE;SAINT-GEOIRE-EN-VALDAINE;15;randonnee culture historique architecture renaissance decouverte;true;02:00:00
-18;38;ISÈRE;VIENNE;20;romains theatre antique medieval eglise;true;04:00:00
-19;38;ISÈRE;VERTRIEU;15;medieval riviere patrimoine rural;false;02:00:00
-20;38;ISÈRE;VILLEFONTAINE;20;urbanisme patrimoine jardin moderne;true;02:00:00
+1;38;ISÈRE;HIÈRES-SUR-AMBY;15;archeologie medieval nature;true;03:00:00
+2;38;ISÈRE;REVEL-TOURDAN;20;chateau nature medieval;false;02:00:00
+3;38;ISÈRE;SAINT-ANTOINE-L'ABBAYE;12;abbaye musee promenade;true;03:00:00
+4;38;ISÈRE;BARRAUX;25;architecture musee;false;02:00:00
+5;38;ISÈRE;BEAUVOIR-EN-ROYANS;20;chateau medieval;false;02:00:00
+6;38;ISÈRE;BESSE-EN-OISANS;10;promenade nature;false;02:00:00
+7;38;ISÈRE;LA COTE-SAINT-ANDRÉ;25;chateau architecture;true;03:00:00
+8;38;ISÈRE;MENS;12;medieval musee nature;false;02:00:00
+9;38;ISÈRE;SAINT-BAUDILLE-DE-LA-TOUR;12;nature promenade;false;02:00:00
+10;38;ISÈRE;SAINT-CHEF;14;medieval abbaye architecture;true;03:00:00
+11;38;ISÈRE;SAINT-ÉTIENNE-DE-SAINT-GEOIRS;15;abbaye chateau architecture;false;02:00:00
+12;38;ISÈRE;BRANGUES;5;chateau architecture;true;02:00:00
+13;38;ISÈRE;CRÉMIEU;30;medieval architecture promenade;true;02:00:00
+14;38;ISÈRE;SAINT-QUENTIN-FALLAVIER;20;chateau medieval nature;false;02:00:00
+15;38;ISÈRE;GRENOBLE;30;musee architecture urbain;true;04:00:00
+16;38;ISÈRE;LA VERPILLÈRE;20;architecture abbaye nature;true;03:00:00
+17;38;ISÈRE;SAINT-GEOIRE-EN-VALDAINE;15;nature promenade architecture;true;02:00:00
+18;38;ISÈRE;VIENNE;20;medieval abbaye nature;true;04:00:00
+19;38;ISÈRE;VERTRIEU;15;medieval nature;false;02:00:00
+20;38;ISÈRE;VILLEFONTAINE;20;urbain promenade;true;02:00:00

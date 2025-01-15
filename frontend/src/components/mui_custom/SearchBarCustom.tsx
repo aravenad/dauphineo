@@ -158,9 +158,6 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 transition: "transform 0.2s ease, background-color 0.2s ease",
                                 animation: `${filteredResults.length !== sprList.length ? "fadeIn" : "none"} 0.3s ease`,
                                 width: "fit-content",
-                                "&:first-of-type": {
-                                    // maelys faudra que tu regardes ici j'ai envie de mettre la font plus épaisse
-                                },
                                 "&:hover": {
                                     backgroundColor: "#f9f9f9",
                                     cursor: "pointer",
