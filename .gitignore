@@ -5,4 +5,7 @@
     bd_sae/insert_sae.sql
     backend/.env.testing
     backend/storage/api-docs/api-docs.json
-    .env
+    .env.DS_Store
+.idea/
+backend/package-lock.json
+backend/api-docs/
