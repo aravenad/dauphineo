@@ -88,11 +88,12 @@ class UtilisateurController extends Controller
 {
 
     $base = "user_";
+    $randomNumbers = rand(100, 999);
     
     // Remove accents and special characters
     $base = preg_replace('/[^A-Za-z0-9]/', '', $base);
     
-    $pseudo = $base . substr(uniqid(), 0, 4);
+    $pseudo = $base . $randomNumbers;
     
     
     return $pseudo;
