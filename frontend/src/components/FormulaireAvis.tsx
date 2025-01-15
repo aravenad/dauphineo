@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, TextField, Typography, Button, Rating, Stack } from "@mui/material";
-import { createReview } from "../api/endpoints/avis";
+import { createAvis } from "../api/endpoints/avis";
 
 interface FormulaireAvisProps {
   onClose?: () => void; // Fonction pour fermer le popup
@@ -21,23 +21,29 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ onClose }) => {
       setErrorMessage("Le commentaire doit contenir au maximum 500 caractères.");
       return;
     }
-
+  
     try {
-      const response = await createReview({ rating, comment });
-      if (response.success) {
+      setErrorMessage(""); // Réinitialiser les messages d'erreur
+      setSuccessMessage("");
+      
+      const response = await createAvis({ rating, comment });
+      
+      // Vérifier si la réponse existe
+      if (response) {
         setSuccessMessage("Avis envoyé avec succès !");
         setRating(null);
         setComment("");
-        setErrorMessage("");
-        if (onClose) onClose(); // Fermer le popup après succès
-      } else {
-        setErrorMessage("Une erreur est survenue. Veuillez réessayer.");
+        if (onClose) {
+          setTimeout(() => {
+            onClose();
+          }, 1500); // Attendre 1.5s avant de fermer pour voir le message de succès
+        }
       }
     } catch {
-      setErrorMessage("Une erreur est survenue lors de l'envoi de l'avis.");
+      setErrorMessage("Une erreur s'est produite. Veuillez réessayer.");
     }
   };
-
+  
   return (
     <Box>
       <Typography variant="h6">Laisser un avis</Typography>
