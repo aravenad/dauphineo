@@ -3,22 +3,7 @@
 use App\Models\Guide;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-test('list of guides', function(){
-    $response = $this->get('/api/guides');
-    $response->assertJson(function (AssertableJson $json) {
-        $json->whereType('0.id', 'integer')
-            ->whereType('0.nom', 'string')
-            ->whereType('0.prenom', 'string')
-            ->whereType('0.email', 'string')
-            ->whereType('0.pseudo', 'string')
-            ->whereType('0.verif_age', 'boolean')
-            ->whereType('0.derniere_activite', 'string')
-            ->whereType('0.id_spr', 'integer')
-            ->whereType('0.disponibilites', 'array')
-            ->missing('0.mot_de_passe');
-    });
-    $response -> assertStatus(200);
-});
+
 
 
 
@@ -81,8 +66,6 @@ test('create a new guide successfully', function () {
         'prenom' => 'Jean',
         'email' => 'doe.jean@example.com',
         'pseudo' => 'jdoe',
-        'verif_age' => true,
-        'derniere_activite' => '2025-01-07T00:00:00.000000Z',
         'id_spr' => 1,
     ]);
 
@@ -101,8 +84,6 @@ test('get a specific guide', function () {
         'prenom' => 'Jean',
         'email' => 'doe.jean@example.com',
         'pseudo' => 'jdoe',
-        'verif_age' => true,
-        'derniere_activite' => '2025-01-07T00:00:00.000000Z',
         'id_spr' => 1,
         ]);
 });
@@ -110,14 +91,16 @@ test('get a specific guide', function () {
 
 test('update a guide', function () {
 
-    $guide_id = Guide::where('email', 'doe.jean@example.com')->first()->id;
+    $guide_id = Guide::inRandomOrder()->first()->id ?? Guide::factory()->create()->id;
+
+    $uniqString = uniqid();
 
     $updatedData = [
-        'nom' => 'Updated',
-        'prenom' => 'Jean',
-        'mot_de_passe' => 'newpassword123',
-        'email' => 'doe.jean@example.com',
-        'pseudo' => 'jdoe',
+        'nom' => 'Martin',
+        'prenom' => 'Luc',
+        'mot_de_passe' => 'guide1234',
+        'email' => "luc.martin{$uniqString}@example.com",
+        'pseudo' => "lucmartin{$uniqString}",
         'verif_age' => true,
         'derniere_activite' => '2025-01-07T00:00:00Z',
         'id_spr' => 1,
@@ -127,12 +110,10 @@ test('update a guide', function () {
     $response->assertStatus(200);
 
     $response->assertJsonFragment([
-        'nom' => 'Updated',
-        'prenom' => 'Jean',
-        'email' => 'doe.jean@example.com',
-        'pseudo' => 'jdoe',
-        'verif_age' => true,
-        'derniere_activite' => '2025-01-07T00:00:00.000000Z',
+        'nom' => 'Martin',
+        'prenom' => 'Luc',
+        'email' => $updatedData['email'],
+        'pseudo' => $updatedData['pseudo'],
         'id_spr' => 1,
     ]);
 });

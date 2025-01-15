@@ -20,6 +20,7 @@ class VisiteController extends Controller
      * @OA\Get(
      *     tags={"Visite"},
      *     path="/api/visites",
+     *     security={{"bearerAuth": {}}},
      *     summary="Get all visits",
      *     @OA\Response(
      *         response=200,
@@ -43,6 +44,7 @@ class VisiteController extends Controller
      * @OA\Get(
      *     tags={"Visite"},
      *     path="/api/visites/{id}",
+     *     security={{"bearerAuth": {}}},
      *     summary="Get a specific visit",
      *     @OA\Parameter(
      *         name="id",
@@ -78,6 +80,7 @@ class VisiteController extends Controller
      * @OA\Post(
      *     tags={"Visite"},
      *     path="/api/visites",
+     *    security={{"bearerAuth": {}}},
      *     summary="Create a new visit",
      *     @OA\RequestBody(
      *         required=true,
@@ -121,6 +124,7 @@ class VisiteController extends Controller
      * @OA\Delete(
      *     tags={"Visite"},
      *     path="/api/visites/{id}",
+     *    security={{"bearerAuth": {}}},
      *     summary="Delete a visit",
      *     @OA\Parameter(
      *         name="id",
@@ -155,6 +159,7 @@ class VisiteController extends Controller
      * @OA\Get(
      *     tags={"Visite"},
      *     path="/api/visites/utilisateur/{userId}",
+     *     security={{"bearerAuth": {}}},
      *     summary="Get all visits associated with a specific user",
      *     @OA\Parameter(
      *         name="userId",
@@ -208,6 +213,7 @@ class VisiteController extends Controller
      * @OA\Get(
      *     tags={"Visite"},
      *     path="/api/visites/spr/{sprId}",
+     *     security={{"bearerAuth": {}}},
      *     summary="Get all visits for a specific SPR",
      *     @OA\Parameter(
      *         name="sprId",
