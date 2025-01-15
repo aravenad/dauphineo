@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {
   Stack,
   Box,
@@ -9,13 +9,29 @@ import {
 } from "@mui/material";
 import { Language } from "@mui/icons-material";
 import LogoVert from "../assets/dauphineo_logo_vert.png";
-import { ButtonCustom } from "./mui_custom";
+import {SearchBarCustom} from "./mui_custom";
 import { ConnexionDialog } from "./index";
+import {fetchSPR} from "../api/endpoints/spr.tsx";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [sprList, setSprList] = useState<any[]>([]);
   const handleDialog = () => {};
+
+
+    useEffect(() => {
+        const loadSPRData = async () => {
+            try {
+                const allSPR = await fetchSPR();
+                setSprList(allSPR);
+
+            } catch (err) {
+                console.error("Erreur lors de la récupération des données SPR :", err);
+            }
+        };
+
+        loadSPRData();
+    }, []);
 
   return (
     <Stack
@@ -24,8 +40,9 @@ function Header() {
         padding: "1em 6em",
         borderBottom: "1px solid",
         borderBottomColor: "rgba(0,0,0,0.2)",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
+          height:"100px"
       }}
     >
       <Box>
@@ -35,12 +52,17 @@ function Header() {
             src={LogoVert}
             alt="logo"
             sx={{
-              width: "40%",
-              height: "auto",
+              width: "auto",
+              height: "60px",
             }}
           />
         </Link>
       </Box>
+        <SearchBarCustom
+            placeholder="Recherche rapide"
+            sprList={sprList}
+            isHeader={true}
+        />
       <Stack direction="row" sx={{ alignItems: "center" }} spacing={4}>
         <Link
           href="/explorer"

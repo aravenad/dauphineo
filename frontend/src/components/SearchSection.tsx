@@ -86,6 +86,7 @@ const SearchSection = ({ sprList }: { sprList: any[] }) => {
                 <SearchBarCustom
                     placeholder="Des endroits à visiter en Isère"
                     sprList={sprList}
+                    isHeader={false}
                 />
 
                 {/* Bouton questionnaire */}

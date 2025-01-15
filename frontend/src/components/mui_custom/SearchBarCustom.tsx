@@ -9,9 +9,10 @@ import { fetchSPRById } from "../../api/endpoints/spr.tsx";
 interface SearchBarCustomProps {
     placeholder?: string;
     sprList: any[];
+    isHeader?: boolean;
 }
 
-const Search = styled("div")(({ theme }) => ({
+const Search = styled("div")<{ isHeader: boolean }>(({ theme, isHeader }) => ({
     position: "relative",
     borderRadius: "2em",
     backgroundColor: theme.palette.common.white,
@@ -22,6 +23,8 @@ const Search = styled("div")(({ theme }) => ({
     display: "flex",
     alignItems: "center",
     padding: "5px 15px",
+    boxShadow: isHeader ? "0px 2px 6px rgba(0, 0, 0, 0.2)" : "none",
+    border: isHeader ? "1px solid #f0f0f0" : "none",
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -90,7 +93,7 @@ export const formatKeywords = (keywords: string) => {
         .join(", ");
 };
 
-const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Rechercher...", sprList }) => {
+const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Rechercher...", sprList, isHeader = false }) => {
     const [query, setQuery] = useState("");
     const [filteredResults, setFilteredResults] = useState<any[]>([]);
     const [highlightedResult, setHighlightedResult] = useState(0);
@@ -138,6 +141,8 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                 try {
                     const spr = await fetchSPRById(selectedResult.id);
                     navigate(`/spr`, { state: { spr: spr.spr } });
+                    setQuery("");
+                    setFilteredResults([]);
                 } catch (error) {
                     console.error("Erreur lors de la récupération du SPR :", error);
                 }
@@ -165,18 +170,18 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                 maxWidth: "100%",
             }}
         >
-            <Search>
-                <SearchIconWrapper>
-                    <SearchIcon sx={{ color: "common.black" }} />
-                </SearchIconWrapper>
-                <StyledInputBase
-                    placeholder={placeholder}
-                    value={query}
-                    onChange={handleSearch}
-                    onKeyDown={handleKeyDown}
-                    inputProps={{ "aria-label": "search" }}
-                />
-            </Search>
+        <Search isHeader={isHeader}>
+            <SearchIconWrapper>
+                <SearchIcon sx={{ color: "common.black" }} />
+            </SearchIconWrapper>
+            <StyledInputBase
+                placeholder={placeholder}
+                value={query}
+                onChange={handleSearch}
+                onKeyDown={handleKeyDown}
+                inputProps={{ "aria-label": "search" }}
+            />
+        </Search>
 
             {filteredResults.length > 0 && (
                 <Box
@@ -203,7 +208,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                                 alignItems: "center",
                                 backgroundColor: "#fff",
                                 borderRadius: "50px",
-                                boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                                boxShadow: isHeader ? "0px 4px 12px rgba(0, 0, 0, 0.3)" : "0px 2px 6px rgba(0, 0, 0, 0.1)",
                                 fontSize: "0.9rem",
                                 textAlign: "left",
                                 transition: "transform 0.2s ease, background-color 0.2s ease",
