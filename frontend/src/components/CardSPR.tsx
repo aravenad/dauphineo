@@ -5,7 +5,7 @@ import {
     CardContent,
     Typography,
     CardActionArea,
-    CircularProgress,
+    Skeleton,
     Box,
 } from "@mui/material";
 import { useNavigate } from "react-router";
@@ -13,7 +13,6 @@ import { fetchSPRById } from "../api/endpoints/spr";
 import { formatKeywords } from "./mui_custom/SearchBarCustom.tsx";
 import StarIcon from "@mui/icons-material/Star";
 import PersonIcon from "@mui/icons-material/Person";
-
 
 type CardSPRProps = {
     id: number;
@@ -24,7 +23,7 @@ type CardSPRProps = {
 
 const CardSPR: React.FC<CardSPRProps> = ({
                                              id,
-                                             variante = "regular", // Par défaut "regular"
+                                             variante = "regular",
                                              reservationsCount,
                                              averageRating,
                                          }) => {
@@ -36,8 +35,8 @@ const CardSPR: React.FC<CardSPRProps> = ({
     useEffect(() => {
         const loadSPR = async () => {
             try {
-                const data = await fetchSPRById(id); // Appel à l'endpoint
-                setSprData(data.spr); // Récupération des données SPR
+                const data = await fetchSPRById(id);
+                setSprData(data.spr);
             } catch (err) {
                 setError(err as Error);
                 console.error("Erreur lors de la récupération du SPR :", err);
@@ -51,9 +50,42 @@ const CardSPR: React.FC<CardSPRProps> = ({
 
     if (loading) {
         return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 200 }}>
-                <CircularProgress />
-            </Box>
+            <Card
+                sx={{
+                    maxWidth: "100%",
+                    boxShadow: "none",
+                    padding: "0em",
+                    borderRadius: "0.7em",
+                }}
+            >
+                <CardActionArea>
+                    <Skeleton
+                        variant="rectangular"
+                        animation="wave"
+                        sx={{
+                            height: "0",
+                            paddingTop: "100%", // Ratio carré
+                            borderRadius: "1em",
+                        }}
+                    />
+                    <CardContent>
+                        <Skeleton
+                            variant="text"
+                            animation="wave"
+                            width="60%"
+                            height={24}
+                            sx={{ marginBottom: 1 }}
+                        />
+                        <Skeleton
+                            variant="text"
+                            animation="wave"
+                            width="80%"
+                            height={18}
+                            sx={{ marginBottom: 1 }}
+                        />
+                    </CardContent>
+                </CardActionArea>
+            </Card>
         );
     }
 
@@ -71,22 +103,24 @@ const CardSPR: React.FC<CardSPRProps> = ({
         );
     }
 
-    // Gestion du clic pour naviguer vers /spr
     const handleClick = () => {
-        navigate("/spr", { state: { spr: sprData } }); // Passe l'objet SPR directement
+        navigate("/spr", { state: { spr: sprData } });
     };
 
-    // Sous-titre basé sur la variante
     const getSubtitle = () => {
         switch (variante) {
             case "booked":
                 return (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <PersonIcon sx={{ color: "black"}} />
-                        <Typography variant="body2" color="text.secondary" marginLeft={-0.5}>
+                        <PersonIcon sx={{ color: "black" }} />
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            marginLeft={-0.5}
+                        >
                             {reservationsCount
-                                ? `${reservationsCount} réservations`
-                                : "Aucune réservation disponible"}
+                                ? `${reservationsCount} visites au total`
+                                : "Aucune visite disponible"}
                         </Typography>
                     </Box>
                 );
@@ -94,7 +128,11 @@ const CardSPR: React.FC<CardSPRProps> = ({
                 return (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <StarIcon sx={{ color: "gold" }} />
-                        <Typography variant="body2" color="text.secondary" marginLeft={-0.5}>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            marginLeft={-0.5}
+                        >
                             {averageRating
                                 ? `Note moyenne : ${averageRating.toFixed(1)}`
                                 : "Pas encore de notes"}
@@ -128,19 +166,23 @@ const CardSPR: React.FC<CardSPRProps> = ({
                 <CardMedia
                     sx={{
                         height: "0",
-                        paddingTop: "100%", // c'est pour avoir un ratio carré
+                        paddingTop: "100%",
                         borderRadius: "1em",
                         backgroundSize: "cover",
                     }}
-                    image={sprData.images[0]?.image_url || "https://via.placeholder.com/200"} // Fallback si aucune image
+                    image={sprData.images[0]?.image_url || "https://via.placeholder.com/200"}
                     title={sprData.nom_commune}
                 />
                 <CardContent sx={{ padding: "1em 0 0 0.1em" }}>
                     <Typography variant="body1" fontWeight={700} textAlign="left">
                         {sprData.nom_commune}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" textAlign="left">
-                        {getSubtitle()} {/* Affichage du sous-titre basé sur la variante */}
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        textAlign="left"
+                    >
+                        {getSubtitle()}
                     </Typography>
                 </CardContent>
             </CardActionArea>

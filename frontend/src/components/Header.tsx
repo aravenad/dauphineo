@@ -43,7 +43,7 @@ function Header() {
       </Box>
       <Stack direction="row" sx={{ alignItems: "center" }} spacing={4}>
         <Link
-          href="#"
+          href="/explorer"
           variant="body1"
           sx={{
             fontWeight: 500,

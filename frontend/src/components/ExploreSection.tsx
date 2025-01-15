@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography} from "@mui/material";
 import CardSPR from "./CardSPR";
-import {ButtonCustom} from "./mui_custom"; // Assurez-vous que CardSPR est correctement importé
+import {ButtonCustom} from "./mui_custom";
 
 type ExploreSectionProps = {
     sprList: any[]; // Liste des SPR à afficher
@@ -47,7 +47,7 @@ const ExploreSection: React.FC<ExploreSectionProps> = ({ sprList }) => {
 
             {/* Bouton Voir tout */}
             <Box sx={{ display: "flex", justifyContent: "center", marginTop: "2em" }}>
-                <ButtonCustom variant="contained" color="primary" size={"large"}>
+                <ButtonCustom variant="outlined" color="primary" size={"large"} href={"/explorer"}>
                     Voir tout
                 </ButtonCustom>
             </Box>
