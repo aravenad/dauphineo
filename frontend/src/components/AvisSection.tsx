@@ -6,6 +6,7 @@ import AvisBox from "./AvisBox.tsx";
 function AvisSection() {
     return (
       <>
+        
         <h1>Avis</h1>
         <Box
           sx={{

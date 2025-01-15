@@ -29,7 +29,7 @@ function ConnexionDialog() {
 
   const [formData, setFormData] = useState({
     email: "", // Valeur initiale pour l'email
-    password: "", // Valeur initiale pour le mot de passe
+    password: "", // Valeur initiale pour le mot de péasse
   });
   const [errorMessage, setErrorMessage] = useState("");
 
