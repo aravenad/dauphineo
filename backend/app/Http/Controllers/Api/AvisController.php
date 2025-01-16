@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Models\Avis;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB; // Ajout de l'import DB
+use Illuminate\Support\Facades\Log; // Ajout de l'import Log
 
 /**
  * @OA\Tag(
@@ -139,4 +141,58 @@ class AvisController extends Controller
         $avis->delete();
         return response()->noContent();
     }
+
+    /**
+     * @OA\Get(
+     *     tags={"Avis"},
+     *     path="/api/avis/utilisateur/{userId}",
+     *     security={{"bearerAuth": {}}},
+     *     summary="Get all reviews associated with a specific user",
+     *     @OA\Parameter(
+     *         name="userId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No reviews found for this user"
+     *     )
+     * )
+     */
+
+    
+     public function getUserAvis($userId)
+     {
+         try {
+             // Modification de la requête pour correspondre à votre structure
+             $avis = DB::table('avis')
+                 ->select([
+                     'avis.titre',
+                     'avis.commentaire',
+                     'avis.note',
+                     'avis.date_de_publication',
+                 ])
+                 ->where('avis.id_utilisateur', $userId)
+                 ->join('spr', 'avis.id_spr', '=', 'spr.id') // Joindre la table SPR pour obtenir des informations sur le SPR
+                 ->get();
+     
+             if ($avis->isEmpty()) {
+                 return response()->json(['message' => 'Aucun avis trouvé pour cet utilisateur'], 404);
+             }
+     
+             return response()->json($avis, 200);
+             
+         } catch (\Exception $e) {
+             Log::error('Erreur lors de la récupération des avis: ' . $e->getMessage());
+             return response()->json([
+                 'message' => 'Une erreur est survenue lors de la récupération des avis',
+                 'error' => $e->getMessage()
+             ], 500);
+         }
+     }     
 }
