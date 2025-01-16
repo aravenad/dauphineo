@@ -27,13 +27,23 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ onClose, sprId }) => {
       return;
     }
 
+    //Pour debuguer
+    console.log("Données envoyées:", {
+      titre: titre.trim(),
+      commentaire: comment.trim(),
+      note: rating,
+      id_utilisateur: 4,
+      id_spr: sprId
+    });
+    //pour débuguer
+
     try {
       const response = await createReview({ 
         titre: titre.trim(),
         commentaire: comment.trim(),
         note: rating,
+        id_utilisateur: 4,
         id_spr: sprId,
-        id_utilisateur: 1
       });
 
       if (response.success) {

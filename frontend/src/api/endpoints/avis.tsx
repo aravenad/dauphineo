@@ -1,5 +1,11 @@
 
 import axiosInstance from "../../utils/axiosInstance";
+import axios from 'axios';
+
+
+const BASE_URL = "http://localhost:8000/api"; // Modifie selon ton projet
+
+
 
 // Fonction pour récupérer tous les avis
 export const getReviews = async () => {
@@ -9,15 +15,33 @@ export const getReviews = async () => {
 
 
   // Fonction pour créer un nouvel avis
-  export const createReview = async (reviewData: { titre : string, commentaire: string ,note: number, id_utilisateur : number ,id_spr : number; }) => {
+  export const createReview = async (reviewData: { 
+    titre: string, 
+    commentaire: string,
+    note: number, 
+    id_utilisateur: number,
+    id_spr: number 
+}) => {
     try {
-      const response = await axiosInstance.post("/avis", reviewData);
-      return response.data; // Retourne la réponse, par exemple un message de succès ou l'avis créé
-    } catch (error) {
-      console.error("Erreur lors de la création de l'avis:", error);
-      throw new Error("Une erreur est survenue lors de la création de l'avis.");
+        console.log('Tentative d\'envoi avec :', reviewData);
+        
+        const response = await axiosInstance.post(`/avis`, reviewData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Remplace par ton mécanisme de stockage
+            },
+        });
+        console.log('Avis créé avec succès:', response.data);
+        return response.data;
+    } catch (error: any) {
+        if (axios.isAxiosError(error)) {
+            console.error('Erreur Axios:', error.response?.data || error.message);
+        } else {
+            console.error('Erreur inconnue:', error);
+        }
+        throw error;
     }
-  };
+};
 
   // Fonction pour supprimer un avis
 export const deleteReview = async (reviewId: string) => {
