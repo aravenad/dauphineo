@@ -31,8 +31,9 @@ const SPR: React.FC = () => {
                         textTransform: "none",
                         fontSize: "1rem",
                     }}
+                    href={"/explorer"}
                 >
-                    ← Retour à l'accueil
+                    ← Retour à la liste des SPR
                 </Button>
             </Box>
 
@@ -99,7 +100,7 @@ const SPR: React.FC = () => {
                     >
                         Description
                     </Typography>
-                    <Typography variant="body1">
+                    <Typography variant="body1" fontSize="1.15rem" paddingRight="1em" textAlign="justify">
                         {sprData.longue_description}
                     </Typography>
                 </Box>

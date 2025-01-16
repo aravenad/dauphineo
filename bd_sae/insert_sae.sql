@@ -38,12 +38,22 @@ VALUES
 INSERT INTO RESERVATION (prix, statut_reservation, statut_paiement, taille, id_utilisateur, id_visite, id_spr, id_guide)
 VALUES 
 (15.5, 'confirmee', 'payee', 3, 1, 1, 1, 1),
-( 12.0, 'confirmee', 'non_reglee', 2, 2, 2, 2, 2);
+( 12.0, 'confirmee', 'non_reglee', 2, 2, 2, 2, 2),
+( 12.0, 'confirmee', 'non_reglee', 2, 1, 2, 2, 2),
+( 12.0, 'confirmee', 'non_reglee', 2, 1, 2, 3, 2),
+( 12.0, 'confirmee', 'non_reglee', 2, 1, 2, 3, 2),
+( 12.0, 'confirmee', 'non_reglee', 2, 1, 2, 3, 2);
+
+
 
 INSERT INTO AVIS (titre, commentaire, note, id_utilisateur, id_spr, created_at)
 VALUES 
 ('Super visite', 'Très belle expérience, guide au top !', 5, 1, 1, CURRENT_TIMESTAMP),
-('Moyen', 'Beaucoup de monde, difficile à apprécier.', 3, 2, 2, CURRENT_TIMESTAMP);
+('Moyen', 'Beaucoup de monde, difficile à apprécier.', 3, 2, 2, CURRENT_TIMESTAMP),
+('Très bien', 'Visite très intéressante, guide très sympa.', 4, 1, 2, CURRENT_TIMESTAMP),
+('Avis', 'Avis', 2, 1, 3, CURRENT_TIMESTAMP),
+('Avis', 'Avis', 2, 1, 3, CURRENT_TIMESTAMP),
+('Avis', 'Avis', 2, 1, 3, CURRENT_TIMESTAMP);
 
 
 

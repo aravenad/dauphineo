@@ -107,6 +107,8 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
     };
 
     const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const inputElement = event.currentTarget; // Sélectionne uniquement l'input actuel
+
         const applyHighlight = (index: number) => {
             filteredResults.forEach((result, idx) => {
                 const element = document.getElementById(`result-${result.id}`);
@@ -119,6 +121,41 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                     }
                 }
             });
+        };
+
+        const applyWiggle = () => {
+            if (inputElement) {
+                // Inject the wiggle keyframes into the document
+                const style = document.createElement("style");
+                style.innerHTML = `
+                @keyframes wiggle {
+                    0%, 100% {
+                        transform: translateX(0);
+                    }
+                    25% {
+                        transform: translateX(-5px);
+                    }
+                    50% {
+                        transform: translateX(5px);
+                    }
+                    75% {
+                        transform: translateX(-5px);
+                    }
+                }
+            `;
+                document.head.appendChild(style);
+
+                // Apply the animation
+                (inputElement as HTMLElement).style.animation = "wiggle 0.3s ease";
+                inputElement.addEventListener(
+                    "animationend",
+                    () => {
+                        (inputElement as HTMLElement).style.animation = "";
+                        document.head.removeChild(style); // Clean up the style tag
+                    },
+                    { once: true }
+                );
+            }
         };
 
         if (event.key === "ArrowDown") {
@@ -136,6 +173,10 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
                 return newIndex;
             });
         } else if (event.key === "Enter") {
+            if (filteredResults.length === 0) {
+                applyWiggle(); // Applique l'animation uniquement sur l'input actuel
+                return;
+            }
             const selectedResult = highlightedResult === 0 ? filteredResults[highlightedResult] : filteredResults[highlightedResult - 1];
             if (selectedResult) {
                 try {
@@ -152,6 +193,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
             setFilteredResults([]);
         }
     };
+
 
     const handleResultClick = async (id: number) => {
         try {
