@@ -117,6 +117,7 @@ const CardSPR: React.FC<CardSPRProps> = ({
 
     const handleClick = () => {
         navigate("/spr", { state: { spr: sprData } });
+        window.scrollTo(0, 0);
     };
 
     const renderPills = (keywords: string) => {

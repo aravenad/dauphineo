@@ -1,8 +1,20 @@
 import React from "react";
 import { useLocation } from "react-router";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Chip } from "@mui/material";
 import SPRPhotos from "../components/SPRPhotos.tsx";
 import SPRMap from "../components/SPRMap.tsx";
+
+const emojiMap: Record<string, string> = {
+    archeologie: "🏺",
+    architecture: "🏛️",
+    nature: "🌳",
+    abbaye: "⛪",
+    chateau: "🏰",
+    medieval: "🛡️",
+    musee: "🖼️",
+    promenade: "🚶",
+    urbain: "🏙️",
+};
 
 const SPR: React.FC = () => {
     const location = useLocation();
@@ -18,6 +30,37 @@ const SPR: React.FC = () => {
             .split(/(\s|-|')/)
             .map((word) => (word === "-" || word === "'" ? word : word.charAt(0).toUpperCase() + word.slice(1)))
             .join("");
+    };
+
+    const renderPills = (keywords: string) => {
+        const keywordArray = keywords.split(" "); // Sépare les mots-clés
+        return (
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1,
+                    marginTop: 2,
+                }}
+            >
+                {keywordArray.map((keyword) => (
+                    <Chip
+                        key={keyword}
+                        label={`${emojiMap[keyword] || ""} ${keyword.charAt(0).toUpperCase()}${keyword.slice(1)}`}
+                        sx={{
+                            backgroundColor: "#f5f5f5",
+                            borderRadius: "16px",
+                            padding: "1em 0.5em",
+                            fontSize: "1.05rem",
+                            marginRight: "0.5em",
+                            fontWeight: 500,
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                    />
+                ))}
+            </Box>
+        );
     };
 
     return (
@@ -56,7 +99,7 @@ const SPR: React.FC = () => {
                 }}
             >
                 {/* Placeholder pour la description */}
-                <Typography variant="body1" sx={{ maxWidth: "60%" }}>
+                <Typography variant="body1" sx={{ maxWidth: "60%" }} fontSize="1.2em">
                     {sprData.courte_description}
                 </Typography>
 
@@ -103,6 +146,9 @@ const SPR: React.FC = () => {
                     <Typography variant="body1" fontSize="1.15rem" paddingRight="1em" textAlign="justify">
                         {sprData.longue_description}
                     </Typography>
+
+                    {/* Pills pour les mots-clés */}
+                    {renderPills(sprData.mot_cle)}
                 </Box>
 
                 {/* Colonne de droite : SPRMap */}
