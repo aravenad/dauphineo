@@ -8,3 +8,7 @@ backend/storage/api-docs/api-docs.json
 .env
 
 backend/.env.testing
+
+/node_modules
+package-lock.json
+package.json

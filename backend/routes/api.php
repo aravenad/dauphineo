@@ -56,6 +56,7 @@ Route::prefix('avis')->group(function() {
     Route::get('{id}', [AvisController::class, 'show'])->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::post('/', [AvisController::class, 'store']);
     Route::delete('{id}', [AvisController::class, 'destroy']);
+    Route::get('/utilisateur/{userId}', [AvisController::class, 'getUserAvis']);
 });
 
 // Routes for ReservationController
