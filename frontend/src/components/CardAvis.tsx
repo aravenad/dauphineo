@@ -58,7 +58,10 @@ const CardAvis: React.FC<CardAvisProps> = ({ titre, commentaire, note, date }) =
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Rating value={note} readOnly size="small" />
         <Typography variant="subtitle1" fontWeight="bold">
-          {titre}
+          <Typography variant="body1" component="span" sx={{ paddingRight: 1 }}>
+            •
+          </Typography>
+           {titre}
         </Typography>
       </Box>
 
