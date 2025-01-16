@@ -2,9 +2,14 @@ import { Box } from "@mui/material";
 import Rating from "./Rating.tsx";
 import AvisBox from "./AvisBox.tsx";
 
+interface AvisSectionProps {
+  sprId: number;  // Notez que c'est 'sprId' et non 'sprID'
+  id_utilisateur: number;
+}
 
-function AvisSection() {
-    return (
+
+const AvisSection: React.FC<AvisSectionProps> = ({ sprId , id_utilisateur }) => {
+  return (
       <>
         
         <h1>Avis</h1>
@@ -19,16 +24,16 @@ function AvisSection() {
           }}
         >
           {/* Box pour l'évaluation globale */}
-          <Box
+            <Box
             sx={{
               flex: "0 0 30%", // Largeur fixe de 30%
               display: "flex",
               flexDirection: "column",
               gap: 2,
             }}
-          >
-            <Rating />
-          </Box>
+            >
+            <Rating sprId = {sprId} />
+            </Box>
   
           {/* Box pour les avis */}
           <Box
@@ -39,7 +44,7 @@ function AvisSection() {
               gap: 2,
             }}
           >
-            <AvisBox />
+            <AvisBox sprId = {sprId} id_utilisateur = {id_utilisateur}/>
           </Box>
         </Box>
       </>
@@ -47,3 +52,5 @@ function AvisSection() {
   }
 
 export default AvisSection;
+
+

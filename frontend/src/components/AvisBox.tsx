@@ -1,13 +1,79 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { CardAvis } from "./index.ts";
 import FormulaireAvis from "./FormulaireAvis";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {fetchSPRById} from "./../api/endpoints/spr.tsx";
 
-function AvisBox() {
-  const [isFormOpen, setIsFormOpen] = useState(false); // État pour contrôler l'ouverture du formulaire
+interface SPRResponse {
+  spr: {
+    id: number;
+    avis: Avis[];
+  };
+  moyenne_notes: { //Pas vraiment utile ici
+    "5_etoiles": number;
+    "4_etoiles": number;
+    "3_etoiles": number;
+    "2_etoiles": number;
+    "1_etoile": number;
+  };
+  avis: {
+    id_utilisateur : number;
+  }
+}
 
-  const handleOpenForm = () => setIsFormOpen(true);
-  const handleCloseForm = () => setIsFormOpen(false);
+interface AvisBoxProps {
+  sprId: number;
+  id_utilisateur: number;
+}
+
+interface Avis{
+  id: number;
+  titre : string;
+  commentaire: string;
+  note: number;
+  id_utilisateur: number;
+  id_spr: number;
+  created_at: string;
+}
+
+
+
+const AvisBox: React.FC<AvisBoxProps> = ({ sprId , id_utilisateur }) => {
+  
+   const [isFormOpen, setIsFormOpen] = useState(false); // État pour contrôler l'ouverture du formulaire
+   const handleOpenForm = () => setIsFormOpen(true);
+   const handleCloseForm = () => setIsFormOpen(false);
+
+  const [avis, setAvis] = useState<Avis[]>([]);
+  const [moyenneNotes, setMoyenneNotes] = useState<SPRResponse['moyenne_notes'] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(3); // Nouvel état pour la pagination
+
+
+  //Récuperation des avis avec l'ID du spr
+  useEffect(() => {
+    const fetchAvis = async () => {
+      try {
+        const response: SPRResponse = await fetchSPRById(sprId);
+        if (response?.spr) {
+          setAvis(response.spr.avis);
+          setMoyenneNotes(response.moyenne_notes);
+        }
+      } catch (error) {
+        console.error("Erreur:", error);
+        setError("Impossible de charger les avis");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAvis();
+  }, [sprId]);
+
+  if (loading) return <p>Chargement des avis...</p>;
+  if (error) return <Typography color="error">{error}</Typography>;
+
 
   return (
     <>
@@ -17,7 +83,7 @@ function AvisBox() {
         onClick={handleOpenForm}
         sx={{
           width: "20%",
-          height: "5%",
+          height: "50px",
           borderRadius: "50px",
           backgroundColor: "#FCFAF9",
           color: "#407E76",
@@ -26,9 +92,10 @@ function AvisBox() {
           alignSelf: "flex-end",
           fontSize: "small",
           fontWeight: 500,
+          marginBottom: "16px", // Added margin bottom
           "&:hover": {
-            backgroundColor: "#407E76",
-            color: "#FCFAF9",
+        backgroundColor: "#407E76",
+        color: "#FCFAF9",
           },
         }}
       >
@@ -57,7 +124,7 @@ function AvisBox() {
         >
           <Typography id="modal-form-title" variant="h6">
           </Typography>
-          <FormulaireAvis onClose={handleCloseForm} />
+          <FormulaireAvis onClose={handleCloseForm} sprId = {sprId} id_utilisateur = {id_utilisateur}  />
         </Box>
       </Modal>
 
@@ -70,9 +137,44 @@ function AvisBox() {
           marginLeft: "auto",
         }}
       >
-        <CardAvis />
-        <CardAvis />
-        <CardAvis />
+        {avis.length === 0 ? (
+        <Typography>Aucun avis disponible</Typography>
+      ) : (
+         <>
+            {/* Affichage des avis avec pagination */}
+            {avis.slice(0, visibleCount).map((avis) => (
+              <CardAvis
+                key={avis.id}
+                titre={avis.titre}
+                commentaire={avis.commentaire}
+                note={avis.note}
+                date={avis.created_at}
+              />
+            ))}
+
+            {/* Bouton "Voir plus" */}
+            {avis.length > visibleCount && (
+              <Button
+                variant="outlined"
+                onClick={() => setVisibleCount(prev => prev + 3)}
+                sx={{
+                  alignSelf: "center",
+                  mt: 2,
+                  color: "#407E76",
+                  borderColor: "#407E76",
+                  "&:hover": {
+                    backgroundColor: "#407E76",
+                    color: "#FCFAF9",
+                    borderColor: "#407E76",
+                  },
+                }}
+              >
+                Voir plus d'avis
+              </Button>
+            )}
+          </>
+        )}
+
       </Box>
     </>
   );
