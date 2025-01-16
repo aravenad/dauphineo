@@ -84,5 +84,5 @@ Route::prefix('visites')->group(function() {
     Route::delete('/{id}', [VisiteController::class, 'destroy']);
     Route::get('/utilisateur/{userId}', [VisiteController::class, 'getUserVisites']);
     Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
-    //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
+    Route::get('/disponibilite/{dispoId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });

@@ -66,15 +66,15 @@ class VisiteController extends Controller
     {
 
         $visite = Visite::findOrFail($id);
-        
-            
+
+
         if (!$visite) {
             return response()->json(['message' => 'Visite not found'], 404);
         }
 
             return response()->json($visite, 200);
     }
-    
+
 
     /**
      * @OA\Post(
@@ -117,7 +117,7 @@ class VisiteController extends Controller
 
         $visite = Visite::create($validated);
         return response()->json($visite, 201);
-        
+
     }
 
     /**
@@ -145,7 +145,7 @@ class VisiteController extends Controller
     public function destroy($id)
     {
         $visite = Visite::find($id);
-        
+
         if (!$visite) {
             return response()->json(['message' => 'Visite not found'], 404);
         }
@@ -199,7 +199,7 @@ class VisiteController extends Controller
 
             // Pas besoin de transformer la réponse car chaque réservation est déjà unique
             return response()->json($reservations, 200);
-            
+
         } catch (\Exception $e) {
             Log::error('Error fetching user reservations: ' . $e->getMessage());
             return response()->json([
@@ -233,6 +233,57 @@ class VisiteController extends Controller
 
         if ($visites->isEmpty()) {
             return response()->json(['message' => 'No visits found for this SPR'], 404);
+        }
+
+        return response()->json($visites);
+    }
+    /**
+     * @OA\Get(
+     *     tags={"Visite"},
+     *     path="/api/visites/disponibilite/{dispoId}",
+     *     security={{"bearerAuth": {}}},
+     *     summary="Get all visits for a specific Disponibilite",
+     *     @OA\Parameter(
+     *         name="dispoId",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="id_disponibilite", type="integer"),
+     *                 @OA\Property(property="capacite_actuelle", type="integer"),
+     *                 @OA\Property(property="capacite_max", type="integer"),
+     *                 @OA\Property(property="date_visite", type="string", format="date"),
+     *                 @OA\Property(property="id_spr", type="integer"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No visits found for this Disponibilite",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     )
+     * )
+     */
+
+    public function getVisitesByDisponibilite($dispoId)
+    {
+        $visites = Visite::where('id_disponibilite', $dispoId)->get();
+
+        if ($visites->isEmpty()) {
+            return response()->json(['message' => 'No visits found for this Disponibilite'], 404);
         }
 
         return response()->json($visites);
