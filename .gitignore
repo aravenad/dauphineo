@@ -16,3 +16,8 @@
     backend/tests/.DS_Store
     backend/package-lock.json
     backend/api-docs/
+backend/.env.testing
+
+/node_modules
+package-lock.json
+package.json

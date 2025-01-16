@@ -56,6 +56,7 @@ Route::prefix('avis')->group(function() {
     Route::get('{id}', [AvisController::class, 'show'])->withoutMiddleware([EnsureTokenIsValid::class]);
     Route::post('/', [AvisController::class, 'store']);
     Route::delete('{id}', [AvisController::class, 'destroy']);
+    Route::get('/utilisateur/{userId}', [AvisController::class, 'getUserAvis']);
 });
 
 // Routes for ReservationController
@@ -84,5 +85,5 @@ Route::prefix('visites')->group(function() {
     Route::delete('/{id}', [VisiteController::class, 'destroy']);
     Route::get('/utilisateur/{userId}', [VisiteController::class, 'getUserVisites']);
     Route::get('/spr/{sprId}', [VisiteController::class, 'getVisitesBySpr']);
-    //Route::get('/disponibilite/{disponibiliteId}', [VisiteController::class, 'getVisitesByDisponibilite']);
+    Route::get('/disponibilite/{dispoId}', [VisiteController::class, 'getVisitesByDisponibilite']);
 });
