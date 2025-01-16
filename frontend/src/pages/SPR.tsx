@@ -50,16 +50,34 @@ const SPR: React.FC = () => {
                         sx={{
                             backgroundColor: "#f5f5f5",
                             borderRadius: "16px",
-                            padding: "1em 0.5em",
-                            fontSize: "1.05rem",
-                            marginRight: "0.5em",
+                            padding: "1.05em 0.5em",
+                            fontSize: "1rem",
                             fontWeight: 500,
                             display: "flex",
                             alignItems: "center",
+                            marginRight: "0.5em",
+                            border : "1px solid #e0e0e0"
                         }}
                     />
                 ))}
             </Box>
+        );
+    };
+
+    const renderPMRPill = (isPMR: boolean) => {
+        return (
+            <Chip
+                label={isPMR ? "♿️ • Site adapté aux PMR" : "♿️ • Non adaptés aux PMR"}
+                sx={{
+                    backgroundColor: isPMR ? "#1976ff" : "#e0e0e0",
+                    color: isPMR ? "white" : "#9e9e9e",
+                    textDecoration: isPMR ? "none" : "line-through",
+                    borderRadius: "16px",
+                    padding: "1.05em 0.5em",
+                    fontSize: "1rem",
+                    fontWeight: 500,
+                }}
+            />
         );
     };
 
@@ -149,10 +167,13 @@ const SPR: React.FC = () => {
 
                     {/* Pills pour les mots-clés */}
                     {renderPills(sprData.mot_cle)}
+
+                    {/* Pill PMR */}
+                    <Box sx={{ marginTop: 0 }}>{renderPMRPill(sprData.is_pmr)}</Box>
                 </Box>
 
                 {/* Colonne de droite : SPRMap */}
-                <Box sx={{ flex: "2" }}>
+                <Box sx={{display : "flex", flex: "2", alignItems : "center"}}>
                     <SPRMap commune={sprData.nom_commune} />
                 </Box>
             </Box>
