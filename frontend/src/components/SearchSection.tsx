@@ -1,9 +1,11 @@
 import { Box, Button } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome"; // Icône correspondant à ✨
-import SearchBarCustom from "./mui_custom/SearchBarCustom"; // Correction : import du composant
+import SearchBarCustom from "./mui_custom/SearchBarCustom";
+import Questionnaire from "./Questionnaire.tsx";
+import {useState} from "react"; // Correction : import du composant
 
 // Bouton Questionnaire
-const QuestionnaireButton = () => {
+const QuestionnaireButton: React.FC<{ onOpen: () => void }> = ({ onOpen }) => {
     return (
         <Button
             variant="contained"
@@ -23,7 +25,7 @@ const QuestionnaireButton = () => {
                     backgroundColor: "#f0f0f0",
                 },
             }}
-            onClick={() => alert("Ouverture du questionnaire")}
+            onClick={onOpen}
         >
             <AutoAwesomeIcon sx={{ fontSize: "24px" }} />
         </Button>
@@ -32,6 +34,8 @@ const QuestionnaireButton = () => {
 
 // Section Recherche
 const SearchSection = ({ sprList }: { sprList: any[] }) => {
+    const [isQuestionnaireOpen, setIsQuestionnaireOpen] = useState(false);
+
     return (
         <Box
             sx={{
@@ -90,8 +94,11 @@ const SearchSection = ({ sprList }: { sprList: any[] }) => {
                 />
 
                 {/* Bouton questionnaire */}
-                <QuestionnaireButton />
+                <QuestionnaireButton onOpen={() => setIsQuestionnaireOpen(true)} />
             </Box>
+
+            {/* Pop-up Questionnaire */}
+            {isQuestionnaireOpen && <Questionnaire onClose={() => setIsQuestionnaireOpen(false)} />}
         </Box>
     );
 };
