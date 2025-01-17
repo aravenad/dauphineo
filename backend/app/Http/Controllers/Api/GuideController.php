@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
 use App\Models\Guide;
@@ -10,79 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Tag(
- *     name="Guides",
- *     description="Endpoints for Guide management"
+ *     name="guides",
+ *     description="Endpoints for guides management"
  * )
  */
 class GuideController extends Controller
 {
 
-     /**
-     * @OA\Post(
-     *     path="/api/guides/login",
-     *     tags={"Guides"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Guide login",
-     *     @OA\RequestBody(
-     *         required=true,
-     *          @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 @OA\Property(property="email", type="string", example="john.doe@gmail.com"),
-     *                 @OA\Property(property="mot_de_passe", type="string", example="securepassword123"),
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Guide authenticated",
-     *           @OA\JsonContent(
-     *             type="object",
-     *              @OA\Property(property="message", type="string", example="Login successful"),
-     *                 @OA\Property(property="utilisateur", type="string", example="..."),
-     *                 @OA\Property(property="token", type="string", example="..."),
-     *         )
-     *     )
-     * )
-     */
-    public function login(Request $request) {
-        $data=$request->validate([
-            'email' => 'required|email',
-            'mot_de_passe' => 'required'
-        ]);
-
-        $guide = Guide::where('email', $request['email'])->firstOrFail();
-        
-        if (! $guide || ! Hash::check($data['mot_de_passe'], $guide->mot_de_passe)) {
-            return response(['message' => 'Bad credentials'], 401);
-        }
-        if($guide->tokens()->where('tokenable_id', $guide->id)->exists()) {
-            $guide->tokens()->delete();
-        }
-        $guide->derniere_activite = Carbon::now();
-        $guide->save(); // Sauvegarde les modifications 
-        $expiration = Carbon::now()->addMinutes(60);
-
-        $token = $guide->createToken('auth_token')->plainTextToken;
-
-        $accessToken = $guide->tokens()->latest()->first();
-        $accessToken->expires_at = $expiration;
-        $accessToken->save();
-
-        return response()->json([
-            'message' => 'Login successful',
-            'guide' => $guide,
-            'token' => $token
-        ]);
-
-    }
-
-
     /**
      * @OA\Get(
      *     path="/api/guides/{id}",
-     *     tags={"Guides"},
+     *     tags={"guides"},
      *     security={{"bearerAuth": {}}},
      *     summary="Get specific guide",
      *     @OA\Parameter(
@@ -107,12 +46,10 @@ class GuideController extends Controller
         return response()->json($guide, 200);
     }
 
-
-
     /**
      * @OA\Put(
      *     path="/api/guides/{id}",
-     *     tags={"Guides"},
+     *     tags={"guides"},
      *     security={{"bearerAuth": {}}},
      *     summary="Update guide",
      *     @OA\Parameter(
@@ -168,7 +105,7 @@ class GuideController extends Controller
     /**
      * @OA\Delete(
      *     path="/api/guides/{id}",
-     *     tags={"Guides"},
+     *     tags={"guides"},
      *     security={{"bearerAuth": {}}},
      *     summary="Delete guide",
      *     @OA\Parameter(
@@ -199,7 +136,7 @@ class GuideController extends Controller
     /**
      * @OA\Post(
      *     path="/api/guides",
-     *     tags={"Guides"},
+     *     tags={"guides"},
      *     security={{"bearerAuth": {}}},
      *     summary="Create a guide",
      *     @OA\RequestBody(
@@ -248,7 +185,7 @@ class GuideController extends Controller
             'id_spr' => 'required|exists:spr,id',
             'derniere_activite' => 'nullable|date'
         ]);
-        
+
 
 
         $guide = Guide::create($validated);
@@ -256,117 +193,70 @@ class GuideController extends Controller
     }
 
     /**
- * @OA\Get(
- *     path="/api/guides/{idGuide}/disponibilites",
- *     tags={"Guides"},
- *     security={{"bearerAuth": {}}},
- *     summary="Get guide's disponibilites by guide ID",
- *     @OA\Parameter(
- *         name="idGuide",
- *         in="path",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Success"
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Guide not found"
- *     )
- * )
- */
-public function disponibilitesGuide($idGuide)
-{
-    // Récupérer d'abord les informations du guide
-    $guide = DB::table('guide')
-        ->select('id', 'nom', 'prenom')
-        ->where('id', '=', $idGuide)
-        ->first();
+     * @OA\Get(
+     *     path="/api/guides/{idGuide}/disponibilites",
+     *     tags={"guides"},
+     *     security={{"bearerAuth": {}}},
+     *     summary="Get guide's disponibilites by guide ID",
+     *     @OA\Parameter(
+     *         name="idGuide",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Guide not found"
+     *     )
+     * )
+     */
+    public function disponibilitesGuide($idGuide)
+    {
+        // Récupérer d'abord les informations du guide
+        $guide = DB::table('guide')
+            ->select('id', 'nom', 'prenom')
+            ->where('id', '=', $idGuide)
+            ->first();
 
-    if (!$guide) {
-        return response()->json(['message' => 'Guide non trouvé'], 404);
-    }
+        if (!$guide) {
+            return response()->json(['message' => 'Guide non trouvé'], 404);
+        }
 
-    // Récupérer les disponibilités avec les créneaux
-    $disponibilites = DB::table('disponibilite')
-        ->join('creneaux', 'disponibilite.id_creneaux', '=', 'creneaux.id')
-        ->select(
-            'disponibilite.id',
-            'disponibilite.date_jour',
-            'creneaux.heure_debut',
-            'creneaux.heure_fin'
-        )
-        ->where('disponibilite.id_guide', '=', $idGuide)
-        ->orderBy('disponibilite.date_jour')
-        ->orderBy('creneaux.heure_debut')
-        ->get();
+        // Récupérer les disponibilités avec les créneaux
+        $disponibilites = DB::table('disponibilite')
+            ->join('creneaux', 'disponibilite.id_creneaux', '=', 'creneaux.id')
+            ->select(
+                'disponibilite.id',
+                'disponibilite.date_jour',
+                'creneaux.heure_debut',
+                'creneaux.heure_fin'
+            )
+            ->where('disponibilite.id_guide', '=', $idGuide)
+            ->orderBy('disponibilite.date_jour')
+            ->orderBy('creneaux.heure_debut')
+            ->get();
 
-    if ($disponibilites->isEmpty()) {
+        if ($disponibilites->isEmpty()) {
+            return response()->json([
+                'guide' => [
+                    'nom' => $guide->nom,
+                    'prenom' => $guide->prenom
+                ],
+                'message' => 'Aucune disponibilité trouvée'
+            ], 404);
+        }
+
         return response()->json([
             'guide' => [
+                'id' => $guide->id,
                 'nom' => $guide->nom,
                 'prenom' => $guide->prenom
             ],
-            'message' => 'Aucune disponibilité trouvée'
-        ], 404);
+            'disponibilites' => $disponibilites
+        ], 200);
     }
-
-    return response()->json([
-        'guide' => [
-            'id' => $guide->id,
-            'nom' => $guide->nom,
-            'prenom' => $guide->prenom
-        ],
-        'disponibilites' => $disponibilites
-    ], 200);
-}
-
-/**
-    * @OA\Post(
-    *    path="/api/guides/{idGuide}/disponibilites",
-    *    tags={"Guides"},
-    *     security={{"bearerAuth": {}}},
-    *     summary="Guide logout",
-    *     @OA\Response(
-    *         response=200,
-    *         description="User logged out",
-    *         @OA\JsonContent(
-    *             type="object",
-    *             @OA\Property(property="message", type="string", example="Déconnexion réussie")
-    *         )
-    *     ),
-    *     @OA\Response(
-    *         response=401,
-    *         description="No guide logged in",
-    *         @OA\JsonContent(
-    *             type="object",
-    *             @OA\Property(property="message", type="string", example="Aucun utilisateur connecté")
-    *         )
-    *     )
-    * )
-    */
-
-    public function logout(Request $request)
-    {
-        $guide = $request->Guide();  // Récupère le guide authentifié
-
-        if ($guide) {
-            // Mettre à jour la dernière activité du guide (optionnel)
-            $guide->derniere_activite = Carbon::now();
-            $guide->save();
-    
-            // Supprimer le token actuel du guide
-            //$guide->currentAccessToken()->delete();
-            DB::table('personal_access_tokens')->where('tokenable_id', $guide->id)->delete();
-    
-            return response()->json(['message' => 'Déconnexion réussie']);
-        }
-    
-        return response()->json(['message' => 'Aucun guide connecté'], 401);
-    }
-
-
-
 }
