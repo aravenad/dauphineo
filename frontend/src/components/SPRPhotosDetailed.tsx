@@ -129,7 +129,7 @@ const SPRPhotosDetailed: React.FC<SPRPhotosDetailedProps> = ({ images, selectedI
                         sx={{
                             maxWidth: "90%",
                             width: "auto",
-                            minHeight: "75%",
+                            height:"auto",
                             maxHeight: "80%",
                             objectFit: "contain",
                             borderRadius: "0.5em",
