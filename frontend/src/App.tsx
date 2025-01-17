@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router";
 import { Home, Reglementation, FAQ} from "./pages";
 import { Container } from "@mui/material";
 import SPR from "./pages/SPR.tsx";
+import Explorer from "./pages/Explorer.tsx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
             <Route path="/reglementation" element={<Reglementation />} />
             <Route path="/faq" element={<FAQ/>} />
             <Route path="/spr" element={<SPR />} />
+            <Route path="/explorer" element={<Explorer />} />
         </Routes>
       </Container>
       <Footer />

@@ -71,6 +71,7 @@ Route::prefix('auth')->group(function () {
 
 // Routes for SprController
 Route::prefix('spr')->group(function () {
+    Route::get('top', [SprController::class, 'topSpr']);
     Route::get('/', [SprController::class, 'index']);
     Route::get('{id}', [SprController::class, 'show']);
     Route::get('/{id}/creneaux', [SprController::class, 'getCreneauxBySpr']);

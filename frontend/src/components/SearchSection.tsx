@@ -37,7 +37,7 @@ const SearchSection = ({ sprList }: { sprList: any[] }) => {
             sx={{
                 position: "relative",
                 width: "100%",
-                height: "50vh",
+                height: "55vh",
                 borderRadius: "16px",
                 display: "flex",
                 alignItems: "center",
@@ -86,6 +86,7 @@ const SearchSection = ({ sprList }: { sprList: any[] }) => {
                 <SearchBarCustom
                     placeholder="Des endroits à visiter en Isère"
                     sprList={sprList}
+                    isHeader={false}
                 />
 
                 {/* Bouton questionnaire */}
