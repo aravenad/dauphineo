@@ -4,11 +4,22 @@ import { Drawer, Box, Typography, Button } from "@mui/material";
 interface DrawerDetailsProps {
     open: boolean;
     onClose: () => void;
-    slot: any; // Informations du créneau
-    guide: any; // Informations du guide
+    idVisite: number; // Seule la clé est passée
+    id_spr: number; // ID du SPR courant
+    date: string; // Date validée au format AAAA-MM-JJ
+    heureDebut: string; // Heure de début du créneau
+    heureFin: string; // Heure de fin du créneau
 }
 
-const SliderReservation: React.FC<DrawerDetailsProps> = ({ open, onClose, slot, guide }) => {
+const SliderReservation: React.FC<DrawerDetailsProps> = ({
+         open,
+         onClose,
+         idVisite,
+         date,
+         id_spr,
+         heureDebut,
+         heureFin,
+     }) => {
     return (
         <Drawer
             anchor="right"
@@ -21,19 +32,33 @@ const SliderReservation: React.FC<DrawerDetailsProps> = ({ open, onClose, slot, 
                 },
             }}
         >
-            <Box>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2, // Ajoute un espacement uniforme entre les éléments
+                }}
+            >
                 <Typography variant="h4" gutterBottom>
-                    Détails de la réservation
+                    Détails de la réservation pour le SPR {id_spr}
                 </Typography>
-                <Typography variant="h6" gutterBottom>
-                    Guide : {guide.prenom} {guide.nom}
+
+                <Typography variant="body2" color="text.secondary">
+                    Identifiant de la visite sélectionnée : {idVisite}
                 </Typography>
-                <Typography variant="body1" gutterBottom>
-                    Créneau : {slot.creneaux.heure_debut.slice(0, 5)} - {slot.creneaux.heure_fin.slice(0, 5)}
+
+                <Typography variant="body2" color="text.secondary">
+                    Date : {date}
                 </Typography>
-                <Typography variant="body2" gutterBottom>
-                    Date : {slot.date_jour}
+
+                <Typography variant="body2" color="text.secondary">
+                    Heure de début : {heureDebut}
                 </Typography>
+
+                <Typography variant="body2" color="text.secondary">
+                    Heure de fin : {heureFin}
+                </Typography>
+
                 <Button
                     variant="contained"
                     color="primary"
@@ -43,8 +68,10 @@ const SliderReservation: React.FC<DrawerDetailsProps> = ({ open, onClose, slot, 
                     Fermer
                 </Button>
             </Box>
+
         </Drawer>
     );
 };
 
 export default SliderReservation;
+

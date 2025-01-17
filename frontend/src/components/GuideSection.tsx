@@ -113,7 +113,7 @@ const GuideSection: React.FC<GuideSectionProps> = ({ guides, sprId }) => {
                     }}
                 >
                     {filteredGuides.map((guide) => (
-                        <CardGuide key={guide.id} guide={guide} date={formattedDate} />
+                        <CardGuide key={guide.id} guide={guide} date={formattedDate} id_spr={sprId}/>
                     ))}
                 </Box>
             ) : selectedDate && !dateError ? (

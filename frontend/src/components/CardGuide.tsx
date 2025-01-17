@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Avatar, Card, CardContent, Typography, Divider, Box, Button } from "@mui/material";
-import DrawerDetails from "./SliderReservation.tsx"; // Le nouveau composant Drawer
+import {SliderReservation} from "./index.ts"; // Le nouveau composant Drawer
 
 interface Disponibilite {
     id: number;
@@ -20,18 +20,23 @@ interface Guide {
 interface CardGuideProps {
     guide: Guide; // Objet complet du guide
     date: string; // Date validée au format AAAA-MM-JJ
+    id_spr: number // ID du SPR courant
 }
 
-const CardGuide: React.FC<CardGuideProps> = ({ guide, date }) => {
+const CardGuide = ({ guide, date, id_spr }: CardGuideProps) => {
     const [openDrawer, setOpenDrawer] = useState(false);
-    const [selectedSlot, setSelectedSlot] = useState<Disponibilite | null>(null);
+    const [selectedSlot, setSelectedSlot] = useState<{
+        id: number;
+        heureDebut: string;
+        heureFin: string;
+    } | null>(null); // Inclure id, heure de début et heure de fin
 
     const disponibilitesPourDate = guide.disponibilites.filter(
         (dispo) => dispo.date_jour === date
     );
 
-    const handleSlotClick = (slot: Disponibilite) => {
-        setSelectedSlot(slot);
+    const handleSlotClick = (slot: { id: number; heureDebut: string; heureFin: string }) => {
+        setSelectedSlot(slot); // Enregistrer l'ID et les heures du créneau sélectionné
         setOpenDrawer(true);
     };
 
@@ -73,7 +78,8 @@ const CardGuide: React.FC<CardGuideProps> = ({ guide, date }) => {
                                 backgroundColor: "#f0f0f0",
                             }}
                         >
-                            {guide.nom[0]}{guide.prenom[0]}
+                            {guide.nom[0]}
+                            {guide.prenom[0]}
                         </Avatar>
                     </Box>
                     <Box
@@ -89,7 +95,11 @@ const CardGuide: React.FC<CardGuideProps> = ({ guide, date }) => {
                         <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.1rem" }}>
                             {guide.prenom}
                         </Typography>
-                        <Typography variant="body1" color="text.secondary" sx={{ fontSize: "1rem" }}>
+                        <Typography
+                            variant="body1"
+                            color="text.secondary"
+                            sx={{ fontSize: "1rem" }}
+                        >
                             {guide.nom}
                         </Typography>
                     </Box>
@@ -115,7 +125,13 @@ const CardGuide: React.FC<CardGuideProps> = ({ guide, date }) => {
                             <Button
                                 key={dispo.id}
                                 variant="outlined"
-                                onClick={() => handleSlotClick(dispo)}
+                                onClick={() =>
+                                    handleSlotClick({
+                                        id: dispo.id,
+                                        heureDebut: dispo.creneaux.heure_debut,
+                                        heureFin: dispo.creneaux.heure_fin,
+                                    })
+                                }
                                 sx={{
                                     width: "120px",
                                     margin: "5px 0",
@@ -123,7 +139,8 @@ const CardGuide: React.FC<CardGuideProps> = ({ guide, date }) => {
                                     textTransform: "none",
                                 }}
                             >
-                                {dispo.creneaux.heure_debut.slice(0, 5)} - {dispo.creneaux.heure_fin.slice(0, 5)}
+                                {dispo.creneaux.heure_debut.slice(0, 5)} -{" "}
+                                {dispo.creneaux.heure_fin.slice(0, 5)}
                             </Button>
                         ))
                     ) : (
@@ -144,11 +161,14 @@ const CardGuide: React.FC<CardGuideProps> = ({ guide, date }) => {
 
             {/* Drawer */}
             {openDrawer && selectedSlot && (
-                <DrawerDetails
+                <SliderReservation
                     open={openDrawer}
                     onClose={() => setOpenDrawer(false)}
-                    slot={selectedSlot}
-                    guide={guide}
+                    idVisite={selectedSlot.id}
+                    date={date}
+                    id_spr={id_spr}
+                    heureDebut={selectedSlot.heureDebut}
+                    heureFin={selectedSlot.heureFin}
                 />
             )}
         </>

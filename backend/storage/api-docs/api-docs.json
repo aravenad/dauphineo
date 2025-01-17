@@ -191,6 +191,38 @@
                 ]
             }
         },
+        "/api/avis/utilisateur/{userId}": {
+            "get": {
+                "tags": [
+                    "Avis"
+                ],
+                "summary": "Get all reviews associated with a specific user",
+                "operationId": "aff492ee81045b4b56c90a312b459321",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "No reviews found for this user"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/creneaux/{id_spr}": {
             "get": {
                 "tags": [
@@ -1647,6 +1679,89 @@
                     }
                 ]
             }
+        },
+        "/api/visites/disponibilite/{dispoId}": {
+            "get": {
+                "tags": [
+                    "Visite"
+                ],
+                "summary": "Get all visits for a specific Disponibilite",
+                "operationId": "2e8ffce3fe435c51ba8bf18e59e5876b",
+                "parameters": [
+                    {
+                        "name": "dispoId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "id_disponibilite": {
+                                                "type": "integer"
+                                            },
+                                            "capacite_actuelle": {
+                                                "type": "integer"
+                                            },
+                                            "capacite_max": {
+                                                "type": "integer"
+                                            },
+                                            "date_visite": {
+                                                "type": "string",
+                                                "format": "date"
+                                            },
+                                            "id_spr": {
+                                                "type": "integer"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No visits found for this Disponibilite",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1690,6 +1805,10 @@
         {
             "name": "Visite",
             "description": "API Endpoints for Managing Visits"
+        },
+        {
+            "name": "Avis",
+            "description": "Avis"
         }
     ]
 }
