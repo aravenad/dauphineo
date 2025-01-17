@@ -22,6 +22,7 @@ class DisponibilitesController extends Controller
      * @OA\Get(
      *     path="/api/disponibilites/{id_guide}/{id_spr}",
      *     tags={"disponibilites"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Get availabilities filtered by guide and SPR",
      *     @OA\Parameter(
      *         name="id_guide",
@@ -78,6 +79,7 @@ class DisponibilitesController extends Controller
      * @OA\Post(
      *     path="/api/disponibilites",
      *     tags={"disponibilites"},
+     *     security={{"bearerAuth": {}}},
      *     summary="Create a new availability",
      *     @OA\Response(
      *         response=201,

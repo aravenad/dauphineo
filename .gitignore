@@ -1,11 +1,14 @@
-    /.idea
-    /bd_sae
-    /.idea/workspace.xml
-    /backend/package-lock.json
-    bd_sae/insert_sae.sql
-    backend/.env.testing
-    backend/storage/api-docs/api-docs.json
-    .env.DS_Store
-.idea/
-backend/package-lock.json
-backend/api-docs/
+/.idea
+/bd_sae
+/.idea/workspace.xml
+/backend/package-lock.json
+bd_sae/insert_sae.sql
+backend/.env.testing
+backend/storage/api-docs/api-docs.json
+.env
+
+backend/.env.testing
+
+/node_modules
+package-lock.json
+package.json
