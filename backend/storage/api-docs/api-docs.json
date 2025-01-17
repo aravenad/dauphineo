@@ -5,7 +5,143 @@
         "description": "API documentation",
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
     "paths": {
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "securepassword123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "user": {
+                                            "type": "string",
+                                            "example": "..."
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User registration",
+                "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "prenom": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "lilya.doe@example.com"
+                                    },
+                                    "mot_de_passe": {
+                                        "type": "string",
+                                        "example": "securepassword123"
+                                    },
+                                    "verif_age": {
+                                        "type": "string",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "nom": {
+                                            "type": "string",
+                                            "example": "Doe"
+                                        },
+                                        "prenom": {
+                                            "type": "string",
+                                            "example": "John"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "john.doe@example.com"
+                                        },
+                                        "pseudo": {
+                                            "type": "string",
+                                            "example": "Jdu59"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "..."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/avis": {
             "post": {
                 "tags": [
@@ -63,10 +199,6 @@
                                         "note": {
                                             "type": "integer",
                                             "example": "5"
-                                        },
-                                        "id_utilisateur": {
-                                            "type": "integer",
-                                            "example": "1"
                                         },
                                         "id_spr": {
                                             "type": "integer",
@@ -191,86 +323,6 @@
                 ]
             }
         },
-        "/api/creneaux/{id_spr}": {
-            "get": {
-                "tags": [
-                    "creneaux"
-                ],
-                "summary": "Retrieve slots for the given SPR",
-                "operationId": "7d0db5dbd77ae1aaa9c6f957e04484a0",
-                "parameters": [
-                    {
-                        "name": "id_spr",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of slots for the specified SPR",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "description": "ID of the creneau",
-                                                "type": "integer",
-                                                "example": 1
-                                            },
-                                            "heure_debut": {
-                                                "description": "Start time of the creneau",
-                                                "type": "string",
-                                                "format": "time",
-                                                "example": "08:00:00"
-                                            },
-                                            "heure_fin": {
-                                                "description": "End time of the creneau",
-                                                "type": "string",
-                                                "format": "time",
-                                                "example": "09:00:00"
-                                            },
-                                            "id_spr": {
-                                                "description": "ID of the associated SPR",
-                                                "type": "integer",
-                                                "example": 1
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "SPR not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "SPR not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/disponibilites/{id_guide}/{id_spr}": {
             "get": {
                 "tags": [
@@ -347,7 +399,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/disponibilites": {
@@ -403,7 +460,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/disponibilites/{id}": {
@@ -435,70 +497,10 @@
                 ]
             }
         },
-        "/api/guides/login": {
-            "post": {
-                "tags": [
-                    "Guides"
-                ],
-                "summary": "Guide login",
-                "operationId": "043770965b8edcc73e87041dbdcdf575",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "example": "john.doe@gmail.com"
-                                    },
-                                    "mot_de_passe": {
-                                        "type": "string",
-                                        "example": "securepassword123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Guide authenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login successful"
-                                        },
-                                        "utilisateur": {
-                                            "type": "string",
-                                            "example": "..."
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "..."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/guides/{id}": {
             "get": {
                 "tags": [
-                    "Guides"
+                    "guides"
                 ],
                 "summary": "Get specific guide",
                 "operationId": "b5e28f5e61a230f277e66237e624bd4a",
@@ -528,7 +530,7 @@
             },
             "put": {
                 "tags": [
-                    "Guides"
+                    "guides"
                 ],
                 "summary": "Update guide",
                 "operationId": "0da0bff6a392f3a27f28c82be761b8e3",
@@ -600,7 +602,7 @@
             },
             "delete": {
                 "tags": [
-                    "Guides"
+                    "guides"
                 ],
                 "summary": "Delete guide",
                 "operationId": "95e5a0413d0cc74096227fb30170906d",
@@ -629,7 +631,7 @@
         "/api/guides": {
             "post": {
                 "tags": [
-                    "Guides"
+                    "guides"
                 ],
                 "summary": "Create a guide",
                 "operationId": "515b2b4b125bc305909b67c8bf4e5dd3",
@@ -735,7 +737,7 @@
         "/api/guides/{idGuide}/disponibilites": {
             "get": {
                 "tags": [
-                    "Guides"
+                    "guides"
                 ],
                 "summary": "Get guide's disponibilites by guide ID",
                 "operationId": "02e9314782ae053c63e127752b7198cb",
@@ -762,52 +764,6 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "post": {
-                "tags": [
-                    "Guides"
-                ],
-                "summary": "Guide logout",
-                "operationId": "251978303b77c840ec10d680de35072b",
-                "responses": {
-                    "200": {
-                        "description": "User logged out",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Déconnexion réussie"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "No guide logged in",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Aucun utilisateur connecté"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/api/reservations": {
@@ -816,53 +772,21 @@
                     "reservation"
                 ],
                 "summary": "Store a new reservation",
-                "description": "This endpoint allows users to create a new reservation.",
                 "operationId": "4f59911f11563f79b4f01bd02222607d",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "date",
-                                    "heure",
-                                    "prix",
-                                    "statut_reservation",
-                                    "statut_paiement",
-                                    "taille",
-                                    "id_utilisateur"
-                                ],
                                 "properties": {
-                                    "date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2025-01-07"
-                                    },
-                                    "heure": {
-                                        "type": "string",
-                                        "format": "time",
-                                        "example": "14:30:00"
-                                    },
                                     "prix": {
                                         "type": "number",
                                         "format": "float",
-                                        "example": 50.75
-                                    },
-                                    "statut_reservation": {
-                                        "type": "string",
-                                        "example": "confirmée"
-                                    },
-                                    "statut_paiement": {
-                                        "type": "string",
-                                        "example": "payé"
+                                        "example": 10.99
                                     },
                                     "taille": {
                                         "type": "integer",
                                         "example": 3
-                                    },
-                                    "id_utilisateur": {
-                                        "type": "integer",
-                                        "example": 1
                                     },
                                     "id_visite": {
                                         "type": "integer",
@@ -916,54 +840,6 @@
                 ]
             }
         },
-        "/api/reservations/{id}": {
-            "put": {
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Update the status of a reservation",
-                "operationId": "decff4da6a5998aa55b14bcd1037fd6a",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "statut_reservation": {
-                                        "type": "string",
-                                        "example": "annulé"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/spr": {
             "get": {
                 "tags": [
@@ -975,12 +851,7 @@
                     "200": {
                         "description": "Success"
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/spr/{id}": {
@@ -1004,12 +875,82 @@
                     "200": {
                         "description": "Success"
                     }
-                },
-                "security": [
+                }
+            }
+        },
+        "/api/spr/{id}/creneaux": {
+            "get": {
+                "tags": [
+                    "SPR"
+                ],
+                "summary": "Retrieve slots a the given SPR",
+                "operationId": "b3d929d00da75c708cf2403c7fd460fd",
+                "parameters": [
                     {
-                        "bearerAuth": []
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of slots for the specified SPR",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "ID of the creneau",
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "heure_debut": {
+                                                "description": "Start time of the creneau",
+                                                "type": "string",
+                                                "format": "time",
+                                                "example": "08:00:00"
+                                            },
+                                            "heure_fin": {
+                                                "description": "End time of the creneau",
+                                                "type": "string",
+                                                "format": "time",
+                                                "example": "09:00:00"
+                                            },
+                                            "id_spr": {
+                                                "description": "ID of the associated SPR",
+                                                "type": "integer",
+                                                "example": 1
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "SPR not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "SPR not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/spr/top": {
@@ -1031,165 +972,13 @@
                 ]
             }
         },
-        "/api/utilisateur/login": {
-            "post": {
-                "tags": [
-                    "utilisateur"
-                ],
-                "summary": "User login",
-                "operationId": "463d344173361981a7e22e4552633c85",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "example": "john.doe@gmail.com"
-                                    },
-                                    "mot_de_passe": {
-                                        "type": "string",
-                                        "example": "securepassword123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "User authenticated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login successful"
-                                        },
-                                        "utilisateur": {
-                                            "type": "string",
-                                            "example": "..."
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "..."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/utilisateur/register": {
-            "post": {
-                "tags": [
-                    "utilisateur"
-                ],
-                "summary": "User registration",
-                "operationId": "35d859171ef18b285b0e80fa43a26d7d",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "nom": {
-                                        "type": "string",
-                                        "example": "Doe"
-                                    },
-                                    "prenom": {
-                                        "type": "string",
-                                        "example": "John"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "lilya.doe@example.com"
-                                    },
-                                    "mot_de_passe": {
-                                        "type": "string",
-                                        "example": "securepassword123"
-                                    },
-                                    "verif_age": {
-                                        "type": "string",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "User registered successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "nom": {
-                                            "type": "string",
-                                            "example": "Doe"
-                                        },
-                                        "prenom": {
-                                            "type": "string",
-                                            "example": "John"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "john.doe@example.com"
-                                        },
-                                        "pseudo": {
-                                            "type": "string",
-                                            "example": "Jdu59"
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "..."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/utilisateur/{id}": {
+        "/api/utilisateur": {
             "get": {
                 "tags": [
                     "utilisateur"
                 ],
                 "summary": "Show one user",
-                "operationId": "0873a0f9719ccfad3ddaf09d472f55fc",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    }
-                ],
+                "operationId": "da73fb8d5a30567b61e26dcae3a14ae9",
                 "responses": {
                     "200": {
                         "description": "User found",
@@ -1247,18 +1036,7 @@
                     "utilisateur"
                 ],
                 "summary": "Update user",
-                "operationId": "c3ce9c4edf3be31d6bf73e7591a666f0",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    }
-                ],
+                "operationId": "b5f87704c2d51bda89e30f75e9ee4993",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1348,18 +1126,7 @@
                     "utilisateur"
                 ],
                 "summary": "Delete one user",
-                "operationId": "11d1b4ffb1d4208a4e6f338b0e80591d",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1
-                        }
-                    }
-                ],
+                "operationId": "519142807cea6590dadccb22495d6345",
                 "responses": {
                     "204": {
                         "description": "User deleted successfully",
@@ -1392,6 +1159,104 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/utilisateur/reservations": {
+            "get": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Fetch user's reservations",
+                "operationId": "ed2b441ca0a1094e2f80433fd874ab9e",
+                "responses": {
+                    "200": {
+                        "description": "User found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "prix": {
+                                            "type": "string",
+                                            "example": "10.99"
+                                        },
+                                        "taille": {
+                                            "type": "string",
+                                            "example": "3"
+                                        },
+                                        "id_utilisateur": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "id_visite": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "id_spr": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "id_guide": {
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "example": "2025-01-14 10:56:02.000"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/utilisateur/visites": {
+            "get": {
+                "tags": [
+                    "utilisateur"
+                ],
+                "summary": "Fetch all user's visits",
+                "operationId": "95fa4f0c58c7897168fca8ad3c38b2d9",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "No visits found for this user"
                     }
                 },
                 "security": [
@@ -1452,7 +1317,7 @@
         "/api/visites": {
             "get": {
                 "tags": [
-                    "Visite"
+                    "visite"
                 ],
                 "summary": "Get all visits",
                 "operationId": "6964aa5d426cefb79ccadb5e9ce063e5",
@@ -1469,7 +1334,7 @@
             },
             "post": {
                 "tags": [
-                    "Visite"
+                    "visite"
                 ],
                 "summary": "Create a new visit",
                 "operationId": "7ebad97f95ff240c8f399fb4d847e860",
@@ -1528,9 +1393,9 @@
         "/api/visites/{id}": {
             "get": {
                 "tags": [
-                    "Visite"
+                    "visite"
                 ],
-                "summary": "Get a specific visit",
+                "summary": "Fetch one visit",
                 "operationId": "6692b7f4d872a11d82205e32d8b66bf1",
                 "parameters": [
                     {
@@ -1558,7 +1423,7 @@
             },
             "delete": {
                 "tags": [
-                    "Visite"
+                    "visite"
                 ],
                 "summary": "Delete a visit",
                 "operationId": "51521dcfaf993a53461bfe3ecb27c29a",
@@ -1586,67 +1451,6 @@
                     }
                 ]
             }
-        },
-        "/api/visites/utilisateur/{userId}": {
-            "get": {
-                "tags": [
-                    "Visite"
-                ],
-                "summary": "Get all visits associated with a specific user",
-                "operationId": "15d23920f4bbefd355a1e3aae4d85c2f",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    },
-                    "404": {
-                        "description": "No visits found for this user"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/visites/spr/{sprId}": {
-            "get": {
-                "tags": [
-                    "Visite"
-                ],
-                "summary": "Get all visits for a specific SPR",
-                "operationId": "bd19b1500dc79a932ca3c6e251983f70",
-                "parameters": [
-                    {
-                        "name": "sprId",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
         }
     },
     "components": {
@@ -1660,20 +1464,20 @@
     },
     "tags": [
         {
-            "name": "avis",
-            "description": "Endpoints for managing reviews"
+            "name": "auth",
+            "description": "Endpoints for authentication"
         },
         {
-            "name": "creneaux",
-            "description": "Endpoints for slots management"
+            "name": "avis",
+            "description": "Endpoints for managing reviews"
         },
         {
             "name": "disponibilites",
             "description": "Endpoints for availabilities management"
         },
         {
-            "name": "Guides",
-            "description": "Endpoints for Guide management"
+            "name": "guides",
+            "description": "Endpoints for guides management"
         },
         {
             "name": "reservation",
@@ -1688,8 +1492,8 @@
             "description": "Endpoints for utilisateur"
         },
         {
-            "name": "Visite",
-            "description": "API Endpoints for Managing Visits"
+            "name": "visite",
+            "description": "Endpoints for managing visits"
         }
     ]
 }

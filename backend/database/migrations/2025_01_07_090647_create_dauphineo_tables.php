@@ -14,7 +14,7 @@ return new class extends Migration
     {
         // Création des types ENUM
         DB::statement("CREATE TYPE statut_reservation AS ENUM ('confirmee', 'annulee', 'termine')");
-        DB::statement("CREATE TYPE statut_paiement AS ENUM ('paye', 'non_regle', 'en_attente')");
+        DB::statement("CREATE TYPE statut_paiement AS ENUM ('payee', 'non_reglee', 'en_attente')");
 
         // Création de la table SPR
         Schema::create('spr', function (Blueprint $table) {

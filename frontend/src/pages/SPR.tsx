@@ -3,6 +3,7 @@ import { useLocation } from "react-router";
 import { Box, Typography, Button, Chip } from "@mui/material";
 import SPRPhotos from "../components/SPRPhotos.tsx";
 import SPRMap from "../components/SPRMap.tsx";
+import AvisSection from "../components/AvisSection.tsx";
 
 const emojiMap: Record<string, string> = {
     archeologie: "🏺",
@@ -176,6 +177,10 @@ const SPR: React.FC = () => {
                 <Box sx={{display : "flex", flex: "2", alignItems : "center"}}>
                     <SPRMap commune={sprData.nom_commune} />
                 </Box>
+            </Box>
+
+            <Box sx={{ marginTop: "150px" }}>
+                <AvisSection sprId={sprData.id} id_utilisateur={1} />
             </Box>
         </Box>
     );
