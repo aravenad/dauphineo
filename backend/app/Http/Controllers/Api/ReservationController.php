@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use Stripe\PaymentIntent;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
-
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Tag(
@@ -23,21 +23,14 @@ class ReservationController extends Controller
      *     path="/api/reservations",
      *     security={{"bearerAuth": {}}},
      *     summary="Store a new reservation",
-     *     description="This endpoint allows users to create a new reservation.",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *                 required={"date", "heure", "prix", "statut_reservation", "statut_paiement", "taille", "id_utilisateur"},
-     *                 @OA\Property(property="date", type="string", format="date", example="2025-01-07"),
-     *                 @OA\Property(property="heure", type="string", format="time", example="14:30:00"),
-     *                 @OA\Property(property="prix", type="number", format="float", example=50.75),
-     *                 @OA\Property(property="statut_reservation", type="string", example="confirmée"),
-     *                 @OA\Property(property="statut_paiement", type="string", example="payé"),
+     *                 @OA\Property(property="prix", type="number", format="float", example=10.99),
      *                 @OA\Property(property="taille", type="integer", example=3),
-     *                 @OA\Property(property="id_utilisateur", type="integer", example=1),
      *                 @OA\Property(property="id_visite", type="integer", nullable=true, example=1),
      *                 @OA\Property(property="id_spr", type="integer", nullable=true, example=1),
      *                 @OA\Property(property="id_guide", type="integer", nullable=true, example=2)
@@ -61,77 +54,48 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
+        if(!Auth::check()) {
+            return response()->json(['message' => 'Vous devez être connecté pour effectuer votre réservation.'], 401);
+        }
+
         // Validation des données entrantes
-        $data = $request->validate([
-            'date' => 'required|date',
-            'heure' => 'required|date_format:H:i:s',
+        $request->validate([
             'prix' => 'required|numeric|min:0.50',
-            'statut_reservation' => 'required|string|in:confirmée,en cours,annulée',
-            'statut_paiement' => 'required|string|in:payé,en attente,annulé',
             'taille' => 'required|integer|min:1',
-            'id_utilisateur' => 'required|integer|exists:utilisateur,id',
             'id_visite' => 'nullable|integer|exists:visite,id',
-            'id_spr' => 'nullable|integer|exists:spr,id',
-            'id_guide' => 'nullable|integer|exists:guide,id',
+            'id_spr' => 'required|integer|exists:spr,id',
+            'id_guide' => 'required|integer|exists:guide,id',
         ]);
 
-        // Création de la réservation
-        $reservation = Reservation::create($data);
+        // Création de la réservation en base de données
+        $reservation = Reservation::create([
+            'prix' => $request->prix,
+            'taille' => $request->taille,
+            'id_utilisateur' => Auth::id(),
+            'id_visite' => $request->id_visite,
+            'id_spr' => $request->id_spr,
+            'id_guide' => $request->id_guide,
+            'statut_reservation' => 'confirmee',
+            'statut_paiement' => 'en_attente',
+        ]);
 
-        // Retourner une réponse JSON
-        return $reservation;
-    }
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-    /**
-     * @OA\Put(
-     *     tags = {"reservation"},
-     *     path="/api/reservations/{id}",
-     *     security={{"bearerAuth": {}}},
-     *     summary="Update the status of a reservation",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 @OA\Property(property="statut_reservation", type="string", example="annulé")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Not Found"
-     *     )
-     * )
-     */
-    public function updateStatus(Request $request, $id)
-    {
-        // Rechercher la réservation
-        $reservation = Reservation::find($id);
-
-        // if (!$reservation) {
-        //     return response()->json(['message' => 'Reservation not found'], 404);
-        // }
-
-        // // Validation du statut ENUM
-        // $request->validate([
-        //     'statut_reservation' => 'required|string|in:terminé,en cours,annulé'
-        // ]);
-
-        // // Mise à jour du statut
-        // $reservation->statut_reservation = $request->statut_reservation;
-        // $reservation->save();
-
-        // return response()->json(['message' => 'Reservation status updated successfully'], 200);
+        try {
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $request->prix * 100,
+                'currency' => 'eur',
+                'payment_method_types' => ['card'],
+                'description' => 'Réservation ID' . $reservation->id,
+            ]);
+            return response()->json([
+                'message' => 'Reservation created successfully',
+                'clientSecret' => $paymentIntent->client_secret
+            ], 201);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            return response()->json([
+                'message' => 'Payment creation failed'
+            ], 500);
+        }
     }
 }

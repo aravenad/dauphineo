@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Avis;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Tag(
@@ -42,7 +43,6 @@ class AvisController extends Controller
      *              @OA\Property(property="titre", type="string", example="Une expérience inoubliable"),
      *                 @OA\Property(property="commentaire", type="string", example="J'ai visité ce SPR, c'était génial !"),
      *                 @OA\Property(property="note", type="integer", example="5"),
-     *                 @OA\Property(property="id_utilisateur", type="integer", example="1"),
      *                 @OA\Property(property="id_spr", type="integer", example="1"),
      *         )
      *     )
@@ -50,13 +50,18 @@ class AvisController extends Controller
      */
     public function store(Request $request)
     {
+        if(!Auth::check()) {
+            return response()->json(['message' => 'Vous devez être connecté pour laisser un avis.'], 401);
+        }
+
         $data = $request->validate([
             'titre' => 'required|string|max:255',
             'commentaire' => 'required|string',
             'note' => 'required|integer|between:0,5',
-            'id_utilisateur' => 'required|integer',
             'id_spr' => 'required|integer',
         ]);
+
+        $data['id_utilisateur'] = Auth::id();
 
         // Vérification si l'utilisateur a déjà laissé un avis pour ce SPR
         $existingAvis = Avis::where('id_utilisateur', $data['id_utilisateur'])
@@ -135,8 +140,17 @@ class AvisController extends Controller
      */
     public function destroy(string $id)
     {
-        $avis = Avis::findOrFail($id);
-        $avis->delete();
-        return response()->noContent();
+        if(Auth::check()) {
+
+            $userAuthId = Auth::id();
+            $avis = Avis::findOrFail($id);
+
+            if ($userAuthId !== $avis->id_utilisateur) {
+                return response()->json(['message' => 'Vous n\'êtes pas autorisé à supprimer cet avis.'], 403);
+            }
+
+            $avis->delete();
+            return response()->noContent();
+        }
     }
 }

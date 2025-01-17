@@ -7,12 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Hash;
 
 class Utilisateur extends Authenticatable
 {
 
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'utilisateur';
 
 
@@ -28,7 +27,7 @@ class Utilisateur extends Authenticatable
         'email',
         'pseudo',
         'verif_age',
-        'derniere_activite',
+        'derniere_activite'
     ];
 
     /**
@@ -60,5 +59,15 @@ class Utilisateur extends Authenticatable
     public function avis(): HasMany
     {
         return $this->hasMany(Avis::class, 'id_utilisateur');
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class, 'id_utilisateur', 'id');
+    }
+
+    public function getAuthPassword(): string
+    {
+        return $this->mot_de_passe;
     }
 }

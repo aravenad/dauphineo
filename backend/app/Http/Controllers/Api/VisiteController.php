@@ -5,20 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Models\Visite;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 /**
  * @OA\Tag(
- *     name="Visite",
- *     description="API Endpoints for Managing Visits"
+ *     name="visite",
+ *     description="Endpoints for managing visits"
  * )
  */
 class VisiteController extends Controller
 {
     /**
      * @OA\Get(
-     *     tags={"Visite"},
+     *     tags={"visite"},
      *     path="/api/visites",
      *     security={{"bearerAuth": {}}},
      *     summary="Get all visits",
@@ -33,19 +31,15 @@ class VisiteController extends Controller
 
         $visites = Visite::all();
 
-        if (!$visites) {
-            return response()->json(data: ['message' => 'Une erreur est survenue']);
-        }
-
-        return response()->json($visites, 200);
+        return $visites;
     }
 
     /**
      * @OA\Get(
-     *     tags={"Visite"},
+     *     tags={"visite"},
      *     path="/api/visites/{id}",
      *     security={{"bearerAuth": {}}},
-     *     summary="Get a specific visit",
+     *     summary="Fetch one visit",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
@@ -66,19 +60,14 @@ class VisiteController extends Controller
     {
 
         $visite = Visite::findOrFail($id);
-        
-            
-        if (!$visite) {
-            return response()->json(['message' => 'Visite not found'], 404);
-        }
-
-            return response()->json($visite, 200);
+             
+        return $visite;
     }
     
 
     /**
      * @OA\Post(
-     *     tags={"Visite"},
+     *     tags={"visite"},
      *     path="/api/visites",
      *    security={{"bearerAuth": {}}},
      *     summary="Create a new visit",
@@ -122,7 +111,7 @@ class VisiteController extends Controller
 
     /**
      * @OA\Delete(
-     *     tags={"Visite"},
+     *     tags={"visite"},
      *     path="/api/visites/{id}",
      *    security={{"bearerAuth": {}}},
      *     summary="Delete a visit",
@@ -144,97 +133,39 @@ class VisiteController extends Controller
      */
     public function destroy($id)
     {
-        $visite = Visite::find($id);
-        
-        if (!$visite) {
-            return response()->json(['message' => 'Visite not found'], 404);
-        }
+        $visite = Visite::findOrFail($id);
 
         $visite->delete();
 
-        return response()->json(['message' => 'Visite deleted successfully']);
+        return response()->noContent();
     }
 
-    /**
-     * @OA\Get(
-     *     tags={"Visite"},
-     *     path="/api/visites/utilisateur/{userId}",
-     *     security={{"bearerAuth": {}}},
-     *     summary="Get all visits associated with a specific user",
-     *     @OA\Parameter(
-     *         name="userId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="No visits found for this user"
-     *     )
-     * )
-     */
-    public function getUserVisites($userId)
-    {
-        try {
-            // On commence par récupérer toutes les réservations de l'utilisateur
-            $reservations = DB::table('reservation')
-                ->select([
-                    'visite.date_visite',
-                    'spr.nom_commune as nom_spr',
-                    'guide.prenom as prenom_guide'
-                ])
-                ->where('reservation.id_utilisateur', $userId)
-                ->join('guide', 'reservation.id_guide', '=', 'guide.id')
-                ->join('spr', 'reservation.id_spr', '=', 'spr.id')
-                ->join('visite', 'reservation.id_visite', '=', 'visite.id')
-                ->get();
+    // /**
+    //  * @OA\Get(
+    //  *     tags={"visite"},
+    //  *     path="/api/visites/spr/{sprId}",
+    //  *     security={{"bearerAuth": {}}},
+    //  *     summary="Get all visits for a specific SPR",
+    //  *     @OA\Parameter(
+    //  *         name="sprId",
+    //  *         in="path",
+    //  *         required=true,
+    //  *         @OA\Schema(type="integer")
+    //  *     ),
+    //  *     @OA\Response(
+    //  *         response=200,
+    //  *         description="Success"
+    //  *     )
+    //  * )
+    //  */
+    // public function getVisitesBySpr($sprId)
+    // {
+    //     $visites = Visite::where('id_spr', $sprId)->get();
 
-            if ($reservations->isEmpty()) {
-                return response()->json(['message' => 'No reservations found for this user'], 404);
-            }
+    //     if ($visites->isEmpty()) {
+    //         return response()->json(['message' => 'No visits found for this SPR'], 404);
+    //     }
 
-            // Pas besoin de transformer la réponse car chaque réservation est déjà unique
-            return response()->json($reservations, 200);
-            
-        } catch (\Exception $e) {
-            Log::error('Error fetching user reservations: ' . $e->getMessage());
-            return response()->json([
-                'message' => 'Une erreur est survenue',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
-     * @OA\Get(
-     *     tags={"Visite"},
-     *     path="/api/visites/spr/{sprId}",
-     *     security={{"bearerAuth": {}}},
-     *     summary="Get all visits for a specific SPR",
-     *     @OA\Parameter(
-     *         name="sprId",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     )
-     * )
-     */
-    public function getVisitesBySpr($sprId)
-    {
-        $visites = Visite::where('id_spr', $sprId)->get();
-
-        if ($visites->isEmpty()) {
-            return response()->json(['message' => 'No visits found for this SPR'], 404);
-        }
-
-        return response()->json($visites);
-    }
+    //     return response()->json($visites);
+    // }
 }
