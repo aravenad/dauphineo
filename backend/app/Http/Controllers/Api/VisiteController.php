@@ -63,7 +63,7 @@ class VisiteController extends Controller
              
         return $visite;
     }
-    
+
 
     /**
      * @OA\Post(
@@ -106,7 +106,7 @@ class VisiteController extends Controller
 
         $visite = Visite::create($validated);
         return response()->json($visite, 201);
-        
+
     }
 
     /**
