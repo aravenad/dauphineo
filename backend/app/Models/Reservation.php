@@ -67,4 +67,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(Visite::class, 'id_visite');
     }
+
+    public function utilisateur()
+    {
+        return $this->belongsTo(Utilisateur::class, 'id_utilisateur', 'id');
+    }
 }

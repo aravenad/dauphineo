@@ -13,6 +13,12 @@ namespace App\Http\Controllers;
  *   type="http",
  *   scheme="bearer",
  *   bearerFormat="JWT"
+ * ), 
+ * @OA\SecurityRequirement(
+ *   securityScheme="bearerAuth"
+ * ),
+ * @OA\Server(
+ *   url="http://localhost:8000",
  * )
  */
 abstract class Controller

@@ -14,7 +14,7 @@ return new class extends Migration
     {
         // Création des types ENUM
         DB::statement("CREATE TYPE statut_reservation AS ENUM ('confirmee', 'annulee', 'termine')");
-        DB::statement("CREATE TYPE statut_paiement AS ENUM ('payee', 'non_reglee', 'en_attente')");
+        DB::statement("CREATE TYPE statut_paiement AS ENUM ('paye', 'non_regle', 'en_attente')");
 
         // Création de la table SPR
         Schema::create('spr', function (Blueprint $table) {
@@ -26,6 +26,8 @@ return new class extends Migration
             $table->text('mot_cle')->notNullable();
             $table->boolean('is_pmr')->notNullable();
             $table->time('temps_de_visite')->notNullable();
+            $table->text('description')->notNullable();
+            $table->string('carte', 255)->notNullable();
         });
 
         // Création de la table IMAGES
