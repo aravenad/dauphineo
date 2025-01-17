@@ -23,10 +23,10 @@ export const createUser = async (userData: any) => {
 };
 
 // Fonction pour connecter un utilisateur
-export const loginUser = async (userData: { email: string; mot_de_passe: string }) => {
+export const loginUser = async (userData: { email: string; password: string }) => {
   try {
     console.log("Données envoyées :", userData);
-    const response = await axiosInstance.post("/utilisateur/login", userData);
+    const response = await axiosInstance.post("/auth/login", userData);
     console.log(response.data);
     // Traite et retourne les données si la requête réussit
     return response.data;
@@ -34,3 +34,27 @@ export const loginUser = async (userData: { email: string; mot_de_passe: string 
     throw error; // Relève l'erreur pour être gérée dans le composant
   }
 };
+
+// Fonction pour déconnecter un utilisateur
+
+export const logoutUser = async (token: string) => {
+  try {
+    const response = await axiosInstance.post(
+        "/utilisateur/logout",  // Remplacez ceci par l'URL de votre endpoint de déconnexion
+        {},  // Aucun corps de requête si l'API ne l'exige pas
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`, // Ajout du token Bearer dans l'en-tête
+          },
+        }
+    );
+
+    // Vous pouvez traiter la réponse ici si nécessaire
+    return response.data; // Retourne les données de la réponse de l'API
+  } catch (error) {
+    console.error("Erreur API lors de la déconnexion", error);
+    throw error; // Vous pouvez aussi gérer l'erreur en affichant un message à l'utilisateur
+  }
+};
+
+

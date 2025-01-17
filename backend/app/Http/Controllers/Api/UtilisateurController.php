@@ -273,7 +273,7 @@ class UtilisateurController extends Controller
     {
         $user = $request->user();
 
-        if (Auth::check()) {
+         if (Auth::check()) {
 
             $user->tokens->each(function ($token) {
                 $token->delete();

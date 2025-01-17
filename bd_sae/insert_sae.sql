@@ -10,8 +10,8 @@
 --DELIMITER ';' CSV HEADER;
 
 
-\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite, courte_description, longue_description) FROM '/Users/nael/Desktop/Dauphinéo/rendus/bd_sae/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER;
-\copy IMAGES(id,image_url,id_spr) FROM '/Users/nael/Desktop/Dauphinéo/rendus/bd_sae/images.csv' DELIMITER ';' CSV HEADER;
+\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite, courte_description, longue_description) FROM 'C:\Users\axelt\WebstormProjects\rendus\bd_sae\sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER ENCODING 'UTF8';
+\copy IMAGES(id,image_url,id_spr) FROM 'C:\Users\axelt\WebstormProjects\rendus\bd_sae\images.csv' DELIMITER ';' CSV HEADER ENCODING 'UTF8';
 
 INSERT INTO UTILISATEUR (nom, prenom, mot_de_passe, email, pseudo, verif_age, derniere_activite)
 VALUES 

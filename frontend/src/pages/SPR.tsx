@@ -23,6 +23,8 @@ const SPR: React.FC = () => {
 
     if (!sprData) {
         return <Typography>Aucune donnée disponible pour ce SPR.</Typography>;
+    } else{
+        console.log(sprData)
     }
 
     const capitalizeWords = (str: string) => {
