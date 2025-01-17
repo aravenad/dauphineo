@@ -26,8 +26,8 @@ return new class extends Migration
             $table->text('mot_cle')->notNullable();
             $table->boolean('is_pmr')->notNullable();
             $table->time('temps_de_visite')->notNullable();
-            $table->text('description')->notNullable();
-            $table->string('carte', 255)->notNullable();
+            $table->text('courte_description');
+            $table->text('longue_description');
         });
 
         // Création de la table IMAGES
