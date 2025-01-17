@@ -5,9 +5,7 @@ import {
   Link,
   Avatar,
   Typography,
-  IconButton,
 } from "@mui/material";
-import { Language } from "@mui/icons-material";
 import LogoVert from "../assets/dauphineo_logo_vert.png";
 import {SearchBarCustom} from "./mui_custom";
 import { ConnexionDialog } from "./index";
@@ -75,14 +73,6 @@ function Header() {
         >
           Explorer
         </Link>
-          <IconButton
-            aria-label="close"
-            sx={(theme) => ({
-              color: theme.palette.common.black,
-            })}
-          >
-            <Language />
-          </IconButton>
         {isLoggedIn ? (
           <Avatar
             sx={{ bgcolor: "info.main", width: 35, height: 35 }}
