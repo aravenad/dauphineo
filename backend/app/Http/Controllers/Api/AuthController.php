@@ -25,11 +25,12 @@ class AuthController extends Controller
     {
 
         $base = "user_";
+        $random_number = rand(100, 999);
 
         // Remove accents and special characters
         $base = preg_replace('/[^A-Za-z0-9]/', '', $base);
 
-        $pseudo = $base . substr(uniqid(), 0, 4);
+        $pseudo = $base . $random_number;
 
 
         return $pseudo;
