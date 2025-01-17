@@ -1,17 +1,5 @@
-
--- SITES_PATRIMONIAUX_REMARQUABLES
---COPY SITE_PATRIMONIAUX_REMARQUABLE(id,code_departement,nom_du_departement,nom_commune,capacite_de_visite,mot_cle,is_pmr,temps_de_visite,image)
---FROM 'C:/Users/ferya/Documents/SAE/sites_patrimoniaux_remarquables.csv'
---DELIMITER ';' CSV HEADER;
-
--- IMAGES
---COPY IMAGES(id,image_url,id_spr)
---FROM 'C:/Users/ferya/Documents/SAE/images.csv'
---DELIMITER ';' CSV HEADER;
-
-
-\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite, courte_description, longue_description) FROM '/Users/tim/Developer/Web/SAE/bd_sae/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER;
-\copy IMAGES(id,image_url,id_spr) FROM '/Users/tim/Developer/Web/SAE/bd_sae/images.csv' DELIMITER ';' CSV HEADER;
+\copy SPR (id, code_departement, nom_du_departement, nom_commune, capacite_de_visite, mot_cle, is_pmr, temps_de_visite, courte_description, longue_description) FROM 'C:/Users/Damien/Desktop/BUT/2A/SAE3.01/Code/rendus/bd_sae/sites_patrimoniaux_remarquables.csv' DELIMITER ';' CSV HEADER  ENCODING 'UTF-8';
+\copy IMAGES(id,image_url,id_spr) FROM 'C:/Users/Damien/Desktop/BUT/2A/SAE3.01/Code/rendus/bd_sae/images.csv' DELIMITER ';' CSV HEADER ENCODING 'UTF-8';
 
 INSERT INTO UTILISATEUR (nom, prenom, mot_de_passe, email, pseudo, verif_age, derniere_activite)
 VALUES 
@@ -22,8 +10,6 @@ INSERT INTO GUIDE (nom, prenom, mot_de_passe, email, pseudo, verif_age, derniere
 VALUES 
 ('Martin', 'Luc', 'guide123', 'luc.martin@example.com', 'lucmartin', TRUE, '2024-01-15 09:00:00', 1),
 ('Rousseau', 'Marie', 'guide456', 'marie.rousseau@example.com', 'marierousseau', TRUE, '2024-02-10 10:30:00', 2);
-
-
 
 INSERT INTO DISPONIBILITE (date_jour, id_guide, id_creneaux)
 VALUES 
@@ -44,8 +30,6 @@ VALUES
 ( 12.0, 'confirmee', 'non_reglee', 2, 1, 2, 3, 2),
 ( 12.0, 'confirmee', 'non_reglee', 2, 1, 2, 3, 2);
 
-
-
 INSERT INTO AVIS (titre, commentaire, note, id_utilisateur, id_spr, created_at)
 VALUES 
 ('Super visite', 'Très belle expérience, guide au top !', 5, 1, 1, CURRENT_TIMESTAMP),
@@ -54,6 +38,3 @@ VALUES
 ('Avis', 'Avis', 2, 1, 3, CURRENT_TIMESTAMP),
 ('Avis', 'Avis', 2, 1, 3, CURRENT_TIMESTAMP),
 ('Avis', 'Avis', 2, 1, 3, CURRENT_TIMESTAMP);
-
-
-

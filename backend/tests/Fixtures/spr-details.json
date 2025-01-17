@@ -1,0 +1,14 @@
+{
+  "spr": [
+    {
+      "name": "SAINT-ANTOINE-L'ABBAYE",
+      "description": "Village médiéval test avec abbaye gothique",
+      "features": {
+        "themes": ["Histoire", "Architecture religieuse"],
+        "activities": ["Visite guidée"],
+        "average_duration": "2-3h",
+        "pmr_accessible": true
+      }
+    }
+  ]
+}
