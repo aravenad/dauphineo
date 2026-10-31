@@ -15,6 +15,13 @@ updates:
     groups:
       mineures:
         update-types: [minor, patch]
+    ignore:
+      # Les types suivent la version de Node de la CI (24), pas la dernière publiée
+      - dependency-name: "@types/node"
+        update-types: [version-update:semver-major]
+      # TypeScript 7 n'a pas encore d'API pour typescript-eslint : rester en 6.0 jusqu'à sa prise en charge
+      - dependency-name: typescript
+        versions: [">=7"]
 
   - package-ecosystem: composer
     directory: /backend
@@ -24,3 +31,8 @@ updates:
     groups:
       mineures:
         update-types: [minor, patch]
+    ignore:
+      # l5-swagger 10 et plus ne lit plus les annotations en docblock : à reprendre avec le passage
+      # à Laravel 13, en convertissant les annotations des contrôleurs en attributs PHP
+      - dependency-name: darkaonline/l5-swagger
+        update-types: [version-update:semver-major]
