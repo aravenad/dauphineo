@@ -164,6 +164,9 @@ d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude es
   heure. En démonstration, un bouton remplace l'e-mail.
 - Chaque réservation et chaque avis ne peut être supprimé que par son auteur. Les places restantes sont décomptées par
   un déclencheur PostgreSQL, ce qui empêche deux réservations simultanées de dépasser la capacité d'une visite.
+- Un compte ne peut pas avoir plus de 5 visites à venir, pour qu'une seule personne ne bloque pas tous les créneaux.
+- Les erreurs de l'API sont rédigées en français (`backend/lang/fr`) et ne révèlent ni le nom des modèles ni le détail
+  d'une erreur interne.
 - L'API n'accepte que l'origine du site (CORS) et renvoie des en-têtes de sécurité (`nosniff`, `frame-ancestors 'none'`,
   HSTS en HTTPS). Le site publié embarque une politique de sécurité du contenu qui n'autorise que ses propres scripts.
 - Les comptes inactifs depuis 3 ans sont supprimés automatiquement par une tâche planifiée.
