@@ -11,7 +11,7 @@
     "require": {
         "php": "^8.2",
         "anthropic-ai/sdk": "^1.3",
-        "darkaonline/l5-swagger": "^9.0",
+        "darkaonline/l5-swagger": "^11.2",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
