@@ -36,9 +36,9 @@ it('classe les SPR les plus réservés et les mieux notés', function () {
     $this->getJson('/api/spr/top')
         ->assertOk()
         ->assertJsonPath('most_visited.0.id', 18)
-        ->assertJsonCount(3, 'most_visited')
+        ->assertJsonCount(4, 'most_visited')
         ->assertJsonPath('best_rated.0.id', 44)
-        ->assertJsonCount(3, 'best_rated');
+        ->assertJsonCount(4, 'best_rated');
 });
 
 it('fournit les descriptions anglaises de chaque SPR', function () {

@@ -17,6 +17,9 @@ use Carbon\Carbon;
  */
 class SprController extends Controller
 {
+    /** Une ligne complète de cartes sur l'accueil en grand écran. */
+    private const TAILLE_CLASSEMENT = 4;
+
     /**
      * @OA\Get(
      *     path="/api/spr",
@@ -117,7 +120,7 @@ class SprController extends Controller
      * @OA\Get(
      *     path="/api/spr/top",
      *     tags={"spr"},
-     *     summary="Get the three most booked and the three best rated SPR",
+     *     summary="Get the four most booked and the four best rated SPR",
      *     @OA\Response(response=200, description="Success")
      * )
      */
@@ -129,7 +132,7 @@ class SprController extends Controller
             ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
             ->orderByDesc('reservations_count')
             ->orderBy('spr.id')
-            ->limit(3)
+            ->limit(self::TAILLE_CLASSEMENT)
             ->get();
 
         $bestRated = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
@@ -138,7 +141,7 @@ class SprController extends Controller
             ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
             ->orderByDesc('average_note')
             ->orderBy('spr.id')
-            ->limit(3)
+            ->limit(self::TAILLE_CLASSEMENT)
             ->get();
 
         return response()->json([
