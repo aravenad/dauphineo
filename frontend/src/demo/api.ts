@@ -2,7 +2,7 @@ import { ApiError } from "../api/erreurs";
 import { lireToken } from "../api/token";
 import type { Api, Avis, Reservation, Utilisateur } from "../api/types";
 import {
-    AVIS_DEMO, COMPTES_DEMO, MOT_DE_PASSE_DEMO, PRIX_PAR_PERSONNE, RESERVATIONS_DEMO, SPR,
+    AVIS_DEMO, COMPTES_DEMO, MAX_A_VENIR_PAR_COMPTE, MOT_DE_PASSE_DEMO, PRIX_PAR_PERSONNE, RESERVATIONS_DEMO, SPR,
     aujourdhui, visitesOuvertes,
 } from "./donnees";
 import { recommander } from "./recommandation";
@@ -272,6 +272,10 @@ const demo: Api = {
         }
         if (placesRestantes(e, visite.id, visite.date_visite, visite.capacite_max) < taille) {
             throw new ApiError(409, "Il ne reste pas assez de places pour cette visite.");
+        }
+        const aVenir = e.reservations.filter((r) => r.id_utilisateur === utilisateur.id && r.date_visite >= aujourdhui()).length;
+        if (aVenir >= MAX_A_VENIR_PAR_COMPTE) {
+            throw new ApiError(422, `Vous avez déjà ${MAX_A_VENIR_PAR_COMPTE} visites à venir. Annulez-en une pour en réserver une autre.`);
         }
         const reservation = {
             id: e.prochainId++,

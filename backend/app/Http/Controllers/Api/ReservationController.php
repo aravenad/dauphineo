@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Models\Utilisateur;
 use App\Models\Visite;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
@@ -35,7 +36,7 @@ class ReservationController extends Controller
      *     ),
      *     @OA\Response(response=201, description="Reservation created"),
      *     @OA\Response(response=409, description="Not enough places left"),
-     *     @OA\Response(response=422, description="Validation error or past visit")
+     *     @OA\Response(response=422, description="Validation error, past visit or too many upcoming reservations")
      * )
      */
     public function store(Request $request)
@@ -52,20 +53,38 @@ class ReservationController extends Controller
         }
 
         try {
-            // Le trigger trigger_reserve_visit_capacity décompte les places ou refuse la réservation
-            $reservation = DB::transaction(fn () => Reservation::create([
-                'prix' => $data['taille'] * Reservation::PRIX_PAR_PERSONNE,
-                'taille' => $data['taille'],
-                'id_utilisateur' => Auth::id(),
-                'id_visite' => $visite->id,
-                'id_spr' => $visite->id_spr,
-                'id_guide' => $visite->disponibilite->id_guide,
-            ]));
+            $reservation = DB::transaction(function () use ($data, $visite) {
+                // Le verrou sur le compte empêche deux requêtes simultanées de dépasser le plafond ensemble
+                Utilisateur::whereKey(Auth::id())->lockForUpdate()->first();
+
+                $aVenir = Reservation::where('id_utilisateur', Auth::id())
+                    ->whereHas('visite', fn ($requete) => $requete->whereDate('date_visite', '>=', Carbon::today()))
+                    ->count();
+                if ($aVenir >= Reservation::MAX_A_VENIR_PAR_COMPTE) {
+                    return null;
+                }
+
+                // Le trigger trigger_reserve_visit_capacity décompte les places ou refuse la réservation
+                return Reservation::create([
+                    'prix' => $data['taille'] * Reservation::PRIX_PAR_PERSONNE,
+                    'taille' => $data['taille'],
+                    'id_utilisateur' => Auth::id(),
+                    'id_visite' => $visite->id,
+                    'id_spr' => $visite->id_spr,
+                    'id_guide' => $visite->disponibilite->id_guide,
+                ]);
+            });
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'Capacité dépassée')) {
                 return response()->json(['message' => 'Il ne reste pas assez de places pour cette visite.'], 409);
             }
             throw $e;
+        }
+
+        if ($reservation === null) {
+            return response()->json([
+                'message' => 'Vous avez déjà '.Reservation::MAX_A_VENIR_PAR_COMPTE.' visites à venir. Annulez-en une pour en réserver une autre.',
+            ], 422);
         }
 
         return response()->json(

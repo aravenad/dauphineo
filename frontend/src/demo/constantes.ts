@@ -5,3 +5,6 @@ export const MOT_DE_PASSE_DEMO = "dauphineo-demo";
 
 /** Reservation::PRIX_PAR_PERSONNE côté Laravel. */
 export const PRIX_PAR_PERSONNE = 12;
+
+/** Reservation::MAX_A_VENIR_PAR_COMPTE côté Laravel. */
+export const MAX_A_VENIR_PAR_COMPTE = 5;

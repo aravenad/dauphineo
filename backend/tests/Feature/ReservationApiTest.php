@@ -37,6 +37,20 @@ it('refuse une réservation au-delà des places restantes', function () {
     expect($visite->fresh()->capacite_actuelle)->toBe($visite->capacite_actuelle);
 });
 
+it('plafonne les réservations à venir d\'un même compte', function () {
+    Sanctum::actingAs(Utilisateur::factory()->create());
+    $visites = Visite::whereDate('date_visite', '>=', today())->where('capacite_actuelle', '>', 0)
+        ->orderBy('date_visite')->orderBy('id')->take(Reservation::MAX_A_VENIR_PAR_COMPTE + 1)->get();
+
+    foreach ($visites->take(Reservation::MAX_A_VENIR_PAR_COMPTE) as $visite) {
+        $this->postJson('/api/reservations', ['id_visite' => $visite->id, 'taille' => 1])->assertCreated();
+    }
+
+    $this->postJson('/api/reservations', ['id_visite' => $visites->last()->id, 'taille' => 1])
+        ->assertUnprocessable()
+        ->assertJsonPath('message', 'Vous avez déjà 5 visites à venir. Annulez-en une pour en réserver une autre.');
+});
+
 it('annule sa réservation et libère les places', function () {
     $utilisateur = Utilisateur::factory()->create();
     Sanctum::actingAs($utilisateur);

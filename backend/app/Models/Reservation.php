@@ -12,6 +12,9 @@ class Reservation extends Model
     /** Prix d'une place, calculé côté serveur. */
     public const PRIX_PAR_PERSONNE = 12.0;
 
+    /** Réservations à venir qu'un compte peut avoir en même temps : le site ne prend pas d'acompte. */
+    public const MAX_A_VENIR_PAR_COMPTE = 5;
+
     protected $table = 'reservation';
 
 

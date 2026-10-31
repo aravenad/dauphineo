@@ -8,7 +8,7 @@ import type { Spr, Visite } from "../api/types";
 /** Mêmes règles que DatabaseSeeder et les triggers PostgreSQL du backend. */
 const JOURS_OUVERTS = 21;
 
-export { MOT_DE_PASSE_DEMO, PRIX_PAR_PERSONNE } from "./constantes";
+export { MAX_A_VENIR_PAR_COMPTE, MOT_DE_PASSE_DEMO, PRIX_PAR_PERSONNE } from "./constantes";
 
 export const COMPTES_DEMO = [
     { nom: "Démo", prenom: "Compte", email: "demo@dauphineo.test", pseudo: "demo" },
