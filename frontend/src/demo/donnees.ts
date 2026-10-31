@@ -2,6 +2,8 @@ import sprCsv from "../../../backend/database/data/spr.csv?raw";
 import imagesCsv from "../../../backend/database/data/images.csv?raw";
 import guidesCsv from "../../../backend/database/data/guides.csv?raw";
 import avisCsv from "../../../backend/database/data/avis.csv?raw";
+import utilisateursCsv from "../../../backend/database/data/utilisateurs.csv?raw";
+import reservationsCsv from "../../../backend/database/data/reservations.csv?raw";
 import { lireCsv } from "./csv";
 import type { Spr, Visite } from "../api/types";
 
@@ -10,19 +12,20 @@ const JOURS_OUVERTS = 21;
 
 export { MAX_A_VENIR_PAR_COMPTE, MOT_DE_PASSE_DEMO, PRIX_PAR_PERSONNE } from "./constantes";
 
-export const COMPTES_DEMO = [
-    { nom: "Démo", prenom: "Compte", email: "demo@dauphineo.test", pseudo: "demo" },
-    { nom: "Dupont", prenom: "Jean", email: "jean.dupont@dauphineo.test", pseudo: "jeandupont" },
-    { nom: "Durand", prenom: "Claire", email: "claire.durand@dauphineo.test", pseudo: "clairedu" },
-    { nom: "Lefèvre", prenom: "Sophie", email: "sophie.lefevre@dauphineo.test", pseudo: "sophiel" },
-];
+export const COMPTES_DEMO = lireCsv(utilisateursCsv).map((ligne) => ({
+    nom: ligne.nom,
+    prenom: ligne.prenom,
+    email: ligne.email,
+    pseudo: ligne.pseudo,
+}));
 
-export const RESERVATIONS_DEMO: [pseudo: string, idSpr: number, taille: number][] = [
-    ["jeandupont", 18, 4], ["clairedu", 18, 2], ["sophiel", 18, 3],
-    ["jeandupont", 13, 2], ["sophiel", 13, 5],
-    ["clairedu", 3, 2], ["demo", 3, 2],
-    ["sophiel", 15, 4],
-];
+/** « rang » : position de la visite parmi celles du SPR, par date puis par créneau. */
+export const RESERVATIONS_DEMO = lireCsv(reservationsCsv).map((ligne) => ({
+    pseudo: ligne.pseudo,
+    id_spr: Number(ligne.id_spr),
+    taille: Number(ligne.taille),
+    rang: Number(ligne.rang),
+}));
 
 const images = lireCsv(imagesCsv).map((ligne) => ({
     id: Number(ligne.id),
@@ -62,6 +65,7 @@ export const AVIS_DEMO = lireCsv(avisCsv).map((ligne) => ({
     note: Number(ligne.note),
     titre: ligne.titre,
     commentaire: ligne.commentaire,
+    il_y_a: Number(ligne.il_y_a),
 }));
 
 interface Creneau {

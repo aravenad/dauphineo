@@ -82,20 +82,13 @@ class DatabaseSeeder extends Seeder
      */
     private function seedUtilisateurs(): array
     {
-        $comptes = [
-            ['Démo', 'Compte', 'demo@dauphineo.test', 'demo'],
-            ['Dupont', 'Jean', 'jean.dupont@dauphineo.test', 'jeandupont'],
-            ['Durand', 'Claire', 'claire.durand@dauphineo.test', 'clairedu'],
-            ['Lefèvre', 'Sophie', 'sophie.lefevre@dauphineo.test', 'sophiel'],
-        ];
-
         $utilisateurs = [];
-        foreach ($comptes as [$nom, $prenom, $email, $pseudo]) {
-            $utilisateurs[$pseudo] = Utilisateur::create([
-                'nom' => $nom,
-                'prenom' => $prenom,
-                'email' => $email,
-                'pseudo' => $pseudo,
+        foreach ($this->csv('utilisateurs.csv') as $ligne) {
+            $utilisateurs[$ligne['pseudo']] = Utilisateur::create([
+                'nom' => $ligne['nom'],
+                'prenom' => $ligne['prenom'],
+                'email' => $ligne['email'],
+                'pseudo' => $ligne['pseudo'],
                 'mot_de_passe' => self::motDePasseDemo(),
                 'verif_age' => true,
                 'derniere_activite' => Carbon::now(),
@@ -146,44 +139,45 @@ class DatabaseSeeder extends Seeder
     }
 
     /**
+     * Les avis sont datés de « il_y_a » jours, pour une liste plus vraisemblable.
+     *
      * @param  array<string, Utilisateur>  $utilisateurs
      */
     private function seedAvis(array $utilisateurs): void
     {
         foreach ($this->csv('avis.csv') as $ligne) {
-            Avis::create([
+            $date = Carbon::now()->subDays((int) $ligne['il_y_a']);
+            Avis::forceCreate([
                 'titre' => $ligne['titre'],
                 'commentaire' => $ligne['commentaire'],
                 'note' => (int) $ligne['note'],
                 'id_utilisateur' => $utilisateurs[$ligne['pseudo']]->id,
                 'id_spr' => (int) $ligne['id_spr'],
+                'created_at' => $date,
+                'updated_at' => $date,
             ]);
         }
     }
 
     /**
-     * Quelques réservations pour alimenter « les plus réservés ».
+     * Des réservations à venir sur plusieurs SPR, pour alimenter « les plus réservés ».
      *
      * @param  array<string, Utilisateur>  $utilisateurs
      */
     private function seedReservations(array $utilisateurs): void
     {
-        $demandes = [
-            ['jeandupont', 18, 4], ['clairedu', 18, 2], ['sophiel', 18, 3],
-            ['jeandupont', 13, 2], ['sophiel', 13, 5],
-            ['clairedu', 3, 2], ['demo', 3, 2],
-            ['sophiel', 15, 4],
-        ];
-
-        foreach ($demandes as [$pseudo, $sprId, $taille]) {
+        foreach ($this->csv('reservations.csv') as $ligne) {
+            $sprId = (int) $ligne['id_spr'];
+            $taille = (int) $ligne['taille'];
+            // « rang » : position de la visite parmi celles du SPR, par date puis par créneau
             $visite = Spr::findOrFail($sprId)->visites()->with('disponibilite')
-                ->orderBy('date_visite')->orderBy('id')->firstOrFail();
+                ->orderBy('date_visite')->orderBy('id')->skip((int) $ligne['rang'])->firstOrFail();
 
             // Le trigger trigger_reserve_visit_capacity retire les places de la visite
             Reservation::create([
                 'prix' => $taille * Reservation::PRIX_PAR_PERSONNE,
                 'taille' => $taille,
-                'id_utilisateur' => $utilisateurs[$pseudo]->id,
+                'id_utilisateur' => $utilisateurs[$ligne['pseudo']]->id,
                 'id_visite' => $visite->id,
                 'id_spr' => $sprId,
                 'id_guide' => $visite->disponibilite->id_guide,

@@ -19,8 +19,8 @@ it('affiche et modifie son profil', function () {
 it('liste ses réservations, ses visites et ses avis', function () {
     Sanctum::actingAs(Utilisateur::where('pseudo', 'jeandupont')->first());
 
-    $this->getJson('/api/utilisateur/reservations')->assertOk()->assertJsonCount(2);
-    $this->getJson('/api/utilisateur/visites')->assertOk()->assertJsonCount(2, 'v_future')->assertJsonCount(0, 'v_passees');
+    $this->getJson('/api/utilisateur/reservations')->assertOk()->assertJsonCount(3);
+    $this->getJson('/api/utilisateur/visites')->assertOk()->assertJsonCount(3, 'v_future')->assertJsonCount(0, 'v_passees');
     $this->getJson('/api/utilisateur/avis')->assertOk()->assertJsonStructure(['*' => ['note', 'spr' => ['nom_commune']]]);
 });
 

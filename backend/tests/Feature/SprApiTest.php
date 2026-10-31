@@ -28,8 +28,8 @@ it('liste les visites à venir d\'un SPR', function () {
         ->json();
 
     expect($visites)->not->toBeEmpty();
-    // Les réservations de démonstration ont retiré 9 places à la première visite
-    expect($visites[0]['capacite_actuelle'])->toBe($visites[0]['capacite_max'] - 9);
+    // La réservation de démonstration de jeandupont a retiré 4 places à la première visite
+    expect($visites[0]['capacite_actuelle'])->toBe($visites[0]['capacite_max'] - 4);
 });
 
 it('classe les SPR les plus réservés et les mieux notés', function () {
@@ -37,6 +37,7 @@ it('classe les SPR les plus réservés et les mieux notés', function () {
         ->assertOk()
         ->assertJsonPath('most_visited.0.id', 18)
         ->assertJsonCount(3, 'most_visited')
+        ->assertJsonPath('best_rated.0.id', 44)
         ->assertJsonCount(3, 'best_rated');
 });
 

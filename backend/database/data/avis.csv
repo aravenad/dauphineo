@@ -1,25 +1,105 @@
-pseudo;id_spr;note;titre;commentaire
-jeandupont;1;5;Super visite;Très belle expérience, le guide connaissait chaque pierre du plateau de Larina.
-clairedu;1;4;Belle découverte;Site passionnant, prévoir de bonnes chaussures pour la montée.
-jeandupont;2;4;Très bien;Visite très intéressante et vue superbe depuis les ruines du château.
-clairedu;2;3;Moyen;Beaucoup de monde le week-end, difficile de bien profiter.
-jeandupont;3;5;Magnifique abbaye;L'abbaye est impressionnante et le musée vaut le détour.
-sophiel;3;5;Incontournable;Un des plus beaux villages de l'Isère, la visite guidée apporte beaucoup.
-sophiel;13;5;Crémieu médiéval;Les halles et les remparts sont superbes, visite très vivante.
-clairedu;13;4;Agréable;Belle balade dans les ruelles, guide sympathique.
-jeandupont;15;4;Grenoble autrement;Parcours urbain riche, on découvre des lieux qu'on ne voit jamais.
-sophiel;18;5;Vienne antique;Le temple d'Auguste et Livie, le théâtre antique : une journée entière ne suffit pas.
-clairedu;18;4;À refaire;Très complet, un peu long pour les enfants.
-sophiel;10;4;Saint-Chef;Fresques romanes remarquables, guide passionné.
-jeandupont;7;3;Correct;Le château est beau mais la visite reste courte.
-sophiel;5;4;Beauvoir-en-Royans;Ruines romantiques et vue sur la vallée de l'Isère.
-sophiel;23;5;Grignan sous le soleil;La terrasse du château et la collégiale, notre guide a fait revivre Madame de Sévigné.
-jeandupont;23;4;Très beau château;Superbe visite, un peu de monde en juillet mais le village vaut le détour.
-clairedu;38;5;Vauban en altitude;Les remparts, la Grande Gargouille, le pont d'Asfeld : une visite passionnante, prévoir de bonnes chaussures.
-jeandupont;38;4;Ça grimpe !;Ville magnifique mais les rues sont raides. Le guide adaptait le rythme au groupe.
-sophiel;44;5;Hors du temps;Les chalets et les cadrans solaires de Saint-Véran sont superbes, et le musée du Soum est émouvant.
-clairedu;27;5;Coup de cœur;Mirmande est un bijou, la vue depuis l'église Sainte-Foy est splendide.
-jeandupont;37;4;Valence méconnue;La Maison des Têtes et le Pendentif, je ne les connaissais pas. Belle balade en ville.
-sophiel;40;4;Cathédrale impressionnante;Notre-Dame-du-Réal est magnifique, et la vue sur Serre-Ponçon depuis le roc aussi.
-clairedu;21;4;Die antique;Les remparts gallo-romains et la porte Saint-Marcel, une visite riche, avec une Clairette à la fin.
-jeandupont;30;3;Intéressant;Le musée de la chaussure est original, le reste de la visite un peu rapide.
+pseudo;id_spr;note;titre;commentaire;il_y_a
+jeandupont;1;5;Super visite;Très belle expérience, le guide connaissait chaque pierre du plateau de Larina.;365
+clairedu;1;4;Belle découverte;Site passionnant, prévoir de bonnes chaussures pour la montée.;300
+jeandupont;2;4;Très bien;Visite très intéressante et vue superbe depuis les ruines du château.;280
+clairedu;2;3;Moyen;Beaucoup de monde le week-end, difficile de bien profiter.;240
+jeandupont;3;5;Magnifique abbaye;L'abbaye est impressionnante et le musée vaut le détour.;330
+sophiel;3;5;Incontournable;Un des plus beaux villages de l'Isère, la visite guidée apporte beaucoup.;200
+sophiel;13;5;Crémieu médiéval;Les halles et les remparts sont superbes, visite très vivante.;150
+clairedu;13;4;Agréable;Belle balade dans les ruelles, guide sympathique.;130
+jeandupont;15;4;Grenoble autrement;Parcours urbain riche, on découvre des lieux qu'on ne voit jamais.;110
+sophiel;18;5;Vienne antique;Le temple d'Auguste et Livie, le théâtre antique : une journée entière ne suffit pas.;260
+clairedu;18;4;À refaire;Très complet, un peu long pour les enfants.;90
+sophiel;10;4;Saint-Chef;Fresques romanes remarquables, guide passionné.;170
+jeandupont;7;3;Correct;Le château est beau mais la visite reste courte.;140
+sophiel;5;4;Beauvoir-en-Royans;Ruines romantiques et vue sur la vallée de l'Isère.;220
+sophiel;23;5;Grignan sous le soleil;La terrasse du château et la collégiale, notre guide a fait revivre Madame de Sévigné.;80
+jeandupont;23;4;Très beau château;Superbe visite, un peu de monde en juillet mais le village vaut le détour.;120
+clairedu;38;5;Vauban en altitude;Les remparts, la Grande Gargouille, le pont d'Asfeld : une visite passionnante, prévoir de bonnes chaussures.;60
+jeandupont;38;4;Ça grimpe !;Ville magnifique mais les rues sont raides. Le guide adaptait le rythme au groupe.;100
+sophiel;44;5;Hors du temps;Les chalets et les cadrans solaires de Saint-Véran sont superbes, et le musée du Soum est émouvant.;30
+clairedu;27;5;Coup de cœur;Mirmande est un bijou, la vue depuis l'église Sainte-Foy est splendide.;200
+jeandupont;37;4;Valence méconnue;La Maison des Têtes et le Pendentif, je ne les connaissais pas. Belle balade en ville.;55
+sophiel;40;4;Cathédrale impressionnante;Notre-Dame-du-Réal est magnifique, et la vue sur Serre-Ponçon depuis le roc aussi.;65
+clairedu;21;4;Die antique;Les remparts gallo-romains et la porte Saint-Marcel, une visite riche, avec une Clairette à la fin.;95
+jeandupont;30;3;Intéressant;Le musée de la chaussure est original, le reste de la visite un peu rapide.;125
+lucasm;1;4;Belle balade archéologique;Le plateau de Larina offre une vue immense sur la plaine. Les explications sur les fouilles sont claires.;41
+emmaw;1;5;Hidden gem;Fascinating site with a guide who made thousands of years of history easy to follow. Great views too.;63
+hugop;2;4;Petit château, grande histoire;Visite courte mais bien menée, le guide répond volontiers aux questions.;25
+inesf;2;2;Déçue;Le site est joli mais il y a peu à voir pour deux heures de visite.;132
+camilleb;3;5;Le trésor de l'abbaye;Le trésor et la salle capitulaire sont superbes. Une des plus belles visites de notre séjour.;18
+thomasm;3;4;Très riche;Beaucoup d'informations, il faut aimer l'histoire religieuse. Le village médiéval autour est charmant.;97
+lucasm;4;4;Fort Barraux;Les bastions et les casemates sont impressionnants, le guide raconte bien la vie des soldats.;54
+lear;4;3;Intéressant mais venté;Visite surtout en extérieur, prévoir une veste. Le fort mérite le détour quand même.;210
+nathang;5;5;Coucher de soleil sur l'Isère;Ruines magnifiques, nous avons pris le créneau de fin de journée et la lumière était parfaite.;33
+camilleb;6;5;Village de carte postale;Les maisons en pierre, les ruelles étroites, le calme : Besse est un vrai voyage dans le temps.;76
+hugop;6;4;Authentique;Très beau village d'altitude. Le groupe de dix était idéal pour circuler dans les ruelles.;290
+inesf;7;5;Pour les fans de Berlioz;Le musée dans sa maison natale est passionnant et notre guide était musicienne, un vrai plus.;14
+thomasm;7;4;Agréable surprise;Je ne connaissais rien à Berlioz, je suis reparti avec l'envie d'écouter la Symphonie fantastique.;158
+lear;8;5;Le Trièves en vrai;Mens est plein de charme et le musée du Trièves explique très bien la vie d'autrefois.;47
+nathang;9;3;Correct;Joli coin de nature, mais la visite manque un peu de rythme.;121
+lucasm;10;5;Fresques incroyables;Les peintures romanes de l'abbatiale sont saisissantes, on ne s'attend pas à ça dans un village.;9
+emmaw;10;4;Beautiful frescoes;The Romanesque paintings are stunning. The tour was in French but the guide kindly summed up in English.;188
+camilleb;11;4;Belle architecture;L'église et les maisons anciennes valent la visite, le guide connaît chaque façade.;65
+hugop;12;5;Sur les pas de Claudel;Visite en tout petit groupe, très intime. Le parc et la tombe du poète sont émouvants.;22
+inesf;12;4;Paisible;Un lieu calme et chargé d'histoire littéraire. Réservez tôt, il n'y a que cinq places.;340
+jeandupont;13;4;Bonne ambiance;Visite vivante des halles et des remparts, idéale en famille.;51
+thomasm;13;5;Ma visite préférée;Les halles du XVe siècle, la montée vers le château Delphinal : Crémieu est superbe.;112
+emmaw;13;5;Lovely medieval town;Charming streets, an amazing old market hall and a very friendly guide.;7
+nathang;14;3;Moyen;Les ruines sont intéressantes mais la zone industrielle autour gâche un peu le paysage.;230
+lear;15;5;Grenoble vue d'en haut;La Bastille, les bulles et la vue sur les trois massifs : un parcours parfait pour découvrir la ville.;28
+camilleb;15;4;Complet;Quatre heures bien remplies entre le musée et la vieille ville. Prévoir des chaussures confortables.;145
+hugop;15;3;Un peu long;Très intéressant mais quatre heures, c'est long avec des enfants.;260
+thomasm;16;3;Sans plus;Ville agréable, mais le parcours n'a rien de très marquant.;199
+inesf;17;4;Les stalles de l'église;Le village est pittoresque et les stalles sculptées de l'église sont remarquables.;84
+lucasm;18;5;Rome au bord du Rhône;Le temple, le théâtre antique et le jardin archéologique : un guide passionnant du début à la fin.;3
+thomasm;18;5;Exceptionnel;Je recommande à tous les amateurs d'histoire antique. Le théâtre est immense.;70
+jeandupont;18;4;Très bien;Visite riche et bien organisée, un peu de marche entre les sites.;180
+emmaw;18;5;A must-see;The Roman temple in the middle of town is breathtaking. Best tour of our trip to the Rhône valley.;36
+nathang;19;4;Le Rhône en toile de fond;Petit village tranquille, la vue sur le fleuve est très belle.;58
+lear;20;3;Original;Pas un centre ancien mais une ville nouvelle : intéressant pour l'architecture en terre, moins pour le charme.;101
+camilleb;20;4;Une autre idée du patrimoine;Le Domaine de la Terre est étonnant, le guide explique bien les choix des urbanistes.;275
+lucasm;21;5;Die et sa Clairette;Visite riche des remparts à la cathédrale, et la dégustation de Clairette en fin de parcours a ravi tout le groupe.;44
+inesf;21;4;Belle cité;Beaucoup de vestiges romains, on sent bien l'histoire de la ville.;167
+hugop;22;4;Village perché;Espeluche est très joli, les ruelles en pierre et la vue sur la Valdaine sont superbes.;19
+clairedu;23;5;Grignan magique;Le château, la collégiale, les ruelles fleuries : tout est beau. Notre guide était excellente.;12
+camilleb;23;5;Madame de Sévigné;Les lettres lues dans les salles du château, une très jolie idée de la guide.;90
+lear;23;3;Trop de monde;Le château est superbe mais en plein été la foule gâche un peu la visite.;300
+thomasm;24;4;Face au Vercors;Vieux village bien restauré, la vue sur les falaises du Vercors est saisissante.;60
+nathang;25;4;Histoire protestante;Livron raconte bien les guerres de Religion, un pan d'histoire que je connaissais mal.;140
+emmaw;26;3;Pleasant walk;A nice old town by the river, but there is not that much to see.;220
+lucasm;27;5;Le plus beau village de la Drôme;Mirmande est sublime, chaque ruelle est une carte postale.;26
+jeandupont;27;4;Ça grimpe mais ça vaut le coup;Les pentes sont raides, mais la vue depuis l'église récompense l'effort.;150
+inesf;28;4;Village étagé;Les maisons empilées sur la colline et les champs de lavande autour : très joli en juillet.;99
+hugop;29;4;Château des Adhémar;Château bien restauré et belles expositions. Le nougat en sortant, évidemment.;31
+sophiel;29;3;Bien sans plus;Le château est intéressant mais la visite de la ville reste rapide.;245
+clairedu;30;4;La chaussure à l'honneur;Le musée international de la chaussure est étonnant, et la collégiale Saint-Barnard très belle.;74
+lear;30;4;Pogne et chaussures;Belle visite, on a fini par une pogne chez un boulanger conseillé par le guide.;128
+camilleb;31;5;Cathédrale magnifique;La cathédrale romane est superbe, et la Maison de la Truffe complète bien la visite.;39
+thomasm;32;4;Les carrières;L'église romane est belle mais ce sont les anciennes carrières qui m'ont le plus marqué.;177
+nathang;33;5;Diane de Poitiers;Le château et son parc sont splendides, et l'histoire de Diane de Poitiers est bien racontée.;23
+hugop;34;3;Petit village;Charmant mais très vite visité, deux heures c'est un peu long.;205
+emmaw;35;5;Peaceful;A tiny hamlet in the hills, quiet and beautiful. Small group, lots of time to ask questions.;81
+inesf;35;4;Hors des sentiers battus;Un hameau isolé et paisible, idéal pour fuir la foule. Accès en voiture un peu sportif.;310
+lucasm;36;4;Vue sur la vallée;Vieux village perché, ruelles calmes, une jolie découverte.;116
+clairedu;37;5;Valence surprenante;Le guide nous a montré la ville sous un autre jour. Le kiosque Peynet en fin de visite, très romantique.;16
+thomasm;37;4;Belle découverte;La Maison des Têtes est étonnante, on passe devant sans la voir d'habitude.;88
+lear;38;5;Cité Vauban;Les remparts, les forts et la vue sur les montagnes : une visite inoubliable.;5
+nathang;38;4;Superbe mais physique;Ville magnifique, mais les pentes et l'altitude se sentent. Prévoir de l'eau.;133
+emmaw;38;5;Breathtaking;UNESCO fortifications in a stunning mountain setting. Our guide was brilliant.;52
+hugop;39;5;Village d'altitude;Cervières a une âme : maisons de bois, chapelles, silence. Un coup de cœur.;67
+camilleb;40;4;Embrun;La cathédrale et son porche sont superbes, la vue sur le lac aussi.;109
+lucasm;41;3;Joli mais dispersé;Les villages sont jolis mais il y a beaucoup de route entre les arrêts.;190
+inesf;42;4;Porte du Queyras;Guillestre est un joli bourg de montagne, l'église vaut vraiment le coup d'œil.;43
+thomasm;42;5;Accueil chaleureux;Guide passionné qui connaît chaque famille du village. Visite très humaine.;160
+nathang;43;2;Décevant;La vue sur la Durance est belle mais il n'y a presque rien à visiter.;95
+jeandupont;44;5;Le toit de l'Europe;Saint-Véran est unique, les cadrans solaires et les fustes en mélèze sont splendides.;20
+lear;44;5;À voir absolument;Le village le plus haut d'Europe tient ses promesses. Le musée du Soum est passionnant.;175
+clairedu;45;4;Serres sur son rocher;Les ruelles médiévales accrochées au rocher ont beaucoup de caractère.;71
+hugop;46;5;Château de Tallard;Le mélange de gothique et de Renaissance est étonnant, et la chapelle est magnifique.;37
+camilleb;46;4;Belle restauration;Château en cours de restauration, le guide explique bien les travaux. Très intéressant.;255
+sophiel;46;1;Sous la pluie;Une pluie battante du début à la fin et aucune solution de repli : nous n'avons presque rien vu du château.;380
+jeandupont;33;4;Beau parc;Le château est élégant et le parc très agréable pour finir la visite.;104
+sophiel;39;4;Le calme des montagnes;Village superbe, mais la route d'accès est longue. On ne regrette pas le détour.;213
+jeandupont;8;4;Bourg plein de vie;Mens est animé et chaleureux, le guide nous a fait entrer dans des cours qu'on ne voit pas seul.;87
+emmaw;31;4;Lovely cathedral;A beautiful Romanesque cathedral and an interesting stop at the truffle museum.;149

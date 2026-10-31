@@ -35,7 +35,7 @@ interface InscriptionDemo {
 }
 
 interface Etat {
-    version: 1;
+    version: 2;
     prochainId: number;
     utilisateurs: UtilisateurDemo[];
     reservations: ReservationDemo[];
@@ -73,7 +73,7 @@ async function etatInitial(): Promise<Etat> {
     const empreinteDemo = await empreinte(MOT_DE_PASSE_DEMO);
     const utilisateurs = COMPTES_DEMO.map((compte, i) => ({ id: i + 1, ...compte, empreinte: empreinteDemo }));
     const idDe = (pseudo: string) => utilisateurs.find((u) => u.pseudo === pseudo)!.id;
-    const maintenant = new Date().toISOString();
+    const jour = 24 * 60 * 60 * 1000;
 
     const avis: Avis[] = AVIS_DEMO.map((ligne, i) => ({
         id: i + 1,
@@ -82,17 +82,17 @@ async function etatInitial(): Promise<Etat> {
         note: ligne.note,
         id_utilisateur: idDe(ligne.pseudo),
         id_spr: ligne.id_spr,
-        created_at: maintenant,
+        created_at: new Date(Date.now() - ligne.il_y_a * jour).toISOString(),
         utilisateur: { id: idDe(ligne.pseudo), pseudo: ligne.pseudo },
     }));
 
-    // Comme le seeder : chaque réservation porte sur la première visite du SPR
-    const reservations = RESERVATIONS_DEMO.map(([pseudo, idSpr, taille], i) => {
-        const visite = visitesOuvertes().find((v) => v.id_spr === idSpr)!;
-        return { id: i + 1, id_utilisateur: idDe(pseudo), id_visite: visite.id, id_spr: idSpr, date_visite: visite.date_visite, taille };
+    // Comme le seeder : les visites du SPR sont déjà rangées par date puis par créneau
+    const reservations = RESERVATIONS_DEMO.map(({ pseudo, id_spr, taille, rang }, i) => {
+        const visite = visitesOuvertes().filter((v) => v.id_spr === id_spr)[rang];
+        return { id: i + 1, id_utilisateur: idDe(pseudo), id_visite: visite.id, id_spr, date_visite: visite.date_visite, taille };
     });
 
-    return { version: 1, prochainId: 1000, utilisateurs, reservations, avis, sessions: {} };
+    return { version: 2, prochainId: 1000, utilisateurs, reservations, avis, sessions: {} };
 }
 
 let etat: Etat | null = null;
@@ -101,7 +101,7 @@ async function charger(): Promise<Etat> {
     if (etat) return etat;
     try {
         const sauvegarde = JSON.parse(localStorage.getItem(CLE) ?? "null") as Etat | null;
-        if (sauvegarde?.version === 1) {
+        if (sauvegarde?.version === 2) {
             etat = sauvegarde;
             return etat;
         }
