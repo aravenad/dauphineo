@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { messageErreur } from "./api";
 
 interface Chargement<T> {
@@ -39,12 +39,34 @@ export function useApi<T>(charger: () => Promise<T>, dependances: unknown[]): Ch
     };
 }
 
-/** Donne à l'onglet le titre de la page, ou celui du site quand il n'est pas encore connu. */
+// Le fil d'Ariane est dessiné hors des pages : il lit ici le titre que la page affichée a choisi
+let titreCourant: string | undefined;
+const abonnes = new Set<() => void>();
+
+function publierTitre(titre: string | undefined) {
+    titreCourant = titre;
+    abonnes.forEach((prevenir) => prevenir());
+}
+
+/** Donne à l'onglet et au fil d'Ariane le titre de la page, ou celui du site quand il n'est pas encore connu. */
 export function useTitre(titre?: string) {
     useEffect(() => {
         document.title = titre ? `${titre} | Dauphinéo` : "Dauphinéo";
+        publierTitre(titre);
         return () => {
             document.title = "Dauphinéo";
+            publierTitre(undefined);
         };
     }, [titre]);
+}
+
+/** Le titre choisi par la page affichée, undefined tant qu'elle charge. */
+export function useTitreCourant(): string | undefined {
+    return useSyncExternalStore(
+        (prevenir) => {
+            abonnes.add(prevenir);
+            return () => abonnes.delete(prevenir);
+        },
+        () => titreCourant,
+    );
 }

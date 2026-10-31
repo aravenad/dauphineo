@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router";
 import { Alert, Box, Container, Skeleton, Typography } from "@mui/material";
 import { Header, Footer } from "./components";
 import RetourEnHaut from "./components/RetourEnHaut";
+import FilAriane from "./components/FilAriane";
 import Home from "./pages/Home";
 import { modeDemo } from "./api";
 import { useTitre } from "./hooks";
@@ -61,6 +62,8 @@ function App() {
                 <Suspense fallback={<Skeleton variant="rounded" height={400} aria-label={t.chargement} />}>
                     {/* La clé recrée le bloc à chaque page, ce qui rejoue son animation d'arrivée */}
                     <Box key={pathname} sx={entree}>
+                        {/* Sur l'accueil, le fil se réduirait à « Accueil » */}
+                        {pathname !== "/" && <FilAriane />}
                         <Routes>
                             <Route path="/" element={<Home />} />
                             <Route path="/reglementation" element={<Reglementation />} />

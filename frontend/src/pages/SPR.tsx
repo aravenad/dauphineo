@@ -1,5 +1,5 @@
-import { Link as RouterLink, useParams } from "react-router";
-import { Alert, Box, Button, Chip, Skeleton, Typography } from "@mui/material";
+import { useParams } from "react-router";
+import { Alert, Box, Chip, Skeleton, Typography } from "@mui/material";
 import AccessibleIcon from "@mui/icons-material/Accessible";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -15,8 +15,8 @@ import { useLangue, useTextes } from "../i18n";
 
 const TEXTES = {
     fr: {
-        retour: "← Retour à la liste des SPR",
         introuvable: "Ce site patrimonial est introuvable.",
+        titreIntrouvable: "Site introuvable",
         description: "Description",
         visite: (d: string) => `Visite de ${d}`,
         capacite: (n: number) => `Jusqu'à ${n} visiteurs par créneau`,
@@ -24,7 +24,7 @@ const TEXTES = {
         nonPmr: "Non adapté aux personnes à mobilité réduite",
     },
     en: {
-        retour: "← Back to the list of sites",
+        titreIntrouvable: "Site not found",
         introuvable: "This heritage site cannot be found.",
         description: "Description",
         visite: (d: string) => `${d} tour`,
@@ -46,18 +46,12 @@ function SPR() {
     // Les descriptions restent en français quand la traduction manque : l'attribut lang suit le texte affiché
     const anglais = langue === "en" && Boolean(spr?.longue_description_en);
 
-    useTitre(nom);
-
-    const retour = (
-        <Button component={RouterLink} to="/explorer" sx={{ color: "text.secondary", textTransform: "none", fontSize: "1rem", mb: 1 }}>
-            {t.retour}
-        </Button>
-    );
+    // Sans titre, le fil d'Ariane attendrait indéfiniment le nom d'un site qui n'existe pas
+    useTitre(spr ? nom : erreur || !chargement ? t.titreIntrouvable : undefined);
 
     if (chargement && !spr) {
         return (
             <Box>
-                {retour}
                 <Skeleton variant="text" width="40%" height={64} />
                 <Skeleton variant="rounded" height={520} sx={{ mt: 2, borderRadius: "1em" }} />
             </Box>
@@ -67,7 +61,6 @@ function SPR() {
     if (erreur || !spr) {
         return (
             <Box>
-                {retour}
                 <Alert severity="error">{erreur ?? t.introuvable}</Alert>
             </Box>
         );
@@ -75,8 +68,6 @@ function SPR() {
 
     return (
         <Box>
-            {retour}
-
             <Typography variant="h3" component="h1" sx={{ fontWeight: "bold" }}>
                 {nom}
             </Typography>
