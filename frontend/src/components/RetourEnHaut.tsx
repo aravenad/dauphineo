@@ -18,7 +18,7 @@ function RetourEnHaut() {
                     size="medium"
                     onClick={remonter}
                     aria-label="Revenir en haut de la page"
-                    sx={{ position: "fixed", right: { xs: 16, md: 32 }, bottom: { xs: 16, md: 32 }, zIndex: "speedDial" }}
+                    sx={{ position: "fixed", right: { xs: 16, md: 32 }, bottom: { xs: 16, md: 32 }, zIndex: "speedDial", "&:hover": { backgroundColor: "info.main", color: "primary.dark" } }}
                 >
                     <KeyboardArrowUpIcon />
                 </Fab>

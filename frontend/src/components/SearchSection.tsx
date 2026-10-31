@@ -86,7 +86,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
             </Box>
 
             <Box sx={{ position: "relative", textAlign: "center", color: "common.white", textShadow: "0 2px 12px rgba(0, 0, 0, 0.35)" }}>
-                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
+                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2rem", sm: "2.6rem", md: "3.75rem" }, hyphens: "manual" }}>
                     Que souhaitez-vous visiter ?
                 </Typography>
                 <Typography fontSize={{ xs: "1.05em", md: "1.3em" }}>Accédez aux sites patrimoniaux remarquables de l'Isère et réservez votre guide</Typography>

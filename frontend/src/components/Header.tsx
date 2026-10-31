@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Avatar, Box, IconButton, Link, ListItemIcon, Menu, MenuItem, Stack, Tooltip } from "@mui/material";
 import { AccountCircleOutlined, Logout } from "@mui/icons-material";
 import { Link as RouterLink, useNavigate } from "react-router";
-import LogoVert from "../assets/dauphineo_logo_vert.png";
+import LogoVert from "../assets/dauphineo_logo.svg";
 import { ButtonCustom, SearchBarCustom } from "./mui_custom";
 import api from "../api";
 import { useApi } from "../hooks";
@@ -15,29 +15,34 @@ function Header() {
     const navigate = useNavigate();
 
     return (
-        <Stack
+        <Box
             component="header"
-            direction={{ xs: "column", md: "row" }}
-            spacing={{ xs: 2, md: 0 }}
             sx={{
-                // Fixée en haut sur grand écran ; sur mobile, l'en-tête sur trois lignes masquerait trop de contenu
+                // Fixée en haut sur grand écran ; sur mobile, l'en-tête sur deux lignes masquerait trop de contenu
                 position: { xs: "static", md: "sticky" },
                 top: 0,
                 zIndex: "appBar",
                 backgroundColor: "background.paper",
-                padding: { xs: "1em", md: "1em 3em", lg: "1em 6em" },
+                padding: { xs: "0.75em 1em 1em", md: "1em 3em", lg: "1em 6em" },
                 borderBottom: "1px solid",
                 borderBottomColor: "rgba(0,0,0,0.2)",
+                display: "flex",
+                // Sur mobile : logo et navigation sur une ligne, recherche en dessous
+                flexWrap: { xs: "wrap", md: "nowrap" },
+                columnGap: 2,
+                rowGap: 1.5,
                 justifyContent: "space-between",
                 alignItems: "center",
-                minHeight: "100px",
+                minHeight: { md: "100px" },
             }}
         >
             <Link component={RouterLink} to="/" aria-label="Dauphinéo, accueil">
-                <Box component="img" src={LogoVert} alt="" sx={{ display: "block", height: "60px" }} />
+                <Box component="img" src={LogoVert} alt="" sx={{ display: "block", height: { xs: "48px", md: "60px" } }} />
             </Link>
 
-            <SearchBarCustom placeholder="Recherche rapide" sprList={sprList ?? []} isHeader />
+            <Box sx={{ order: { xs: 3, md: 0 }, width: { xs: "100%", md: "auto" }, display: "flex", justifyContent: "center" }}>
+                <SearchBarCustom placeholder="Recherche rapide" sprList={sprList ?? []} isHeader />
+            </Box>
 
             <Stack component="nav" direction="row" spacing={3} sx={{ alignItems: "center" }}>
                 <Link component={RouterLink} to="/explorer" variant="body1" sx={{ fontWeight: 500, color: "common.black", textDecoration: "none" }}>
@@ -69,7 +74,7 @@ function Header() {
                     </ButtonCustom>
                 )}
             </Stack>
-        </Stack>
+        </Box>
     );
 }
 

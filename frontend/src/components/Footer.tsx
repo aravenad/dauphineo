@@ -1,7 +1,7 @@
 import { Box, Stack, Typography, Divider, List, ListItem, Link } from "@mui/material";
 import { GitHub } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router";
-import LogoVert from "../assets/dauphineo_logo_vert.png";
+import LogoVert from "../assets/dauphineo_logo.svg";
 
 interface Lien {
   text: string;

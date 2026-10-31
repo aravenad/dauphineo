@@ -34,7 +34,7 @@ function App() {
                 </Alert>
             )}
             <Header />
-            <Container component="main" sx={{ flex: "1 0 auto", padding: "2em" }} disableGutters>
+            <Container component="main" sx={{ flex: "1 0 auto", padding: { xs: "1em", sm: "1.5em", md: "2em" } }} disableGutters>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/reglementation" element={<Reglementation />} />
