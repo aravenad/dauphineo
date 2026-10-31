@@ -7,6 +7,7 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import type { Spr } from "../api";
 import { nomCommune } from "../utils/format";
 import { attributsImage } from "../utils/images";
+import { useImageChargee } from "../animations";
 import MotsCles from "./MotsCles";
 
 interface CardSPRProps {
@@ -42,6 +43,7 @@ function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardS
     // Les photos sont hébergées par des sites tiers : on passe à la suivante si l'une ne répond plus
     const [essai, setEssai] = useState(0);
     const image = spr.images[essai]?.image_url;
+    const { imageProps, style } = useImageChargee();
 
     return (
         <Card sx={{ boxShadow: "none", borderRadius: "1em", height: "100%", backgroundColor: "transparent", overflow: "visible" }}>
@@ -79,7 +81,8 @@ function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardS
                             alt=""
                             loading="lazy"
                             onError={() => setEssai((i) => i + 1)}
-                            sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease" }}
+                            {...imageProps}
+                            sx={{ width: "100%", height: "100%", objectFit: "cover", ...style }}
                         />
                     ) : (
                         <Box sx={{ height: "100%", display: "grid", placeItems: "center", color: "primary.main" }}>

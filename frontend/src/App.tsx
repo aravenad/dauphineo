@@ -6,6 +6,7 @@ import RetourEnHaut from "./components/RetourEnHaut";
 import Home from "./pages/Home";
 import { modeDemo } from "./api";
 import { useTitre } from "./hooks";
+import { entree } from "./animations";
 
 // L'accueil part avec le premier fichier ; les autres pages ne sont téléchargées qu'à la première visite
 const Explorer = lazy(() => import("./pages/Explorer"));
@@ -44,17 +45,20 @@ function App() {
             <Header />
             <Container component="main" sx={{ flex: "1 0 auto", padding: { xs: "1em", sm: "1.5em", md: "2em" } }} disableGutters>
                 <Suspense fallback={<Skeleton variant="rounded" height={400} aria-label="Chargement de la page" />}>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/reglementation" element={<Reglementation />} />
-                        <Route path="/faq" element={<FAQ />} />
-                        <Route path="/spr/:id" element={<SPR />} />
-                        <Route path="/explorer" element={<Explorer />} />
-                        <Route path="/mentions-legales" element={<MentionsLeg />} />
-                        <Route path="/cgu" element={<CGU />} />
-                        <Route path="/mon-compte" element={<MonCompte />} />
-                        <Route path="*" element={<PageIntrouvable />} />
-                    </Routes>
+                    {/* La clé recrée le bloc à chaque page, ce qui rejoue son animation d'arrivée */}
+                    <Box key={pathname} sx={entree}>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/reglementation" element={<Reglementation />} />
+                            <Route path="/faq" element={<FAQ />} />
+                            <Route path="/spr/:id" element={<SPR />} />
+                            <Route path="/explorer" element={<Explorer />} />
+                            <Route path="/mentions-legales" element={<MentionsLeg />} />
+                            <Route path="/cgu" element={<CGU />} />
+                            <Route path="/mon-compte" element={<MonCompte />} />
+                            <Route path="*" element={<PageIntrouvable />} />
+                        </Routes>
+                    </Box>
                 </Suspense>
             </Container>
             <Footer />

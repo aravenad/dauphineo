@@ -164,7 +164,7 @@ d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude es
 - `composer audit` et `npm audit` ne signalent aucune faille dans les dépendances livrées, et Dependabot les tient à
   jour.
 
-### Performance
+### Performance et animations
 
 - Les photos viennent de Wikimedia Commons à la taille qui convient à l'écran (`srcset`) : les 20 vignettes de la page
   Explorer pèsent 0,6 Mo au lieu de 7,2 Mo.
@@ -172,6 +172,8 @@ d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude es
 - La police Satoshi est servie en WOFF2 (25 ko par graisse au lieu de 73 ko) et les deux graisses de l'accueil sont
   préchargées.
 - Le site publié contient une copie de la page par route, pour que les liens partagés répondent 200 et non 404.
+- Les animations (arrivée des pages, cartes en cascade, photos en fondu, barres de notes, en-tête qui se détache au
+  défilement) n'animent que l'opacité et la position, et s'effacent quand le système demande moins de mouvement.
 
 ### Écarts avec le dossier de conception
 

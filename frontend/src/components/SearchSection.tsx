@@ -6,6 +6,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import type { Spr } from "../api";
 import { attributsImage } from "../utils/images";
+import { mouvementReduit } from "../animations";
 import { nomCommune } from "../utils/format";
 import SearchBarCustom from "./mui_custom/SearchBarCustom";
 
@@ -14,10 +15,6 @@ const chargerQuestionnaire = () => import("./Questionnaire");
 const Questionnaire = lazy(chargerQuestionnaire);
 
 const DUREE_DIAPO = 6000;
-
-function mouvementReduit(): boolean {
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 function SearchSection({ sprList }: { sprList: Spr[] }) {
     const [questionnaire, setQuestionnaire] = useState(false);

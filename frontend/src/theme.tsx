@@ -48,7 +48,17 @@ const theme = createTheme({
           src: url(${fichier}) format('woff2');
         }`,
         )
-        .join(""),
+        .join("") +
+        // Quand le système demande moins de mouvement, animations et transitions deviennent instantanées
+        `
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-delay: 0s !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }`,
       
     },
     MuiTypography: {

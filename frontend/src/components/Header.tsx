@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Avatar, Box, IconButton, Link, ListItemIcon, Menu, MenuItem, Stack, Tooltip } from "@mui/material";
+import { Avatar, Box, IconButton, Link, ListItemIcon, Menu, MenuItem, Stack, Tooltip, useScrollTrigger } from "@mui/material";
 import { AccountCircleOutlined, Logout } from "@mui/icons-material";
 import { Link as RouterLink, useNavigate } from "react-router";
 import LogoVert from "../assets/dauphineo_logo.svg";
@@ -13,6 +13,8 @@ function Header() {
     const { donnees: sprList } = useApi(() => api.listSpr(), []);
     const [menu, setMenu] = useState<HTMLElement | null>(null);
     const navigate = useNavigate();
+    // Une ombre détache l'en-tête fixé du contenu qui défile dessous
+    const defile = useScrollTrigger({ disableHysteresis: true, threshold: 8 });
 
     return (
         <Box
@@ -26,6 +28,8 @@ function Header() {
                 padding: { xs: "0.75em 1em 1em", md: "1em 3em", lg: "1em 6em" },
                 borderBottom: "1px solid",
                 borderBottomColor: "rgba(0,0,0,0.2)",
+                boxShadow: { md: defile ? "0 6px 20px rgba(22, 37, 33, 0.12)" : "none" },
+                transition: "box-shadow 0.2s ease",
                 display: "flex",
                 // Sur mobile : logo et navigation sur une ligne, recherche en dessous
                 flexWrap: { xs: "wrap", md: "nowrap" },

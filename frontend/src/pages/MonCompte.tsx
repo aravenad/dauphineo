@@ -12,6 +12,7 @@ import Profil from "../components/Profil";
 import Confidentialite from "../components/Confidentialite";
 import Confirmation from "../components/Confirmation";
 import { ButtonCustom } from "../components/mui_custom";
+import { apparition } from "../animations";
 
 function aVenir(reservation: Reservation): boolean {
     return reservation.date_visite.slice(0, 10) >= new Date().toLocaleDateString("sv-SE");
@@ -151,7 +152,7 @@ function MonCompte() {
                         <Tab key={valeur} value={valeur} label={libelle} icon={icone} iconPosition="start" id={`onglet-${valeur}`} aria-controls={`panneau-${valeur}`} sx={{ textTransform: "none", minHeight: 56 }} />
                     ))}
                 </Tabs>
-                <Box role="tabpanel" id={`panneau-${onglet}`} aria-labelledby={`onglet-${onglet}`} sx={{ p: { xs: 2, md: 4 } }}>
+                <Box key={onglet} role="tabpanel" id={`panneau-${onglet}`} aria-labelledby={`onglet-${onglet}`} sx={{ p: { xs: 2, md: 4 }, ...apparition }}>
                     {onglet === "reservations" && <MesReservations />}
                     {onglet === "profil" && <Profil key={utilisateur.id} utilisateur={utilisateur} />}
                     {onglet === "confidentialite" && <Confidentialite />}

@@ -8,6 +8,7 @@ import CardSPR from "../components/CardSPR";
 import FilterPanel from "../components/FilterPanel";
 import { DUREE_MAX, FILTRES_VIDES, type Filtres } from "../components/filtres";
 import { ButtonCustom } from "../components/mui_custom";
+import { entreeEnCascade } from "../animations";
 
 function filtrer(sprs: Spr[], filtres: Filtres): Spr[] {
     const recherche = normaliser(filtres.recherche.trim());
@@ -73,7 +74,8 @@ function Explorer() {
                     ))}
                 </Box>
             ) : resultats.length > 0 ? (
-                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: { xs: 2, md: 4 } }}>
+                // Les cartes qui réapparaissent après un changement de filtre arrivent aussi en cascade
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: { xs: 2, md: 4 }, ...entreeEnCascade() }}>
                     {resultats.map((spr) => (
                         <CardSPR key={spr.id} spr={spr} />
                     ))}
