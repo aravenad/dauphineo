@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Utilisateur;
+use Database\Seeders\DatabaseSeeder;
 use Laravel\Sanctum\Sanctum;
 
 it('protège l\'espace utilisateur', function () {
@@ -35,6 +36,6 @@ it('supprime son compte', function () {
     $utilisateur = Utilisateur::where('pseudo', 'jeandupont')->first();
     Sanctum::actingAs($utilisateur);
 
-    $this->deleteJson('/api/utilisateur')->assertNoContent();
+    $this->deleteJson('/api/utilisateur', ['mot_de_passe_actuel' => DatabaseSeeder::motDePasseDemo()])->assertNoContent();
     expect(Utilisateur::find($utilisateur->id))->toBeNull();
 });

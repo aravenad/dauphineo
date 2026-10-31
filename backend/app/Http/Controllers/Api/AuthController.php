@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @OA\Tag(
@@ -101,10 +102,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'nom' => 'required|string|max:50',
-            'prenom' => 'required|string|max:50',
+            'nom' => ['required', 'string', 'max:50', 'regex:'.Utilisateur::REGLE_NOM],
+            'prenom' => ['required', 'string', 'max:50', 'regex:'.Utilisateur::REGLE_NOM],
             'email' => 'required|string|email|max:255|unique:utilisateur,email',
-            'mot_de_passe' => 'required|string|min:8',
+            'mot_de_passe' => ['required', 'string', Password::defaults()],
             'verif_age' => 'required|accepted',
         ]);
 

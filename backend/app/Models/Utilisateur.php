@@ -14,6 +14,9 @@ class Utilisateur extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'utilisateur';
 
+    /** Lettres, avec tirets, apostrophes ou espaces entre deux mots, comme le formulaire du site. */
+    public const REGLE_NOM = '/^\p{L}+(?:[-\' ]\p{L}+)*$/u';
+
 
     /**
      * The attributes that are mass assignable.

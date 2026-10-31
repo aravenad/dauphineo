@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Avis;
 use App\Models\Spr;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,15 +63,18 @@ class AvisController extends Controller
 
         $data['id_utilisateur'] = Auth::id();
 
-        $existe = Avis::where('id_utilisateur', $data['id_utilisateur'])
-            ->where('id_spr', $data['id_spr'])
-            ->exists();
+        $dejaPublie = response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 409);
 
-        if ($existe) {
-            return response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 409);
+        if (Avis::where('id_utilisateur', $data['id_utilisateur'])->where('id_spr', $data['id_spr'])->exists()) {
+            return $dejaPublie;
         }
 
-        $avis = Avis::create($data)->load('utilisateur:id,pseudo');
+        try {
+            $avis = Avis::create($data)->load('utilisateur:id,pseudo');
+        } catch (UniqueConstraintViolationException) {
+            // Deux envois simultanés passent tous les deux la vérification : la contrainte unique tranche
+            return $dejaPublie;
+        }
 
         return response()->json($avis, 201);
     }

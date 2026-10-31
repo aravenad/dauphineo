@@ -8,7 +8,7 @@ it('crée un compte et renvoie un jeton', function () {
         'nom' => 'Martin',
         'prenom' => 'Élise',
         'email' => 'elise.martin@dauphineo.test',
-        'mot_de_passe' => 'un-mot-de-passe',
+        'mot_de_passe' => 'Un-mot-de-passe1',
         'verif_age' => true,
     ])
         ->assertCreated()

@@ -38,17 +38,19 @@ Route::post('/recommandations', [RecommandationController::class, 'store'])->mid
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('utilisateur')->group(function () {
         Route::get('/', [UtilisateurController::class, 'show']);
-        Route::put('/', [UtilisateurController::class, 'update']);
-        Route::delete('/', [UtilisateurController::class, 'destroy']);
+        Route::put('/', [UtilisateurController::class, 'update'])->middleware('throttle:ecriture');
+        Route::delete('/', [UtilisateurController::class, 'destroy'])->middleware('throttle:ecriture');
         Route::post('/logout', [UtilisateurController::class, 'logout']);
         Route::get('/visites', [UtilisateurController::class, 'getUserVisites']);
         Route::get('/reservations', [UtilisateurController::class, 'getUserReservations']);
         Route::get('/avis', [UtilisateurController::class, 'getUserAvis']);
     });
 
-    Route::post('/avis', [AvisController::class, 'store']);
-    Route::delete('/avis/{id}', [AvisController::class, 'destroy'])->whereNumber('id');
+    Route::middleware('throttle:ecriture')->group(function () {
+        Route::post('/avis', [AvisController::class, 'store']);
+        Route::delete('/avis/{id}', [AvisController::class, 'destroy'])->whereNumber('id');
 
-    Route::post('/reservations', [ReservationController::class, 'store']);
-    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])->whereNumber('id');
+        Route::post('/reservations', [ReservationController::class, 'store']);
+        Route::delete('/reservations/{id}', [ReservationController::class, 'destroy'])->whereNumber('id');
+    });
 });

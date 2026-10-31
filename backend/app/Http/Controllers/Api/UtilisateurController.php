@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Models\Utilisateur;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 /**
  * @OA\Tag(
@@ -16,6 +20,19 @@ use Illuminate\Validation\Rule;
  */
 class UtilisateurController extends Controller
 {
+    /**
+     * Un jeton volé ne doit pas suffire à prendre le compte : changer d'adresse ou de mot de passe
+     * et supprimer le compte demandent le mot de passe actuel.
+     */
+    private function verifierMotDePasseActuel(Request $request, Utilisateur $user): void
+    {
+        $motDePasse = $request->validate(['mot_de_passe_actuel' => 'required|string'])['mot_de_passe_actuel'];
+
+        if (! Hash::check($motDePasse, $user->mot_de_passe)) {
+            throw ValidationException::withMessages(['mot_de_passe_actuel' => 'Le mot de passe actuel est incorrect.']);
+        }
+    }
+
     /**
      * @OA\Get(
      *     path="/api/utilisateur",
@@ -43,6 +60,7 @@ class UtilisateurController extends Controller
      *             @OA\Property(property="prenom", type="string"),
      *             @OA\Property(property="email", type="string"),
      *             @OA\Property(property="mot_de_passe", type="string", minLength=8),
+     *             @OA\Property(property="mot_de_passe_actuel", type="string", description="Required to change the email or the password"),
      *         )
      *     ),
      *     @OA\Response(response=200, description="User updated"),
@@ -54,13 +72,23 @@ class UtilisateurController extends Controller
         $user = $request->user();
 
         $data = $request->validate([
-            'nom' => 'sometimes|string|max:50',
-            'prenom' => 'sometimes|string|max:50',
+            'nom' => ['sometimes', 'string', 'max:50', 'regex:'.Utilisateur::REGLE_NOM],
+            'prenom' => ['sometimes', 'string', 'max:50', 'regex:'.Utilisateur::REGLE_NOM],
             'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('utilisateur', 'email')->ignore($user->id)],
-            'mot_de_passe' => 'sometimes|string|min:8',
+            'mot_de_passe' => ['sometimes', 'string', Password::defaults()],
         ]);
 
+        $changeMotDePasse = isset($data['mot_de_passe']);
+        if ($changeMotDePasse || (isset($data['email']) && $data['email'] !== $user->email)) {
+            $this->verifierMotDePasseActuel($request, $user);
+        }
+
         $user->update($data);
+
+        if ($changeMotDePasse) {
+            // Les autres sessions, peut-être ouvertes par quelqu'un qui connaissait l'ancien mot de passe, sont fermées
+            $user->tokens()->where('id', '!=', (int) $user->currentAccessToken()?->getKey())->delete();
+        }
 
         return response()->json($user);
     }
@@ -71,12 +99,18 @@ class UtilisateurController extends Controller
      *     tags={"utilisateur"},
      *     security={{"bearerAuth": {}}},
      *     summary="Delete the signed-in user and their data",
-     *     @OA\Response(response=204, description="User deleted")
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(@OA\Property(property="mot_de_passe_actuel", type="string"))
+     *     ),
+     *     @OA\Response(response=204, description="User deleted"),
+     *     @OA\Response(response=422, description="Missing or wrong current password")
      * )
      */
     public function destroy(Request $request)
     {
         $user = $request->user();
+        $this->verifierMotDePasseActuel($request, $user);
         $user->tokens()->delete();
         $user->delete();
 
