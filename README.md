@@ -1,43 +1,53 @@
-# Dauphinéo
+# SAÉ 3.01 – Dauphinéo (équipe 8)
 
-Site de réservation de visites guidées dans les sites patrimoniaux remarquables (SPR) de l'Isère. On y explore une vingtaine de communes, on réserve un créneau avec un guide, on laisse un avis, et un questionnaire recommande les sites qui correspondent à ses envies.
+Projet de deuxième année de BUT Informatique (IUT2 Grenoble, novembre 2024 à janvier 2025) : un site de réservation de
+visites guidées dans les sites patrimoniaux remarquables (SPR) de l'Isère. On y explore une vingtaine de communes, on
+réserve un créneau avec un guide, on laisse un avis, et un questionnaire recommande les sites qui correspondent à ses
+envies. On l'a appelé **Dauphinéo**, avec React pour le site et Laravel pour l'API.
 
-La démonstration est disponible sur [aravenad.github.io/dauphineo](https://aravenad.github.io/dauphineo/).
+La version rendue en janvier 2025 est marquée par le tag [`rendu-code`](https://github.com/aravenad/dauphineo/tree/rendu-code).
+J'ai repris le projet seul en octobre 2026, après la fermeture des serveurs de l'IUT, pour brancher toutes les pages sur
+l'API, sécuriser celle-ci et publier une démonstration sans serveur.
 
-## Contexte
+**Démonstration : [aravenad.github.io/dauphineo](https://aravenad.github.io/dauphineo/)**
 
-Projet d'équipe réalisé pendant la SAÉ 3.01 du BUT Informatique à l'IUT2 de Grenoble (2024). Le projet a été repris en 2026 après la fermeture des serveurs de l'IUT : sécurisation de l'API, migrations Laravel, branchement de toutes les pages sur l'API, recommandation par Claude Haiku 5.5 et version de démonstration publiée sur GitHub Pages.
+![La page d'accueil de Dauphinéo](docs/accueil.jpg)
 
-Les dossiers de conception d'origine sont dans [`conception/`](conception/).
+## Ce qu'il y a dans le site
 
-## Fonctionnalités
+Chaque partie reprend un cas d'utilisation du dossier de conception (phase 2) :
 
-- page d'accueil avec recherche rapide et sites mis en avant ;
-- exploration des sites avec filtres par commune, thème, durée de visite et accessibilité PMR ;
-- fiche de chaque site : photos, description, carte, créneaux et avis ;
-- réservation d'un créneau avec un guide, au prix fixé par le serveur et dans la limite des places restantes ;
-- espace « Mon compte » : réservations à venir et passées, annulation, profil, mot de passe et suppression du compte ;
-- avis notés de 1 à 5, un par site et par visiteur ;
-- questionnaire de recommandation : Claude Haiku 5.5 quand une clé d'API est configurée, moteur local sinon.
+- **Fiche d'un site** (UC3) : photos avec leur crédit, description, thèmes, carte, accessibilité PMR et créneaux à venir
+- **Réservation** (UC2) : choix d'une date, d'un créneau et du nombre de personnes ; le prix est calculé par le serveur
+  et les places restantes sont vérifiées
+- **Avis** (UC4, UC5) : note de 1 à 5 et commentaire, un avis par site et par visiteur
+- **Explorer** (UC6) : filtres par commune, thème, durée de visite et accessibilité PMR
+- **Questionnaire** (UC7) : cinq questions (taille du groupe, thèmes, durée, PMR, type d'expérience), puis des sites
+  classés avec les réponses qu'ils satisfont ; Claude Haiku 5.5 choisit trois sites quand une clé d'API est configurée,
+  le moteur local en classe jusqu'à six sinon
+- **Mon compte** : réservations à venir et passées, annulation, profil, mot de passe et suppression du compte
 
-## Deux façons de l'utiliser
+S'y ajoutent une recherche rapide dans l'en-tête, la FAQ, les mentions légales, la politique de confidentialité et les
+CGU. Le site s'adapte aux écrans de téléphone.
 
-**Démonstration (GitHub Pages).** Le site fonctionne sans serveur : les données viennent des fichiers CSV du dépôt et tout ce que vous faites (compte, réservations, avis) reste dans votre navigateur. Les recommandations viennent du moteur local. Le bouton « Utiliser le compte de démo » de la fenêtre de connexion remplit les identifiants.
+## Lancer le projet
 
-**Version complète (en local).** Le frontend React parle à l'API Laravel, adossée à PostgreSQL.
+### La démonstration
 
-## Technologies
+Elle tourne sans serveur : les données viennent des fichiers CSV du dépôt, et tout ce que vous faites (compte,
+réservations, avis) reste dans votre navigateur. Les recommandations viennent du moteur local. Le bouton « Utiliser le
+compte de démo » de la fenêtre de connexion remplit les identifiants. Pour la construire soi-même, il faut Node.js 22 :
 
-- frontend : React 18, TypeScript, Material UI 6, React Router 7 et Vite 6 ;
-- API : Laravel 11 avec Sanctum pour l'authentification ;
-- base de données : PostgreSQL 17 ;
-- recommandation : SDK PHP d'Anthropic avec le modèle `claude-haiku-5-5`, et un moteur de score local en repli.
+```bash
+cd frontend
+npm install
+npm run build -- --mode pages
+npx vite preview --mode pages
+```
 
-## Lancer le projet en local
+### La version complète
 
-Prérequis : PHP 8.2 ou plus avec l'extension `pdo_pgsql`, Composer, PostgreSQL 17 et Node.js 22.
-
-### API
+Il faut PHP 8.2 ou plus récent avec l'extension `pdo_pgsql`, Composer, PostgreSQL 17 et Node.js 22. Pour l'API :
 
 ```bash
 cd backend
@@ -53,9 +63,9 @@ php artisan migrate --seed
 php artisan serve
 ```
 
-L'API répond sur `http://localhost:8000`. Le seeder importe les sites, les guides, les photos et les avis depuis `backend/database/data/`, génère les créneaux des semaines à venir et crée des comptes de démonstration, dont `demo@dauphineo.test`.
-
-### Frontend
+L'API répond sur `http://localhost:8000`. Le seeder importe les sites, les guides, les photos et les avis depuis
+`backend/database/data/`, génère les créneaux des semaines à venir et crée des comptes de démonstration, dont
+`demo@dauphineo.test`. Le site se lance ensuite à part et s'ouvre sur `http://localhost:5173` :
 
 ```bash
 cd frontend
@@ -63,42 +73,101 @@ npm install
 npm run dev
 ```
 
-Le site est servi sur `http://localhost:5173`. Pour tester la version de démonstration sans API :
+### La recommandation par Claude
 
-```bash
-npm run build -- --mode pages
-npx vite preview --mode pages
-```
-
-## Recommandation par Claude
-
-La recommandation par IA est facultative. Sans clé, le moteur local classe les sites selon les thèmes, la durée, l'accessibilité et la taille du groupe.
-
-Pour activer Claude Haiku 5.5 :
-
-1. créez un compte sur la [console Anthropic](https://console.anthropic.com/) et ajoutez des crédits (l'abonnement Claude.ai ne couvre pas l'API) ;
-2. fixez une limite de dépenses dans les réglages de facturation ;
-3. créez une clé dans « API Keys » ;
-4. ajoutez-la dans `backend/.env` :
+Elle est facultative : sans clé, le moteur local classe les sites selon les thèmes, la durée, l'accessibilité, la taille
+du groupe et le type d'expérience. Pour l'activer, créez une clé sur la [console Anthropic](https://console.anthropic.com/)
+(l'abonnement Claude.ai ne couvre pas l'API ; pensez à fixer une limite de dépenses), puis ajoutez-la dans
+`backend/.env` :
 
 ```dotenv
 ANTHROPIC_API_KEY=votre-clé
 ANTHROPIC_MODEL=claude-haiku-5-5
 ```
 
-La clé reste côté serveur et n'est jamais envoyée au navigateur. Si l'appel échoue ou dépasse 15 secondes, l'API se rabat sur le moteur local et l'indique dans sa réponse.
+La clé reste côté serveur et n'est jamais envoyée au navigateur. Si l'appel échoue ou dépasse 15 secondes, l'API se
+rabat sur le moteur local et l'indique dans sa réponse.
 
-## Tests
+## Les autres commandes
 
-```bash
-cd backend && php artisan test
-cd frontend && npm run lint && npm run build
+| Commande | Rôle |
+|---|---|
+| `php artisan test` (dans `backend`) | Tests de l'API avec Pest, sur une base PostgreSQL `dauphineo_test` |
+| `php artisan migrate:fresh --seed` (dans `backend`) | Remet la base à zéro avec les données de démonstration |
+| `npm run lint` (dans `frontend`) | Analyse statique ESLint |
+| `npm run build` (dans `frontend`) | Vérification des types et construction du site pour l'API locale |
+| `npm run build -- --mode pages` (dans `frontend`) | Construction de la démonstration pour GitHub Pages |
+
+Le workflow GitHub Actions lance les tests de l'API, l'analyse et la construction à chaque push sur `main`, puis publie
+la démonstration.
+
+## Arborescence
+
+```
+├── backend/                     l'API Laravel 11
+│   ├── app/
+│   │   ├── Http/Controllers/Api/    un contrôleur par ressource (sites, guides, avis, réservations, utilisateur…)
+│   │   ├── Models/              Spr, Visite, Creneaux, Reservation, Avis, Guide, Utilisateur…
+│   │   └── Services/
+│   │       └── Recommandation/  le moteur local, l'appel à Claude et la lecture des réponses
+│   ├── database/
+│   │   ├── data/                les sites, guides, photos et avis en CSV
+│   │   ├── migrations/
+│   │   └── seeders/
+│   ├── routes/api.php           les routes de l'API
+│   └── tests/Feature/           les tests Pest, un fichier par ressource
+├── frontend/                    le site React
+│   └── src/
+│       ├── api/                 le client HTTP et les types partagés avec l'API
+│       ├── demo/                l'API simulée de la démonstration et sa copie du moteur local
+│       ├── pages/               une page par route (accueil, explorer, fiche, compte, pages légales)
+│       └── components/          en-tête, cartes, questionnaire, réservation, avis…
+├── conception/                  nos dossiers de conception de 2024 (PDF)
+└── docs/                        la capture d'écran de ce README
 ```
 
-Les tests de l'API utilisent une base PostgreSQL `dauphineo_test`. Le workflow GitHub Actions lance ces vérifications à chaque push, puis publie la démonstration sur GitHub Pages.
+## Documents de conception
 
-## Photos
+Nos rendus de l'automne 2024, tels quels :
 
-Les 60 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre (CC BY, CC BY-SA). Le fichier `backend/database/data/images.csv` garde pour chacune l'auteur, la licence et la page d'origine.
+- [Dossier de la phase 1](conception/dossier-phase1-team08.pdf) : cadrage, analyse de l'existant, risques, répartition
+  des rôles et profils d'utilisateurs
+- [Dossier de la phase 2](conception/dossier-phase2-team08.pdf) : besoins fonctionnels et cas d'utilisation, maquettes,
+  architecture du code, schéma de la base de données et choix techniques
 
-Le site affiche le crédit sous chaque photo de la galerie et la liste complète dans les mentions légales. Une photo qui ne se charge plus est masquée automatiquement.
+Le code a évolué depuis ces documents : les écarts sont listés plus bas.
+
+## Nos choix
+
+Le site React ne parle qu'à l'API Laravel, qui fait foi pour tout ce qui compte : le prix d'une réservation, les places
+restantes, l'unicité d'un avis et la validation des réponses au questionnaire. L'authentification passe par des jetons
+Sanctum. La démonstration remplace l'API par une version simulée dans le navigateur, qui lit les mêmes fichiers CSV que
+le seeder, pour que les deux versions montrent les mêmes sites.
+
+Le moteur de recommandation local existe en deux exemplaires, en PHP pour l'API et en TypeScript pour la démonstration.
+Il note chaque site selon les thèmes choisis, la durée, l'accessibilité PMR, la capacité des guides et le type
+d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude est configuré, sa réponse est vérifiée
+(identifiants connus, sites distincts) avant d'être renvoyée, et le moteur local reste en repli.
+
+### Écarts avec le dossier de conception
+
+| Dossier de conception | Réalisation | Raison |
+|---|---|---|
+| Recoil pour l'état global | Un contexte React pour la session | La session est la seule donnée partagée entre les pages |
+| Paiement en ligne et facture par mail (UC2) | Réservation sans paiement | Pas de prestataire de paiement pour un projet de démonstration |
+| Se proposer comme guide local (UC1) | Guides fournis par le seeder | Pas d'espace guide réalisé |
+| Tableau de bord et disponibilités des guides (UC8, UC9) | Créneaux générés à partir des disponibilités du CSV | Même raison |
+| Tables `FACTURE`, `LANGUE` et `SUIVI_DONNEES` | Absentes des migrations | Elles servaient au paiement, aux langues des guides et aux durées de conservation des données |
+
+## Équipe
+
+ARAVENA BRAVO Damien, JACOB Timothé, BENDRIS Nael, TIERRIE Axel, BENKHEIRA Lilya, DESCHAUX-BEAUME Maëlys, SEKMA Sarah.
+
+## Crédits
+
+- Sujet : SAÉ 3.01 du département Informatique de l'IUT2 Grenoble
+- Site : React 18, TypeScript, Material UI 6, React Router 7, Axios et Vite 6 ; police Satoshi
+- API : Laravel 11, Sanctum, Pest et PostgreSQL 17 ; SDK PHP d'Anthropic pour la recommandation
+- Photos : les 60 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre
+  (CC BY, CC BY-SA). Le fichier `backend/database/data/images.csv` garde pour chacune l'auteur, la licence et la page
+  d'origine ; le site affiche le crédit sous chaque photo et la liste complète dans les mentions légales.
