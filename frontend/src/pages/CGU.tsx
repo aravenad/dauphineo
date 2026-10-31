@@ -1,136 +1,139 @@
-import { Box, Typography, Divider, Link } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import BalanceIcon from "@mui/icons-material/Balance";
+import BlockIcon from "@mui/icons-material/Block";
+import CopyrightIcon from "@mui/icons-material/Copyright";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import DevicesIcon from "@mui/icons-material/Devices";
+import GavelIcon from "@mui/icons-material/Gavel";
+import LanguageIcon from "@mui/icons-material/Language";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import RuleIcon from "@mui/icons-material/Rule";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
+import UpdateIcon from "@mui/icons-material/Update";
+import { CarteInfo, GrilleCartes, PageLegale, SectionLegale } from "../components/PageLegale";
 import { useTitre } from "../hooks";
 
 function CGU() {
   useTitre("Conditions générales d'utilisation");
   return (
-    <Box sx={{ padding: "2em" }}>
-      <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1em" }}>
-        Conditions Générales d'Utilisation (CGU)
-      </Typography>
-      <Divider sx={{ marginBottom: "2em" }} />
+    <PageLegale
+      titre="Conditions générales d'utilisation"
+      intro="Les règles qui encadrent l'utilisation de Dauphinéo, que vous soyez simple visiteur ou inscrit."
+    >
+      <SectionLegale icone={<DescriptionOutlinedIcon />} titre="1. Objet">
+        <Typography>
+          Les présentes CGU ont pour objectif de définir les modalités et conditions d’utilisation des services proposés par Dauphinéo. Elles
+          s’appliquent à tous les utilisateurs de la plateforme, qu’ils soient simples visiteurs ou inscrits.
+        </Typography>
+      </SectionLegale>
 
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        1. Objet
-      </Typography>
-      <Typography>
-        Les présentes CGU ont pour objectif de définir les modalités et conditions d’utilisation des services proposés par Dauphinéo. Elles s’appliquent à tous les utilisateurs de la plateforme, qu’ils soient simples visiteurs ou inscrits.
-      </Typography>
+      <SectionLegale icone={<LanguageIcon />} titre="2. Accès au site">
+        <GrilleCartes colonnes={2}>
+          <CarteInfo icone={<ScheduleIcon fontSize="small" />} titre="Disponibilité">
+            Dauphinéo s’efforce d’assurer l’accès à son site 24h/24, 7j/7. L’accès peut toutefois être temporairement suspendu pour des raisons
+            de maintenance ou en cas de force majeure.
+          </CarteInfo>
+          <CarteInfo icone={<DevicesIcon fontSize="small" />} titre="Matériel requis">
+            L’utilisateur est responsable de disposer des équipements (ordinateur, connexion Internet) nécessaires pour accéder au site.
+          </CarteInfo>
+        </GrilleCartes>
+      </SectionLegale>
 
-      <Divider sx={{ marginY: "2em" }} />
+      <SectionLegale icone={<AccountCircleOutlinedIcon />} titre="3. Inscription et compte utilisateur">
+        <GrilleCartes>
+          <CarteInfo icone={<PersonAddAltOutlinedIcon fontSize="small" />} titre="Création de compte">
+            Certains services nécessitent un compte, créé avec des informations exactes et à jour (nom, prénom, email, mot de passe, etc.).
+          </CarteInfo>
+          <CarteInfo icone={<LockOutlinedIcon fontSize="small" />} titre="Confidentialité">
+            Vous êtes responsable de la confidentialité de vos identifiants. Toute activité réalisée depuis votre compte est réputée effectuée
+            par vous.
+          </CarteInfo>
+          <CarteInfo icone={<DeleteOutlineIcon fontSize="small" />} titre="Suppression de compte">
+            Vous pouvez supprimer votre compte à tout moment, ou en faire la demande à{" "}
+            <Link href="mailto:contact.dauphineo@gmail.com">contact.dauphineo@gmail.com</Link>.
+          </CarteInfo>
+        </GrilleCartes>
+      </SectionLegale>
 
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        2. Accès au site
-      </Typography>
-      <Typography component="div">
-        <ul>
-          <li>
-            <strong>Disponibilité :</strong> Dauphinéo s’efforce d’assurer l’accès à son site 24h/24, 7j/7. Toutefois, l’accès peut être temporairement suspendu pour des raisons de maintenance ou en cas de force majeure.
-          </li>
-          <li>
-            <strong>Matériel requis :</strong> L’utilisateur est responsable de disposer des équipements (ordinateur, connexion Internet) nécessaires pour accéder au site.
-          </li>
-        </ul>
-      </Typography>
+      <SectionLegale icone={<RuleIcon />} titre="4. Utilisation des services">
+        <Typography>
+          Vous vous engagez à utiliser les services conformément aux lois en vigueur et aux présentes CGU. Il est notamment interdit de :
+        </Typography>
+        <GrilleCartes>
+          <CarteInfo ton="error" icone={<BlockIcon fontSize="small" />} titre="Contenu illicite">
+            Publier du contenu illégal, diffamatoire ou portant atteinte aux droits de tiers.
+          </CarteInfo>
+          <CarteInfo ton="error" icone={<BlockIcon fontSize="small" />} titre="Piratage">
+            Tenter de pirater le site ou d’en perturber le fonctionnement.
+          </CarteInfo>
+          <CarteInfo ton="error" icone={<BlockIcon fontSize="small" />} titre="Usage commercial">
+            Utiliser le site à des fins commerciales non autorisées par Dauphinéo.
+          </CarteInfo>
+        </GrilleCartes>
+      </SectionLegale>
 
-      <Divider sx={{ marginY: "2em" }} />
+      <SectionLegale icone={<CopyrightIcon />} titre="5. Propriété intellectuelle">
+        <Typography>
+          Les contenus présents sur le site Dauphinéo (textes, images, logos) sont la propriété de Dauphinéo ou de ses partenaires et protégés
+          par les lois sur la propriété intellectuelle. Toute reproduction, distribution, modification ou exploitation non autorisée est
+          strictement interdite. Les photographies des sites, sous licence libre, suivent les conditions indiquées dans les{" "}
+          <Link component={RouterLink} to="/mentions-legales">
+            mentions légales
+          </Link>
+          .
+        </Typography>
+      </SectionLegale>
 
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        3. Inscription et Compte Utilisateur
-      </Typography>
-      <Typography component="div">
-        <ul>
-          <li>
-            <strong>Création de compte :</strong> Certains services nécessitent la création d’un compte en fournissant des informations exactes et à jour (nom, prénom, email, mot de passe, etc.).
-          </li>
-          <li>
-            <strong>Confidentialité :</strong> Vous êtes responsable de la confidentialité de vos identifiants. Toute activité réalisée à partir de votre compte est réputée être effectuée par vous.
-          </li>
-          <li>
-            <strong>Suppression de compte :</strong> Vous pouvez demander la suppression de votre compte à tout moment en nous contactant à :{" "}
-            <a href="mailto:contact.dauphineo@gmail.com">contact.dauphineo@gmail.com</a>.
-          </li>
-        </ul>
-      </Typography>
+      <SectionLegale icone={<ShieldOutlinedIcon />} titre="6. Protection des données personnelles">
+        <Typography>
+          Les données personnelles collectées sur le site sont traitées conformément à notre{" "}
+          <Link component={RouterLink} to="/reglementation">
+            politique de confidentialité
+          </Link>
+          . Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, d’effacement et d’opposition concernant vos données.
+        </Typography>
+      </SectionLegale>
 
-      <Divider sx={{ marginY: "2em" }} />
+      <SectionLegale icone={<BalanceIcon />} titre="7. Responsabilité">
+        <Typography>
+          Dauphinéo met tout en œuvre pour assurer l'exactitude des informations diffusées sur son site. Cependant, l'éditeur ne peut garantir
+          l'exactitude ou l'exhaustivité des informations disponibles.
+        </Typography>
+      </SectionLegale>
 
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        4. Utilisation des Services
-      </Typography>
-      <Typography component="div">
-        <ul>
-          <li>
-            <strong>Comportement attendu :</strong> Vous vous engagez à utiliser les services conformément aux lois en vigueur et aux présentes CGU.
-          </li>
-          <li>
-            <strong>Interdictions :</strong>
-            <ul>
-              <li>Publier du contenu illégal, diffamatoire, ou portant atteinte aux droits de tiers.</li>
-              <li>Tenter de pirater le site ou d’en perturber le fonctionnement.</li>
-              <li>Utiliser le site à des fins commerciales non autorisées par Dauphinéo.</li>
-            </ul>
-          </li>
-        </ul>
-      </Typography>
+      <SectionLegale icone={<UpdateIcon />} titre="8. Modification des CGU">
+        <Typography>
+          Dauphinéo se réserve le droit de modifier les présentes CGU à tout moment. Les modifications sont effectives dès leur publication sur
+          cette page.
+        </Typography>
+      </SectionLegale>
 
-      <Divider sx={{ marginY: "2em" }} />
+      <SectionLegale icone={<GavelIcon />} titre="9. Droit applicable et juridiction">
+        <Typography>
+          Les présentes CGU sont régies par le droit français. Tout litige sera soumis aux juridictions compétentes du ressort du siège de
+          Dauphinéo.
+        </Typography>
+      </SectionLegale>
 
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        5. Propriété Intellectuelle
-      </Typography>
-      <Typography>
-        Tous les contenus présents sur le site Dauphinéo (textes, images, logos) sont la propriété exclusive de Dauphinéo ou de ses partenaires et protégés par les lois sur la propriété intellectuelle. Toute reproduction, distribution, modification ou exploitation non autorisée est strictement interdite.
-      </Typography>
-
-      <Divider sx={{ marginY: "2em" }} />
-
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        6. Protection des Données Personnelles
-      </Typography>
-      <Typography>
-        Les données personnelles collectées sur le site sont traitées conformément à notre{" "}
-        <Link component={RouterLink} to="/reglementation">Politique de Confidentialité</Link>. Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, d’effacement et d’opposition concernant vos données.
-      </Typography>
-
-      <Divider sx={{ marginY: "2em" }} />
-
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        7. Responsabilité
-      </Typography>
-      <Typography>
-        Dauphinéo met tout en œuvre pour assurer l'exactitude des informations diffusées sur son site. Cependant, l'éditeur ne peut garantir l'exactitude ou l'exhaustivité des informations disponibles.
-      </Typography>
-
-      <Divider sx={{ marginY: "2em" }} />
-
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        8. Modification des CGU
-      </Typography>
-      <Typography>
-        Dauphinéo se réserve le droit de modifier les présentes CGU à tout moment. Les modifications seront effectives dès leur publication sur cette page.
-      </Typography>
-
-      <Divider sx={{ marginY: "2em" }} />
-
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        9. Droit Applicable et Juridiction
-      </Typography>
-      <Typography>
-        Les présentes CGU sont régies par les lois françaises. Tout litige sera soumis aux juridictions compétentes du ressort du siège de Dauphinéo.
-      </Typography>
-
-      <Divider sx={{ marginY: "2em" }} />
-
-      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
-        10. Contact
-      </Typography>
-      <Typography>
-        Pour toute question concernant ces CGU, veuillez nous écrire à :{" "}
-        <a href="mailto:contact.dauphineo@gmail.com">contact.dauphineo@gmail.com</a> ou à l’adresse suivante : 2 Place Doyen Gosse, 38000 Grenoble, France.
-      </Typography>
-    </Box>
+      <SectionLegale icone={<MailOutlineIcon />} titre="10. Contact">
+        <Typography>Pour toute question concernant ces CGU, vous pouvez nous joindre :</Typography>
+        <GrilleCartes colonnes={2}>
+          <CarteInfo icone={<MailOutlineIcon fontSize="small" />} titre="Par email">
+            <Link href="mailto:contact.dauphineo@gmail.com">contact.dauphineo@gmail.com</Link>
+          </CarteInfo>
+          <CarteInfo icone={<PlaceOutlinedIcon fontSize="small" />} titre="Par courrier">
+            2 Place Doyen Gosse, 38000 Grenoble, France
+          </CarteInfo>
+        </GrilleCartes>
+      </SectionLegale>
+    </PageLegale>
   );
 }
 
