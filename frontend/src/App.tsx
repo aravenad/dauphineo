@@ -1,6 +1,6 @@
 import { Header, Footer } from "./components/index";
 import { Routes, Route } from "react-router";
-import { Home, Reglementation, FAQ} from "./pages";
+import { Home, Reglementation, FAQ, MentionsLeg, CGU } from "./pages";
 import { Container } from "@mui/material";
 import SPR from "./pages/SPR.tsx";
 import Explorer from "./pages/Explorer.tsx";
@@ -25,6 +25,8 @@ function App() {
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/spr" element={<SPR />} />
                     <Route path="/explorer" element={<Explorer />} />
+                    <Route path="/mentions-legales" element={<MentionsLeg />} />
+                    <Route path="/cgu" element={<CGU />} />
                 </Routes>
             </Container>
             <Footer />
