@@ -1,11 +1,10 @@
-import { useEffect } from "react";
 import { Link as RouterLink, useParams } from "react-router";
 import { Alert, Box, Button, Chip, Skeleton, Typography } from "@mui/material";
 import AccessibleIcon from "@mui/icons-material/Accessible";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import GroupsIcon from "@mui/icons-material/Groups";
 import api from "../api";
-import { useApi } from "../hooks";
+import { useApi, useTitre } from "../hooks";
 import { formaterDuree, heures, nomCommune } from "../utils/format";
 import SPRPhotos from "../components/SPRPhotos";
 import SPRMap from "../components/SPRMap";
@@ -21,12 +20,7 @@ function SPR() {
     );
     const nom = spr ? nomCommune(spr.nom_commune) : "";
 
-    useEffect(() => {
-        if (nom) document.title = `${nom} | Dauphinéo`;
-        return () => {
-            document.title = "Dauphinéo";
-        };
-    }, [nom]);
+    useTitre(nom);
 
     const retour = (
         <Button component={RouterLink} to="/explorer" sx={{ color: "text.secondary", textTransform: "none", fontSize: "1rem", mb: 1 }}>

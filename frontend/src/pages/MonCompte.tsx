@@ -5,7 +5,7 @@ import EventIcon from "@mui/icons-material/Event";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShieldIcon from "@mui/icons-material/Shield";
 import api, { messageErreur, type Reservation } from "../api";
-import { useApi } from "../hooks";
+import { useApi, useTitre } from "../hooks";
 import { useSession } from "../session";
 import { formaterDate, formaterHeure, formaterPrix, nomCommune } from "../utils/format";
 import Profil from "../components/Profil";
@@ -88,6 +88,7 @@ const ONGLETS = [
 type Onglet = (typeof ONGLETS)[number]["valeur"];
 
 function MonCompte() {
+    useTitre("Mon compte");
     const { utilisateur, verification, ouvrirConnexion } = useSession();
     const [onglet, setOnglet] = useState<Onglet>("reservations");
 

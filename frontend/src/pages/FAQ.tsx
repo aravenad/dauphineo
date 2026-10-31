@@ -1,7 +1,9 @@
 import { Typography, Stack } from "@mui/material";
 import { AccordionFAQ } from "../components";
+import { useTitre } from "../hooks";
 
 function FAQ() {
+  useTitre("Foire aux questions");
   return (
     <>
       <Stack sx={{ justifyContent: "center", alignItems: "center", mb:4 }}>

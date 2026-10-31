@@ -31,3 +31,13 @@ export function useApi<T>(charger: () => Promise<T>, dependances: unknown[]): Ch
 
     return { ...etat, recharger: () => setVersion((v) => v + 1) };
 }
+
+/** Donne à l'onglet le titre de la page, ou celui du site quand il n'est pas encore connu. */
+export function useTitre(titre?: string) {
+    useEffect(() => {
+        document.title = titre ? `${titre} | Dauphinéo` : "Dauphinéo";
+        return () => {
+            document.title = "Dauphinéo";
+        };
+    }, [titre]);
+}

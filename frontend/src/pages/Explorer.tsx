@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert, Badge, Box, Chip, Skeleton, Typography } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import api, { type Spr } from "../api";
-import { useApi } from "../hooks";
+import { useApi, useTitre } from "../hooks";
 import { heures, libelleMotCle, normaliser } from "../utils/format";
 import CardSPR from "../components/CardSPR";
 import FilterPanel from "../components/FilterPanel";
@@ -23,6 +23,7 @@ function filtrer(sprs: Spr[], filtres: Filtres): Spr[] {
 }
 
 function Explorer() {
+    useTitre("Explorer les sites");
     const { donnees, erreur, chargement } = useApi(() => api.listSpr(), []);
     const [filtres, setFiltres] = useState<Filtres>(FILTRES_VIDES);
     const [panneau, setPanneau] = useState(false);

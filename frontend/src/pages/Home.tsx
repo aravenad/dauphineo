@@ -1,7 +1,7 @@
 import { Link as RouterLink } from "react-router";
 import { Alert, Box, Skeleton, Typography } from "@mui/material";
 import api, { type Spr } from "../api";
-import { useApi } from "../hooks";
+import { useApi, useTitre } from "../hooks";
 import SearchSection from "../components/SearchSection";
 import ExploreSection from "../components/ExploreSection";
 import CardSPR from "../components/CardSPR";
@@ -14,6 +14,7 @@ function Squelettes() {
 }
 
 function Home() {
+    useTitre();
     const liste = useApi(() => api.listSpr(), []);
     const top = useApi(() => api.topSpr(), []);
     const parId = new Map<number, Spr>((liste.donnees ?? []).map((spr) => [spr.id, spr]));

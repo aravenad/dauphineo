@@ -1,7 +1,9 @@
 import { Box, Typography, Divider, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router";
+import { useTitre } from "../hooks";
 
 function MentionsLeg() {
+  useTitre("Mentions légales");
   return (
     <Box sx={{ padding: "2em" }}>
     

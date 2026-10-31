@@ -1,6 +1,8 @@
 import { Box, Typography, Divider } from "@mui/material";
+import { useTitre } from "../hooks";
 
 function Reglementation() {
+  useTitre("Politique de confidentialité");
   return (
     <Box sx={{ padding: "2em"}}>
       <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1em" }}>

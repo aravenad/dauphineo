@@ -1,7 +1,9 @@
 import { Box, Typography, Divider, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router";
+import { useTitre } from "../hooks";
 
 function CGU() {
+  useTitre("Conditions générales d'utilisation");
   return (
     <Box sx={{ padding: "2em" }}>
       <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: "1em" }}>
@@ -21,7 +23,7 @@ function CGU() {
       <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
         2. Accès au site
       </Typography>
-      <Typography>
+      <Typography component="div">
         <ul>
           <li>
             <strong>Disponibilité :</strong> Dauphinéo s’efforce d’assurer l’accès à son site 24h/24, 7j/7. Toutefois, l’accès peut être temporairement suspendu pour des raisons de maintenance ou en cas de force majeure.
@@ -37,7 +39,7 @@ function CGU() {
       <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
         3. Inscription et Compte Utilisateur
       </Typography>
-      <Typography>
+      <Typography component="div">
         <ul>
           <li>
             <strong>Création de compte :</strong> Certains services nécessitent la création d’un compte en fournissant des informations exactes et à jour (nom, prénom, email, mot de passe, etc.).
@@ -57,7 +59,7 @@ function CGU() {
       <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
         4. Utilisation des Services
       </Typography>
-      <Typography>
+      <Typography component="div">
         <ul>
           <li>
             <strong>Comportement attendu :</strong> Vous vous engagez à utiliser les services conformément aux lois en vigueur et aux présentes CGU.

@@ -43,11 +43,18 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ sprId, onPublie, onAnnu
           Vous pouvez laisser un seul avis par site.
         </Typography>
 
-        <Box>
+        <Box component="fieldset" sx={{ border: 0, m: 0, p: 0 }}>
           <Typography component="legend" sx={{ mb: 1 }}>
             Note
           </Typography>
-          <Rating name="note" value={note} onChange={(_, valeur) => setNote(valeur)} size="large" />
+          <Rating
+            name="note"
+            value={note}
+            onChange={(_, valeur) => setNote(valeur)}
+            getLabelText={(valeur) => `${valeur} étoile${valeur > 1 ? "s" : ""}`}
+            emptyLabelText="Aucune note"
+            size="large"
+          />
         </Box>
 
         <TextField

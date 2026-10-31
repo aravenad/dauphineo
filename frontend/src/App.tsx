@@ -4,8 +4,10 @@ import { Alert, Container, Typography } from "@mui/material";
 import { Header, Footer } from "./components";
 import { Home, Reglementation, FAQ, MentionsLeg, CGU, SPR, Explorer, MonCompte } from "./pages";
 import { modeDemo } from "./api";
+import { useTitre } from "./hooks";
 
 function PageIntrouvable() {
+    useTitre("Page introuvable");
     return (
         <Typography variant="h4" component="h1" sx={{ textAlign: "center", padding: "3em 0" }}>
             Cette page n'existe pas.
