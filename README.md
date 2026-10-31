@@ -1,93 +1,102 @@
-# sae3-app
+# Dauphinéo
 
+Site de réservation de visites guidées dans les sites patrimoniaux remarquables (SPR) de l'Isère. On y explore une vingtaine de communes, on réserve un créneau avec un guide, on laisse un avis, et un questionnaire recommande les sites qui correspondent à ses envies.
 
+La démonstration est disponible sur [aravenad.github.io/dauphineo](https://aravenad.github.io/dauphineo/).
 
-## Getting started
+## Contexte
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Projet d'équipe réalisé pendant la SAÉ 3.01 du BUT Informatique à l'IUT2 de Grenoble (2024). Le projet a été repris en 2026 après la fermeture des serveurs de l'IUT : sécurisation de l'API, migrations Laravel, branchement de toutes les pages sur l'API, recommandation par Claude Haiku 5.5 et version de démonstration publiée sur GitHub Pages.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Les dossiers de conception d'origine sont dans [`conception/`](conception/).
 
-## Add your files
+## Fonctionnalités
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- page d'accueil avec recherche rapide et sites mis en avant ;
+- exploration des sites avec filtres par commune, thème, durée de visite et accessibilité PMR ;
+- fiche de chaque site : photos, description, carte, créneaux et avis ;
+- réservation d'un créneau avec un guide, au prix fixé par le serveur et dans la limite des places restantes ;
+- espace « Mon compte » : réservations à venir et passées, annulation, profil, mot de passe et suppression du compte ;
+- avis notés de 1 à 5, un par site et par visiteur ;
+- questionnaire de recommandation : Claude Haiku 5.5 quand une clé d'API est configurée, moteur local sinon.
 
+## Deux façons de l'utiliser
+
+**Démonstration (GitHub Pages).** Le site fonctionne sans serveur : les données viennent des fichiers CSV du dépôt et tout ce que vous faites (compte, réservations, avis) reste dans votre navigateur. Les recommandations viennent du moteur local. Le bouton « Utiliser le compte de démo » de la fenêtre de connexion remplit les identifiants.
+
+**Version complète (en local).** Le frontend React parle à l'API Laravel, adossée à PostgreSQL.
+
+## Technologies
+
+- frontend : React 18, TypeScript, Material UI 6, React Router 7 et Vite 6 ;
+- API : Laravel 11 avec Sanctum pour l'authentification ;
+- base de données : PostgreSQL 17 ;
+- recommandation : SDK PHP d'Anthropic avec le modèle `claude-haiku-5-5`, et un moteur de score local en repli.
+
+## Lancer le projet en local
+
+Prérequis : PHP 8.2 ou plus avec l'extension `pdo_pgsql`, Composer, PostgreSQL 17 et Node.js 22.
+
+### API
+
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
-cd existing_repo
-git remote add origin https://gricad-gitlab.univ-grenoble-alpes.fr/iut2-info-stud/2024-s3/s3.01/team-08/sae3-app.git
-git branch -M main
-git push -uf origin main
+
+Renseignez l'accès à PostgreSQL dans `.env` (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`), créez la base, puis :
+
+```bash
+php artisan migrate --seed
+php artisan serve
 ```
 
-## Integrate with your tools
+L'API répond sur `http://localhost:8000`. Le seeder importe les sites, les guides, les photos et les avis depuis `backend/database/data/`, génère les créneaux des semaines à venir et crée des comptes de démonstration, dont `demo@dauphineo.test`.
 
-- [ ] [Set up project integrations](https://gricad-gitlab.univ-grenoble-alpes.fr/iut2-info-stud/2024-s3/s3.01/team-08/sae3-app/-/settings/integrations)
+### Frontend
 
-## Collaborate with your team
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Le site est servi sur `http://localhost:5173`. Pour tester la version de démonstration sans API :
 
-## Test and Deploy
+```bash
+npm run build -- --mode pages
+npx vite preview --mode pages
+```
 
-Use the built-in continuous integration in GitLab.
+## Recommandation par Claude
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+La recommandation par IA est facultative. Sans clé, le moteur local classe les sites selon les thèmes, la durée, l'accessibilité et la taille du groupe.
 
-***
+Pour activer Claude Haiku 5.5 :
 
-# Editing this README
+1. créez un compte sur la [console Anthropic](https://console.anthropic.com/) et ajoutez des crédits (l'abonnement Claude.ai ne couvre pas l'API) ;
+2. fixez une limite de dépenses dans les réglages de facturation ;
+3. créez une clé dans « API Keys » ;
+4. ajoutez-la dans `backend/.env` :
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```dotenv
+ANTHROPIC_API_KEY=votre-clé
+ANTHROPIC_MODEL=claude-haiku-5-5
+```
 
-## Suggestions for a good README
+La clé reste côté serveur et n'est jamais envoyée au navigateur. Si l'appel échoue ou dépasse 15 secondes, l'API se rabat sur le moteur local et l'indique dans sa réponse.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Tests
 
-## Name
-Choose a self-explaining name for your project.
+```bash
+cd backend && php artisan test
+cd frontend && npm run lint && npm run build
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Les tests de l'API utilisent une base PostgreSQL `dauphineo_test`. Le workflow GitHub Actions lance ces vérifications à chaque push, puis publie la démonstration sur GitHub Pages.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## Photos
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Les photos des sites sont chargées depuis leurs sources d'origine. Celles qui ne répondent plus sont masquées automatiquement.
