@@ -22,7 +22,8 @@ it('réserve une visite au prix fixé par le serveur et décompte les places', f
         ->assertCreated()
         ->assertJsonPath('taille', 3)
         ->assertJsonPath('id_spr', 2)
-        ->assertJsonPath('visite.capacite_actuelle', $visite->capacite_max - 3);
+        ->assertJsonPath('visite.capacite_actuelle', $visite->capacite_max - 3)
+        ->assertJsonStructure(['visite' => ['disponibilite' => ['creneaux' => ['heure_debut', 'heure_fin']]]]);
 
     expect((float) Reservation::latest('id')->value('prix'))->toBe(3 * Reservation::PRIX_PAR_PERSONNE);
 });

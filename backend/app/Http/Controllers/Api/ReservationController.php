@@ -69,7 +69,7 @@ class ReservationController extends Controller
         }
 
         return response()->json(
-            $reservation->fresh()->load(['spr:id,nom_commune', 'guide:id,nom,prenom', 'visite']),
+            $reservation->fresh()->load(['spr:id,nom_commune', 'guide:id,nom,prenom', 'visite.disponibilite.creneaux']),
             201
         );
     }
