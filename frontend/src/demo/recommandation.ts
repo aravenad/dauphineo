@@ -1,36 +1,19 @@
-import type { Duree, Experience, Interet, Preferences, Spr } from "../api/types";
+import { langueActuelle } from "../i18n";
+import type { Duree, Preferences, Spr, Theme } from "../api/types";
 
 /**
  * Portage de App\Services\Recommandation\LocalRecommender : les deux calculs doivent rester identiques.
  */
-const MOTS_CLES_INTERETS: Record<Interet, string[]> = {
-    archeologie: ["archeologie"],
-    architecture: ["architecture", "urbain"],
-    medieval: ["medieval", "chateau"],
-    nature: ["nature"],
-    religion: ["abbaye"],
-    villages: ["promenade", "medieval"],
-    jardins: ["nature", "promenade"],
-};
+const THEMES: Theme[] = ["antiquite", "medieval", "chateau", "religieux", "architecture", "musee", "nature"];
 
-const MOTS_CLES_EXPERIENCES: Record<Experience, string[]> = {
-    balade: ["promenade", "nature"],
-    decouverte: ["musee", "architecture"],
-    exploration: ["archeologie", "chateau"],
-    immersion: ["medieval", "abbaye"],
-};
+const POIDS_THEME = 3;
+const POIDS_CADRE = 3;
+const POIDS_DUREE = 2;
 
 const DUREES_HEURES: Record<Duree, [number, number]> = {
     court: [0, 2],
     moyen: [2, 3],
     long: [3, 24],
-};
-
-const LIBELLES: Record<Interet | Experience, string> = {
-    archeologie: "archéologie", architecture: "architecture", medieval: "médiéval",
-    nature: "nature", religion: "patrimoine religieux", villages: "villages",
-    jardins: "jardins", balade: "balade", decouverte: "découverte",
-    exploration: "exploration", immersion: "immersion",
 };
 
 /** Convertit « 02:30:00 » en 2.5. */
@@ -42,50 +25,51 @@ export function heures(temps: string): number {
 export function formaterDuree(nbHeures: number): string {
     const h = Math.floor(nbHeures);
     const m = Math.round((nbHeures - h) * 60);
+    if (langueActuelle() === "en") return m === 0 ? `${h} h` : `${h} h ${m} min`;
     return m === 0 ? `${h} h` : `${h} h ${String(m).padStart(2, "0")}`;
 }
 
-/** Score sur 100, raison sur la durée et l'accessibilité, et libellés des réponses que le SPR satisfait. */
-function evaluer(preferences: Preferences, spr: Spr): { score: number; raison: string; criteres: string[] } {
-    const motsCles = spr.mot_cle.trim().split(/\s+/);
-    let points = 0;
-    let maximum = 0;
-    const retenus: string[] = [];
+/** Heures entre la durée de visite du SPR et la plage voulue, 0 si elle y est. */
+export function ecartDuree(duree: Duree, temps: string): number {
+    const nbHeures = heures(temps);
+    const [min, max] = DUREES_HEURES[duree];
+    return nbHeures < min ? min - nbHeures : Math.max(0, nbHeures - max);
+}
 
-    const criteres: [string[], Record<string, string[]>, number][] = [
-        [preferences.interets, MOTS_CLES_INTERETS, 3],
-        [preferences.experiences, MOTS_CLES_EXPERIENCES, 2],
-    ];
-    for (const [choix, correspondances, poids] of criteres) {
-        for (const cle of choix) {
-            maximum += poids;
-            if ((correspondances[cle] ?? []).some((mot) => motsCles.includes(mot))) {
-                points += poids;
-                retenus.push(LIBELLES[cle as Interet | Experience]);
-            }
+/** Score sur 100, part des thèmes du site choisis par le visiteur, et réponses que le SPR satisfait. */
+function evaluer(preferences: Preferences, spr: Spr): { score: number; focus: number; criteres: string[] } {
+    const motsCles = spr.mot_cle.trim().split(/\s+/);
+
+    const themes = preferences.interets.filter((theme) => motsCles.includes(theme));
+    let points = POIDS_THEME * themes.length;
+    let maximum = POIDS_THEME * preferences.interets.length;
+    const criteres: string[] = [...themes];
+
+    if (preferences.cadre !== "indifferent") {
+        maximum += POIDS_CADRE;
+        if (motsCles.includes(preferences.cadre)) {
+            points += POIDS_CADRE;
+            criteres.push(preferences.cadre);
         }
     }
 
-    const duree = heures(spr.temps_de_visite);
-    const [min, max] = DUREES_HEURES[preferences.duree];
-    const ecart = duree < min ? min - duree : Math.max(0, duree - max);
-    maximum += 2;
-    points += Math.max(0, 2 - ecart);
+    maximum += POIDS_DUREE;
+    points += Math.max(0, POIDS_DUREE - ecartDuree(preferences.duree, spr.temps_de_visite));
 
-    const raisons: string[] = [];
-    raisons.push(`Visite de ${formaterDuree(duree)}${ecart === 0 ? ", comme vous le souhaitez." : "."}`);
-    if (preferences.pmr) {
-        raisons.push("Accessible aux personnes à mobilité réduite.");
-    }
+    const themesDuSite = THEMES.filter((theme) => motsCles.includes(theme)).length;
 
-    return { score: Math.round((100 * points) / maximum), raison: raisons.join(" "), criteres: retenus };
+    return {
+        score: Math.round((100 * points) / maximum),
+        focus: themesDuSite === 0 ? 0 : themes.length / themesDuSite,
+        criteres,
+    };
 }
 
 export function recommander(preferences: Preferences, sprs: Spr[], limite = 6) {
     return sprs
         .filter((spr) => (!preferences.pmr || spr.is_pmr) && spr.capacite_de_visite >= preferences.taille_groupe)
-        .sort((a, b) => a.id - b.id)
         .map((spr) => ({ spr, ...evaluer(preferences, spr) }))
-        .sort((a, b) => b.score - a.score || a.spr.id - b.spr.id)
-        .slice(0, limite);
+        .sort((a, b) => b.score - a.score || b.focus - a.focus || a.spr.id - b.spr.id)
+        .slice(0, limite)
+        .map(({ spr, score, criteres }) => ({ spr, score, raison: null, criteres }));
 }

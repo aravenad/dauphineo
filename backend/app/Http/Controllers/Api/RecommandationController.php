@@ -18,11 +18,11 @@ class RecommandationController extends Controller
         $donnees = $request->validate([
             'taille_groupe' => 'required|integer|between:1,20',
             'interets' => 'required|array|min:1',
-            'interets.*' => ['string', Rule::in(Preferences::INTERETS)],
+            'interets.*' => ['string', Rule::in(Preferences::THEMES)],
+            'cadre' => ['required', Rule::in(Preferences::CADRES)],
             'duree' => ['required', Rule::in(Preferences::DUREES)],
             'pmr' => 'required|boolean',
-            'experiences' => 'required|array|min:1',
-            'experiences.*' => ['string', Rule::in(Preferences::EXPERIENCES)],
+            'langue' => ['sometimes', Rule::in(Preferences::LANGUES)],
         ]);
 
         $resultat = $this->service->recommander(Preferences::fromArray($donnees));

@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Recommande des SPR : trois choisis par Claude Haiku 5.5 si une clé API est configurée, jusqu'à six
- * classés par le moteur local sinon ou en cas d'échec de l'appel.
+ * Recommande jusqu'à six SPR choisis et classés par le moteur local. Si une clé API est configurée,
+ * Claude Haiku 5.5 rédige la raison de chacun ; sinon, ou en cas d'échec, la raison reste nulle et
+ * le site compose celle du moteur local dans la langue de l'interface.
  */
 class RecommandationService
 {
@@ -20,39 +21,31 @@ class RecommandationService
     ) {}
 
     /**
-     * @return array{source: string, recommandations: list<array{spr: \App\Models\Spr, score: int, raison: string, criteres: list<string>}>}
+     * @return array{source: string, recommandations: list<array{spr: \App\Models\Spr, score: int, raison: ?string, criteres: list<string>}>}
      */
     public function recommander(Preferences $preferences): array
     {
         $candidats = $this->local->candidats($preferences)->load('images');
+        $recommandations = $this->local->recommander($preferences, $candidats);
+        $raisons = [];
 
-        if ($candidats->isEmpty()) {
-            return ['source' => 'local', 'recommandations' => []];
-        }
-
-        if ($this->claude !== null) {
+        if ($this->claude !== null && $recommandations !== []) {
             try {
-                $parId = $candidats->keyBy('id');
-                $recommandations = array_map(function (array $reco) use ($parId, $preferences) {
-                    $evaluation = $this->local->evaluer($preferences, $parId[$reco['id_spr']]);
-
-                    return [
-                        'spr' => $parId[$reco['id_spr']],
-                        'score' => $evaluation['score'],
-                        'raison' => $reco['raison'],
-                        'criteres' => $evaluation['criteres'],
-                    ];
-                }, $this->claude->recommander($preferences, $candidats));
-
-                return ['source' => 'claude', 'recommandations' => $recommandations];
+                $raisons = $this->claude->rediger($preferences, $recommandations);
             } catch (Throwable $e) {
-                Log::warning('Recommandation Claude indisponible, repli sur le moteur local.', [
+                Log::warning('Raisons de Claude indisponibles, repli sur celles du moteur local.', [
                     'erreur' => $e::class,
                     'message' => $e->getMessage(),
                 ]);
             }
         }
 
-        return ['source' => 'local', 'recommandations' => $this->local->recommander($preferences, $candidats)];
+        return [
+            'source' => $raisons === [] ? 'local' : 'claude',
+            'recommandations' => array_map(
+                fn (array $reco) => [...$reco, 'raison' => $raisons[$reco['spr']->id] ?? null],
+                $recommandations,
+            ),
+        ];
     }
 }

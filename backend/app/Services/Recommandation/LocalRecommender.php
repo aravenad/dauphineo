@@ -6,42 +6,24 @@ use App\Models\Spr;
 use Illuminate\Support\Collection;
 
 /**
- * Moteur de recommandation sans IA : un score par mots-clés, durée et accessibilité.
+ * Moteur de recommandation déterministe : les mêmes réponses donnent toujours les mêmes sites, dans le même ordre.
  * Le même calcul existe côté frontend (src/demo/recommandation.ts) pour la démo GitHub Pages.
  */
 class LocalRecommender
 {
-    /** Mots-clés des SPR (colonne mot_cle) associés à chaque centre d'intérêt. */
-    public const MOTS_CLES_INTERETS = [
-        'archeologie' => ['archeologie'],
-        'architecture' => ['architecture', 'urbain'],
-        'medieval' => ['medieval', 'chateau'],
-        'nature' => ['nature'],
-        'religion' => ['abbaye'],
-        'villages' => ['promenade', 'medieval'],
-        'jardins' => ['nature', 'promenade'],
-    ];
+    /** Points par thème choisi que le SPR propose, et pour un cadre qui correspond. */
+    private const POIDS_THEME = 3;
 
-    /** Mots-clés des SPR associés à chaque type d'expérience. */
-    public const MOTS_CLES_EXPERIENCES = [
-        'balade' => ['promenade', 'nature'],
-        'decouverte' => ['musee', 'architecture'],
-        'exploration' => ['archeologie', 'chateau'],
-        'immersion' => ['medieval', 'abbaye'],
-    ];
+    private const POIDS_CADRE = 3;
+
+    /** Points d'une durée dans la plage voulue ; on en perd un par heure d'écart. */
+    private const POIDS_DUREE = 2;
 
     /** Durée idéale en heures pour chaque réponse : [minimum, maximum]. */
     public const DUREES_HEURES = [
         'court' => [0, 2],
         'moyen' => [2, 3],
         'long' => [3, 24],
-    ];
-
-    public const LIBELLES = [
-        'archeologie' => 'archéologie', 'architecture' => 'architecture', 'medieval' => 'médiéval',
-        'nature' => 'nature', 'religion' => 'patrimoine religieux', 'villages' => 'villages',
-        'jardins' => 'jardins', 'balade' => 'balade', 'decouverte' => 'découverte',
-        'exploration' => 'exploration', 'immersion' => 'immersion',
     ];
 
     /**
@@ -59,58 +41,65 @@ class LocalRecommender
     }
 
     /**
+     * Classement par score, puis par part des thèmes du site que le visiteur a choisis (un site centré sur
+     * ses envies passe devant un site qui en coche autant parmi beaucoup d'autres), puis par identifiant.
+     *
      * @param  Collection<int, Spr>  $candidats
-     * @return list<array{spr: Spr, score: int, raison: string, criteres: list<string>}>
+     * @return list<array{spr: Spr, score: int, criteres: list<string>}>
      */
     public function recommander(Preferences $preferences, Collection $candidats, int $limite = 6): array
     {
         return $candidats
             ->map(fn (Spr $spr) => ['spr' => $spr, ...$this->evaluer($preferences, $spr)])
-            ->sortBy([['score', 'desc'], [fn ($a, $b) => $a['spr']->id <=> $b['spr']->id]])
+            ->sort(fn ($a, $b) => [$b['score'], $b['focus'], $a['spr']->id] <=> [$a['score'], $a['focus'], $b['spr']->id])
             ->take($limite)
+            ->map(fn ($reco) => ['spr' => $reco['spr'], 'score' => $reco['score'], 'criteres' => $reco['criteres']])
             ->values()
             ->all();
     }
 
     /**
-     * Score sur 100, raison sur la durée et l'accessibilité, et libellés des réponses que le SPR satisfait.
+     * Score sur 100, part des thèmes du site choisis par le visiteur, et réponses que le SPR satisfait
+     * (clés des thèmes et du cadre).
      *
-     * @return array{score: int, raison: string, criteres: list<string>}
+     * @return array{score: int, focus: float, criteres: list<string>}
      */
     public function evaluer(Preferences $preferences, Spr $spr): array
     {
         $motsCles = preg_split('/\s+/', trim($spr->mot_cle)) ?: [];
-        $points = 0;
-        $maximum = 0;
-        $retenus = [];
 
-        foreach ([[$preferences->interets, self::MOTS_CLES_INTERETS, 3], [$preferences->experiences, self::MOTS_CLES_EXPERIENCES, 2]] as [$choix, $correspondances, $poids]) {
-            foreach ($choix as $cle) {
-                $maximum += $poids;
-                if (array_intersect($correspondances[$cle] ?? [], $motsCles) !== []) {
-                    $points += $poids;
-                    $retenus[] = self::LIBELLES[$cle];
-                }
+        $themes = array_values(array_intersect($preferences->interets, $motsCles));
+        $points = self::POIDS_THEME * count($themes);
+        $maximum = self::POIDS_THEME * count($preferences->interets);
+        $criteres = $themes;
+
+        if ($preferences->cadre !== 'indifferent') {
+            $maximum += self::POIDS_CADRE;
+            if (in_array($preferences->cadre, $motsCles, true)) {
+                $points += self::POIDS_CADRE;
+                $criteres[] = $preferences->cadre;
             }
         }
 
-        $heures = self::heures($spr->temps_de_visite);
-        [$min, $max] = self::DUREES_HEURES[$preferences->duree];
-        $ecart = $heures < $min ? $min - $heures : max(0, $heures - $max);
-        $maximum += 2;
-        $points += max(0, 2 - $ecart);
+        $maximum += self::POIDS_DUREE;
+        $points += max(0, self::POIDS_DUREE - self::ecartDuree($preferences->duree, $spr->temps_de_visite));
 
-        $raisons = [];
-        $raisons[] = 'Visite de '.self::formaterDuree($heures).($ecart == 0 ? ', comme vous le souhaitez.' : '.');
-        if ($preferences->pmr) {
-            $raisons[] = 'Accessible aux personnes à mobilité réduite.';
-        }
+        $themesDuSite = count(array_intersect(Preferences::THEMES, $motsCles));
 
         return [
             'score' => (int) round(100 * $points / $maximum),
-            'raison' => implode(' ', $raisons),
-            'criteres' => $retenus,
+            'focus' => $themesDuSite === 0 ? 0.0 : count($themes) / $themesDuSite,
+            'criteres' => $criteres,
         ];
+    }
+
+    /** Heures entre la durée de visite du SPR et la plage voulue, 0 si elle y est. */
+    public static function ecartDuree(string $duree, string $temps): float
+    {
+        $heures = self::heures($temps);
+        [$min, $max] = self::DUREES_HEURES[$duree];
+
+        return $heures < $min ? $min - $heures : max(0, $heures - $max);
     }
 
     /** Convertit « 02:30:00 » en 2.5. */
@@ -119,13 +108,5 @@ class LocalRecommender
         [$h, $m] = array_map('intval', explode(':', $temps) + [0, 0]);
 
         return $h + $m / 60;
-    }
-
-    private static function formaterDuree(float $heures): string
-    {
-        $h = (int) floor($heures);
-        $m = (int) round(($heures - $h) * 60);
-
-        return $m === 0 ? "{$h} h" : sprintf('%d h %02d', $h, $m);
     }
 }
