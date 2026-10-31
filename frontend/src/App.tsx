@@ -4,6 +4,7 @@ import { Home, Reglementation, FAQ, MentionsLeg, CGU } from "./pages";
 import { Container } from "@mui/material";
 import SPR from "./pages/SPR.tsx";
 import Explorer from "./pages/Explorer.tsx";
+import MonCompte from "./pages/MonCompte.tsx";
 import {useEffect, useState} from "react";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/explorer" element={<Explorer />} />
                     <Route path="/mentions-legales" element={<MentionsLeg />} />
                     <Route path="/cgu" element={<CGU />} />
+                    <Route path="/mon-compte" element={<MonCompte />} />
                 </Routes>
             </Container>
             <Footer />
