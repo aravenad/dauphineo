@@ -104,7 +104,7 @@ la démonstration.
 ## Arborescence
 
 ```
-├── backend/                     l'API Laravel 11
+├── backend/                     l'API Laravel 12
 │   ├── app/
 │   │   ├── Http/Controllers/Api/    un contrôleur par ressource (sites, guides, avis, réservations, utilisateur…)
 │   │   ├── Models/              Spr, Visite, Creneaux, Reservation, Avis, Guide, Utilisateur…
@@ -149,6 +149,21 @@ Il note chaque site selon les thèmes choisis, la durée, l'accessibilité PMR, 
 d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude est configuré, sa réponse est vérifiée
 (identifiants connus, sites distincts) avant d'être renvoyée, et le moteur local reste en repli.
 
+### Sécurité
+
+- Les mots de passe sont hachés avec Argon2id et doivent compter 8 caractères, une majuscule, une minuscule, un chiffre et
+  un caractère spécial, côté API comme côté formulaire.
+- Les jetons Sanctum expirent au bout de 3 heures. Changer d'adresse e-mail ou de mot de passe et supprimer son compte
+  redemandent le mot de passe actuel, et un nouveau mot de passe ferme les autres sessions.
+- La connexion et l'inscription sont limitées à 10 essais par minute, les écritures d'un compte à 20 par minute.
+- Chaque réservation et chaque avis ne peut être supprimé que par son auteur. Les places restantes sont décomptées par
+  un déclencheur PostgreSQL, ce qui empêche deux réservations simultanées de dépasser la capacité d'une visite.
+- L'API n'accepte que l'origine du site (CORS) et renvoie des en-têtes de sécurité (`nosniff`, `frame-ancestors 'none'`,
+  HSTS en HTTPS). Le site publié embarque une politique de sécurité du contenu qui n'autorise que ses propres scripts.
+- Les comptes inactifs depuis 3 ans sont supprimés automatiquement par une tâche planifiée.
+- `composer audit` et `npm audit` ne signalent aucune faille dans les dépendances livrées, et Dependabot les tient à
+  jour.
+
 ### Écarts avec le dossier de conception
 
 | Dossier de conception | Réalisation | Raison |
@@ -167,7 +182,7 @@ ARAVENA BRAVO Damien, JACOB Timothé, BENDRIS Nael, TIERRIE Axel, BENKHEIRA Lily
 
 - Sujet : SAÉ 3.01 du département Informatique de l'IUT2 Grenoble
 - Site : React 18, TypeScript, Material UI 6, React Router 7, Axios et Vite 6 ; police Satoshi
-- API : Laravel 11, Sanctum, Pest et PostgreSQL 17 ; SDK PHP d'Anthropic pour la recommandation
+- API : Laravel 12, Sanctum, Pest et PostgreSQL 17 ; SDK PHP d'Anthropic pour la recommandation
 - Photos : les 60 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre
   (CC BY, CC BY-SA). Le fichier `backend/database/data/images.csv` garde pour chacune l'auteur, la licence et la page
   d'origine ; le site affiche le crédit sous chaque photo et la liste complète dans les mentions légales.

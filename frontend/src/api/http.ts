@@ -70,8 +70,8 @@ const http: Api = {
     },
     me: async () => (await client.get<Utilisateur>("/utilisateur")).data,
     updateMe: async (modification) => (await client.put<Utilisateur>("/utilisateur", modification)).data,
-    deleteMe: async () => {
-        await client.delete("/utilisateur");
+    deleteMe: async (motDePasse) => {
+        await client.delete("/utilisateur", { data: { mot_de_passe_actuel: motDePasse } });
     },
     mesReservations: async () => {
         const { data } = await client.get<ReservationApi[]>("/utilisateur/reservations");

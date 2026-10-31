@@ -79,6 +79,8 @@ export interface ModificationUtilisateur {
     prenom?: string;
     email?: string;
     mot_de_passe?: string;
+    /** Exigé par l'API pour changer d'adresse e-mail ou de mot de passe */
+    mot_de_passe_actuel?: string;
 }
 
 export interface Connexion {
@@ -127,7 +129,7 @@ export interface Api {
     logout(): Promise<void>;
     me(): Promise<Utilisateur>;
     updateMe(modification: ModificationUtilisateur): Promise<Utilisateur>;
-    deleteMe(): Promise<void>;
+    deleteMe(motDePasse: string): Promise<void>;
     mesReservations(): Promise<Reservation[]>;
     reserver(idVisite: number, taille: number): Promise<Reservation>;
     annulerReservation(id: number): Promise<void>;

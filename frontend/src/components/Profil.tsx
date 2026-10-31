@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Alert, Avatar, Box, TextField, Typography } from "@mui/material";
 import api, { messageErreur, type Utilisateur } from "../api";
 import { useSession } from "../session";
+import ChampMotDePasse from "./ChampMotDePasse";
 import { erreurEmail, erreurNom } from "./validation";
 import { ButtonCustom } from "./mui_custom";
 
@@ -14,6 +15,7 @@ function initiales({ prenom, nom }: Champs): string {
 function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
     const { mettreAJour } = useSession();
     const [champs, setChamps] = useState<Champs>({ prenom: utilisateur.prenom, nom: utilisateur.nom, email: utilisateur.email });
+    const [motDePasse, setMotDePasse] = useState("");
     const [envoi, setEnvoi] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; texte: string } | null>(null);
 
@@ -23,7 +25,9 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
         email: erreurEmail(champs.email),
     };
     const modifie = champs.prenom !== utilisateur.prenom || champs.nom !== utilisateur.nom || champs.email !== utilisateur.email;
-    const valide = !erreurs.prenom && !erreurs.nom && !erreurs.email;
+    // L'API redemande le mot de passe avant de changer l'adresse qui sert à se connecter
+    const nouvelEmail = champs.email.trim().toLowerCase() !== utilisateur.email.toLowerCase();
+    const valide = !erreurs.prenom && !erreurs.nom && !erreurs.email && (!nouvelEmail || motDePasse !== "");
 
     const champ = (nom: keyof Champs) => ({
         value: champs[nom],
@@ -42,8 +46,9 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
             const modification = Object.fromEntries(
                 (Object.keys(champs) as (keyof Champs)[]).filter((cle) => champs[cle] !== utilisateur[cle]).map((cle) => [cle, champs[cle].trim()]),
             );
-            const misAJour = await api.updateMe(modification);
+            const misAJour = await api.updateMe(nouvelEmail ? { ...modification, mot_de_passe_actuel: motDePasse } : modification);
             mettreAJour(misAJour);
+            setMotDePasse("");
             setChamps({ prenom: misAJour.prenom, nom: misAJour.nom, email: misAJour.email });
             setMessage({ type: "success", texte: "Vos informations ont été mises à jour." });
         } catch (erreur) {
@@ -72,12 +77,25 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
                 <TextField label="Nom" autoComplete="family-name" {...champ("nom")} />
             </Box>
             <TextField label="Adresse e-mail" type="email" autoComplete="email" {...champ("email")} />
+            {nouvelEmail && (
+                <ChampMotDePasse
+                    label="Mot de passe actuel"
+                    autoComplete="current-password"
+                    value={motDePasse}
+                    onChange={(e) => setMotDePasse(e.target.value)}
+                    helperText="Nécessaire pour changer d'adresse e-mail."
+                    fullWidth
+                />
+            )}
 
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
                 <ButtonCustom
                     variant="outlined"
                     disabled={!modifie || envoi}
-                    onClick={() => setChamps({ prenom: utilisateur.prenom, nom: utilisateur.nom, email: utilisateur.email })}
+                    onClick={() => {
+                        setChamps({ prenom: utilisateur.prenom, nom: utilisateur.nom, email: utilisateur.email });
+                        setMotDePasse("");
+                    }}
                 >
                     Annuler
                 </ButtonCustom>

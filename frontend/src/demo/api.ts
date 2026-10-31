@@ -41,6 +41,12 @@ async function empreinte(motDePasse: string): Promise<string> {
     return Array.from(new Uint8Array(octets), (o) => o.toString(16).padStart(2, "0")).join("");
 }
 
+async function verifierMotDePasse(utilisateur: UtilisateurDemo, motDePasse: string | undefined): Promise<void> {
+    if (!motDePasse || (await empreinte(motDePasse)) !== utilisateur.empreinte) {
+        throw new ApiError(422, "Le mot de passe actuel est incorrect.");
+    }
+}
+
 async function etatInitial(): Promise<Etat> {
     const empreinteDemo = await empreinte(MOT_DE_PASSE_DEMO);
     const utilisateurs = COMPTES_DEMO.map((compte, i) => ({ id: i + 1, ...compte, empreinte: empreinteDemo }));
@@ -221,18 +227,26 @@ const demo: Api = {
     updateMe: async (modification) => {
         const { etat: e, utilisateur } = await connecte();
         const email = modification.email?.trim();
+        const nouvelEmail = Boolean(email) && email!.toLowerCase() !== utilisateur.email.toLowerCase();
+        if (modification.mot_de_passe || nouvelEmail) await verifierMotDePasse(utilisateur, modification.mot_de_passe_actuel);
         if (email && e.utilisateurs.some((u) => u.id !== utilisateur.id && u.email.toLowerCase() === email.toLowerCase())) {
             throw new ApiError(422, "Cette adresse e-mail est déjà utilisée.");
         }
         if (modification.nom) utilisateur.nom = modification.nom;
         if (modification.prenom) utilisateur.prenom = modification.prenom;
         if (email) utilisateur.email = email;
-        if (modification.mot_de_passe) utilisateur.empreinte = await empreinte(modification.mot_de_passe);
+        if (modification.mot_de_passe) {
+            utilisateur.empreinte = await empreinte(modification.mot_de_passe);
+            // Comme l'API : les autres sessions ouvertes sont fermées
+            const courant = lireToken();
+            e.sessions = Object.fromEntries(Object.entries(e.sessions).filter(([token, id]) => id !== utilisateur.id || token === courant));
+        }
         sauvegarder(e);
         return public_(utilisateur);
     },
-    deleteMe: async () => {
+    deleteMe: async (motDePasse) => {
         const { etat: e, utilisateur } = await connecte();
+        await verifierMotDePasse(utilisateur, motDePasse);
         // Comme les clés étrangères en cascade du backend
         e.utilisateurs = e.utilisateurs.filter((u) => u.id !== utilisateur.id);
         e.reservations = e.reservations.filter((r) => r.id_utilisateur !== utilisateur.id);
