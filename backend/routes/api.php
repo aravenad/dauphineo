@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->middleware('throttle:10,1')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/confirmer', [AuthController::class, 'confirmer']);
 });
 
 Route::prefix('spr')->group(function () {

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { ApiError } from "./erreurs";
 import { lireToken } from "./token";
-import type { Api, Reservation, Spr, Top, Visite, Avis, Connexion, Utilisateur, Recommandations } from "./types";
+import type { Api, Reservation, Spr, Top, Visite, Avis, Connexion, DemandeInscription, Utilisateur, Recommandations } from "./types";
 
 const client = axios.create({
     baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
@@ -64,7 +64,8 @@ const http: Api = {
     visitesSpr: async (id) => (await client.get<Visite[]>(`/spr/${id}/visites`)).data,
     avisSpr: async (id) => (await client.get<Avis[]>(`/spr/${id}/avis`)).data,
     login: async (email, motDePasse) => (await client.post<Connexion>("/auth/login", { email, password: motDePasse })).data,
-    register: async (inscription) => (await client.post<Connexion>("/auth/register", { ...inscription, verif_age: true })).data,
+    register: async (inscription) => (await client.post<DemandeInscription>("/auth/register", { ...inscription, verif_age: true })).data,
+    confirmerInscription: async (jeton) => (await client.post<Connexion>("/auth/confirmer", { jeton })).data,
     logout: async () => {
         await client.post("/utilisateur/logout");
     },

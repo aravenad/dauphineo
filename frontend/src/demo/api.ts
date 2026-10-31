@@ -25,6 +25,14 @@ interface ReservationDemo {
     taille: number;
 }
 
+interface InscriptionDemo {
+    nom: string;
+    prenom: string;
+    email: string;
+    empreinte: string;
+    expire: number;
+}
+
 interface Etat {
     version: 1;
     prochainId: number;
@@ -32,7 +40,12 @@ interface Etat {
     reservations: ReservationDemo[];
     avis: Avis[];
     sessions: Record<string, number>;
+    /** Demandes d'inscription en attente d'activation, absentes des sauvegardes plus anciennes */
+    inscriptions?: Record<string, InscriptionDemo>;
 }
+
+const DUREE_LIEN_MS = 24 * 60 * 60 * 1000;
+const MESSAGE_INSCRIPTION = "Si cette adresse peut être utilisée, un e-mail vient d'y être envoyé. Ouvrez le lien qu'il contient pour activer votre compte.";
 
 const CLE = "dauphineo.demo";
 
@@ -201,18 +214,39 @@ const demo: Api = {
         }
         return ouvrirSession(e, utilisateur);
     },
+    // Comme l'API : même réponse pour une adresse connue ou non, le compte n'existe qu'après activation
     register: async (inscription) => {
         const e = await charger();
-        if (e.utilisateurs.some((u) => u.email.toLowerCase() === inscription.email.trim().toLowerCase())) {
-            throw new ApiError(422, "Cette adresse e-mail est déjà utilisée.");
+        const jeton = crypto.randomUUID();
+        e.inscriptions = { ...e.inscriptions, [jeton]: {
+            nom: inscription.nom,
+            prenom: inscription.prenom,
+            email: inscription.email.trim(),
+            empreinte: await empreinte(inscription.mot_de_passe),
+            expire: Date.now() + DUREE_LIEN_MS,
+        } };
+        sauvegarder(e);
+        return { message: MESSAGE_INSCRIPTION, jetonDemo: jeton };
+    },
+    confirmerInscription: async (jeton) => {
+        const e = await charger();
+        const inscription = e.inscriptions?.[jeton];
+        if (!inscription) {
+            throw new ApiError(422, "Ce lien d'activation n'est pas valide. Vérifiez qu'il a été copié en entier.");
+        }
+        if (inscription.expire < Date.now()) {
+            throw new ApiError(422, "Ce lien d'activation a expiré. Inscrivez-vous de nouveau pour en recevoir un autre.");
+        }
+        if (e.utilisateurs.some((u) => u.email.toLowerCase() === inscription.email.toLowerCase())) {
+            throw new ApiError(409, "Ce compte est déjà activé. Connectez-vous avec votre adresse e-mail et votre mot de passe.");
         }
         const utilisateur: UtilisateurDemo = {
             id: e.prochainId++,
             nom: inscription.nom,
             prenom: inscription.prenom,
-            email: inscription.email.trim(),
+            email: inscription.email,
             pseudo: pseudoLibre(e, inscription.prenom),
-            empreinte: await empreinte(inscription.mot_de_passe),
+            empreinte: inscription.empreinte,
         };
         e.utilisateurs.push(utilisateur);
         return ouvrirSession(e, utilisateur);

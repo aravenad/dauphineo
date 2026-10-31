@@ -73,6 +73,9 @@ npm install
 npm run dev
 ```
 
+En local, les e-mails ne partent pas : `MAIL_MAILER=log` les écrit dans `backend/storage/logs/laravel.log`, où se
+trouve le lien d'activation envoyé après une inscription. Les liens pointent vers `FRONTEND_URL`.
+
 ### La recommandation par Claude
 
 Elle est facultative : sans clé, le moteur local classe les sites selon les thèmes, la durée, l'accessibilité, la taille
@@ -156,6 +159,9 @@ d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude es
 - Les jetons Sanctum expirent au bout de 3 heures. Changer d'adresse e-mail ou de mot de passe et supprimer son compte
   redemandent le mot de passe actuel, et un nouveau mot de passe ferme les autres sessions.
 - La connexion et l'inscription sont limitées à 10 essais par minute, les écritures d'un compte à 20 par minute.
+- L'inscription répond la même chose qu'une adresse ait déjà un compte ou non. Le compte n'est créé qu'à l'ouverture
+  du lien d'activation envoyé par e-mail, valable 24 heures, et une même adresse ne reçoit pas plus de 3 e-mails par
+  heure. En démonstration, un bouton remplace l'e-mail.
 - Chaque réservation et chaque avis ne peut être supprimé que par son auteur. Les places restantes sont décomptées par
   un déclencheur PostgreSQL, ce qui empêche deux réservations simultanées de dépasser la capacité d'une visite.
 - L'API n'accepte que l'origine du site (CORS) et renvoie des en-têtes de sécurité (`nosniff`, `frame-ancestors 'none'`,

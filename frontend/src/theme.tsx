@@ -1,9 +1,11 @@
 import { createTheme } from "@mui/material/styles";
+import { frFR } from "@mui/material/locale";
 import SatoshiRegular from "./assets/fonts/Satoshi-Regular.woff2";
 import SatoshiMedium from "./assets/fonts/Satoshi-Medium.woff2";
 import SatoshiBold from "./assets/fonts/Satoshi-Bold.woff2";
 import SatoshiBlack from "./assets/fonts/Satoshi-Black.woff2";
 
+// frFR traduit les textes intégrés de MUI, comme le bouton « Fermer » des alertes
 const theme = createTheme({
   palette: {
     common :{
@@ -69,6 +71,6 @@ const theme = createTheme({
       },
     },
   },
-});
+}, frFR);
 
 export default theme;

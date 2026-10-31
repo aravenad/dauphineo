@@ -83,6 +83,13 @@ export interface ModificationUtilisateur {
     mot_de_passe_actuel?: string;
 }
 
+/** Réponse identique que l'adresse ait déjà un compte ou non */
+export interface DemandeInscription {
+    message: string;
+    /** Mode démo seulement : aucun e-mail n'est envoyé, le jeton d'activation est rendu directement */
+    jetonDemo?: string;
+}
+
 export interface Connexion {
     user: Utilisateur;
     access_token: string;
@@ -125,7 +132,8 @@ export interface Api {
     visitesSpr(id: number): Promise<Visite[]>;
     avisSpr(id: number): Promise<Avis[]>;
     login(email: string, motDePasse: string): Promise<Connexion>;
-    register(inscription: Inscription): Promise<Connexion>;
+    register(inscription: Inscription): Promise<DemandeInscription>;
+    confirmerInscription(jeton: string): Promise<Connexion>;
     logout(): Promise<void>;
     me(): Promise<Utilisateur>;
     updateMe(modification: ModificationUtilisateur): Promise<Utilisateur>;

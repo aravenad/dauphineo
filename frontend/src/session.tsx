@@ -1,5 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import api, { ApiError, type Connexion, type Utilisateur } from "./api";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useSearchParams } from "react-router";
+import { Alert, Snackbar } from "@mui/material";
+import api, { ApiError, messageErreur, type Connexion, type Utilisateur } from "./api";
 import { enregistrerToken, lireToken } from "./api/token";
 import ConnexionDialog from "./components/ConnexionDialog";
 
@@ -20,6 +22,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const [utilisateur, setUtilisateur] = useState<Utilisateur | null>(null);
     const [verification, setVerification] = useState(() => lireToken() !== null);
     const [dialogue, setDialogue] = useState(false);
+    // Le message reste en place pendant que la notification se referme
+    const [activation, setActivation] = useState({ ouverte: false, succes: true, message: "" });
+    const [parametres, setParametres] = useSearchParams();
+    const jetonActivation = parametres.get("inscription");
+    const activationLancee = useRef(false);
 
     useEffect(() => {
         if (!lireToken()) return;
@@ -39,6 +46,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         setUtilisateur(connexion.user);
         setDialogue(false);
     }, []);
+
+    // Lien d'activation reçu par e-mail : ?inscription=<jeton>
+    useEffect(() => {
+        if (!jetonActivation || activationLancee.current) return;
+        activationLancee.current = true;
+        setParametres((p) => {
+            p.delete("inscription");
+            return p;
+        }, { replace: true });
+        api.confirmerInscription(jetonActivation)
+            .then((connexion) => {
+                connecter(connexion);
+                setActivation({ ouverte: true, succes: true, message: "Votre compte est activé. Bienvenue sur Dauphinéo !" });
+            })
+            .catch((erreur) => setActivation({ ouverte: true, succes: false, message: messageErreur(erreur, "Votre compte n'a pas pu être activé.") }));
+    }, [jetonActivation, setParametres, connecter]);
+
+    const fermerActivation = () => setActivation((a) => ({ ...a, ouverte: false }));
 
     const oublier = useCallback(() => {
         enregistrerToken(null);
@@ -67,6 +92,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         <SessionContext.Provider value={valeur}>
             {children}
             <ConnexionDialog open={dialogue} onClose={() => setDialogue(false)} onConnexion={connecter} />
+            <Snackbar open={activation.ouverte} autoHideDuration={activation.succes ? 6000 : null} onClose={fermerActivation}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}>
+                <Alert severity={activation.succes ? "success" : "error"} variant="filled" onClose={fermerActivation}>
+                    {activation.message}
+                </Alert>
+            </Snackbar>
         </SessionContext.Provider>
     );
 }
