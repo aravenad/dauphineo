@@ -1,9 +1,9 @@
 <?php
 
-it('liste les 20 SPR avec leurs images', function () {
+it('liste les 46 SPR avec leurs images', function () {
     $this->getJson('/api/spr')
         ->assertOk()
-        ->assertJsonCount(20)
+        ->assertJsonCount(46)
         ->assertJsonStructure(['*' => ['id', 'nom_commune', 'capacite_de_visite', 'mot_cle', 'is_pmr', 'temps_de_visite', 'courte_description', 'images']]);
 });
 
@@ -38,4 +38,12 @@ it('classe les SPR les plus réservés et les mieux notés', function () {
         ->assertJsonPath('most_visited.0.id', 18)
         ->assertJsonCount(3, 'most_visited')
         ->assertJsonCount(3, 'best_rated');
+});
+
+it('fournit les descriptions anglaises de chaque SPR', function () {
+    $sprs = $this->getJson('/api/spr')->assertOk()->json();
+
+    expect($sprs)->toHaveCount(46)
+        ->each(fn ($spr) => $spr->courte_description_en->not->toBeEmpty()
+            ->longue_description_en->not->toBeEmpty());
 });

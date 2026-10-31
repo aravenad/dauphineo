@@ -31,6 +31,8 @@ class Spr extends Model
         'temps_de_visite',
         'courte_description',
         'longue_description',
+        'courte_description_en',
+        'longue_description_en',
     ];
 
     /**

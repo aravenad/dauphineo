@@ -44,6 +44,8 @@ export const SPR: Spr[] = lireCsv(sprCsv).map((ligne) => ({
     temps_de_visite: ligne.temps_de_visite,
     courte_description: ligne.courte_description,
     longue_description: ligne.longue_description,
+    courte_description_en: ligne.courte_description_en || null,
+    longue_description_en: ligne.longue_description_en || null,
     images: images.filter((image) => image.id_spr === Number(ligne.id)),
 }));
 
