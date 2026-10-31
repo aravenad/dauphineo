@@ -96,11 +96,11 @@ export default defineConfig(({ mode }) => {
     // Les données de démo sont lues dans ../backend/database/data, et rien d'autre hors du frontend
     server: { fs: { allow: [searchForWorkspaceRoot(process.cwd()), '../backend/database/data'] } },
     build: {
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           // React change rarement : un fichier à part reste en cache d'une version à l'autre. Les composants
           // MUI restent avec les pages qui les utilisent, pour que l'accueil ne télécharge pas ceux des autres pages.
-          manualChunks: (id) => (/node_modules\/(react|react-dom|react-router|scheduler)\//.test(id) ? 'react' : undefined),
+          codeSplitting: { groups: [{ name: 'react', test: /node_modules\/(react|react-dom|react-router|scheduler)\// }] },
         },
       },
     },
