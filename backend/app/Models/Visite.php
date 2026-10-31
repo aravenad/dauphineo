@@ -25,7 +25,7 @@ class Visite extends Model
     ];
 
     protected $casts = [
-        'date_visite' => 'date',
+        'date_visite' => 'date:Y-m-d',
         'capacite_actuelle' => 'integer',
         'capacite_max' => 'integer',
         'id_spr' => 'integer',
