@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { ApiError, messageErreur } from "./erreurs";
 import { lireToken } from "./token";
 import { langueActuelle, traduire } from "../i18n";
-import type { Api, Reservation, Spr, Top, Visite, Avis, Connexion, DemandeInscription, Utilisateur, Recommandations } from "./types";
+import type { Api, Reservation, Spr, SprClasse, Visite, Avis, Connexion, DemandeInscription, Utilisateur, Recommandations } from "./types";
 
 const client = axios.create({
     baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:8000/api",
@@ -52,18 +52,16 @@ function aplatir(reservation: ReservationApi): Reservation {
 }
 
 const http: Api = {
-    listSpr: async () => (await client.get<Spr[]>("/spr")).data,
-    getSpr: async (id) => (await client.get<{ spr: Spr }>(`/spr/${id}`)).data.spr,
-    topSpr: async () => {
-        const { data } = await client.get<{
-            most_visited: { id: number; reservations_count: number }[];
-            best_rated: { id: number; average_note: string }[];
-        }>("/spr/top");
-        return {
-            plus_reserves: data.most_visited.map((s) => ({ id: s.id, reservations: s.reservations_count })),
-            mieux_notes: data.best_rated.map((s) => ({ id: s.id, note_moyenne: Number(s.average_note) })),
-        } satisfies Top;
+    listSpr: async () => {
+        const { data } = await client.get<(Spr & { reservations_count: number; avis_count: number; avis_avg_note: string | number | null })[]>("/spr");
+        return data.map(({ reservations_count, avis_count, avis_avg_note, ...spr }) => ({
+            ...spr,
+            note_moyenne: avis_avg_note === null ? null : Number(avis_avg_note),
+            nb_avis: avis_count,
+            reservations: reservations_count,
+        })) satisfies SprClasse[];
     },
+    getSpr: async (id) => (await client.get<{ spr: Spr }>(`/spr/${id}`)).data.spr,
     visitesSpr: async (id) => (await client.get<Visite[]>(`/spr/${id}/visites`)).data,
     avisSpr: async (id) => (await client.get<Avis[]>(`/spr/${id}/avis`)).data,
     login: async (email, motDePasse) => (await client.post<Connexion>("/auth/login", { email, password: motDePasse })).data,

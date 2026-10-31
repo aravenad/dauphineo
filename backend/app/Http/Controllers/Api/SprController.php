@@ -24,13 +24,18 @@ class SprController extends Controller
      * @OA\Get(
      *     path="/api/spr",
      *     tags={"spr"},
-     *     summary="List every SPR with its images",
+     *     summary="List every SPR with its images, booking count, review count and average rating",
      *     @OA\Response(response=200, description="Success")
      * )
      */
     public function index()
     {
-        return Spr::with('images')->orderBy('id')->get();
+        // L'accueil et l'explorateur classent les sites sur ces chiffres ; avis_avg_note reste null tant que personne n'a noté le site
+        return Spr::with('images')
+            ->withCount(['reservations', 'avis'])
+            ->withAvg('avis', 'note')
+            ->orderBy('id')
+            ->get();
     }
 
     /**

@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Alert, Badge, Box, Chip, Skeleton, Typography } from "@mui/material";
+import { Alert, Badge, Box, Chip, MenuItem, Skeleton, TextField, Typography } from "@mui/material";
+import { useSearchParams } from "react-router";
 import TuneIcon from "@mui/icons-material/Tune";
-import api, { type Spr } from "../api";
+import api, { type SprClasse } from "../api";
 import { useApi, useTitre } from "../hooks";
 import { heures, libelleMotCle, normaliser } from "../utils/format";
 import CardSPR from "../components/CardSPR";
 import FilterPanel from "../components/FilterPanel";
-import { DUREE_MAX, FILTRES_VIDES, type Filtres } from "../components/filtres";
+import { DUREE_MAX, FILTRES_VIDES, TRIS, lireTri, trier, type Filtres, type Tri } from "../components/filtres";
 import { ButtonCustom } from "../components/mui_custom";
 import { entreeEnCascade } from "../animations";
 import { locale, useTextes } from "../i18n";
@@ -22,6 +23,8 @@ const TEXTES = {
         filtrer: "Filtrer",
         aucun: "Aucun site patrimonial remarquable ne correspond à ces critères.",
         reinitialiser: "Réinitialiser les filtres",
+        trierPar: "Trier par",
+        tris: { nom: "Nom", note: "Mieux notés", reservations: "Plus réservés" } satisfies Record<Tri, string>,
     },
     en: {
         titre: "Explore the sites",
@@ -33,10 +36,12 @@ const TEXTES = {
         filtrer: "Filter",
         aucun: "No remarkable heritage site matches these criteria.",
         reinitialiser: "Reset the filters",
+        trierPar: "Sort by",
+        tris: { nom: "Name", note: "Top rated", reservations: "Most booked" },
     },
 };
 
-function filtrer(sprs: Spr[], filtres: Filtres): Spr[] {
+function filtrer(sprs: SprClasse[], filtres: Filtres): SprClasse[] {
     const recherche = normaliser(filtres.recherche.trim());
     return sprs.filter((spr) => {
         const motsCles = spr.mot_cle.split(/\s+/);
@@ -55,8 +60,19 @@ function Explorer() {
     const { donnees, erreur, chargement } = useApi(() => api.listSpr(), []);
     const [filtres, setFiltres] = useState<Filtres>(FILTRES_VIDES);
     const [panneau, setPanneau] = useState(false);
+    const [params, setParams] = useSearchParams();
+    const tri = lireTri(params.get("tri"));
 
-    const sprs = [...(donnees ?? [])].sort((a, b) => a.nom_commune.localeCompare(b.nom_commune, "fr"));
+    const changerTri = (nouveau: Tri) => {
+        // Remplace l'entrée d'historique : le retour arrière ramène à la page précédente, pas au tri précédent
+        setParams((courants) => {
+            if (nouveau === "nom") courants.delete("tri");
+            else courants.set("tri", nouveau);
+            return courants;
+        }, { replace: true });
+    };
+
+    const sprs = trier(donnees ?? [], tri);
     const resultats = filtrer(sprs, filtres);
     const actifs = filtres.motsCles.length + (filtres.dureeMax < DUREE_MAX ? 1 : 0) + (filtres.pmr ? 1 : 0) + (filtres.recherche.trim() ? 1 : 0);
 
@@ -85,11 +101,27 @@ function Explorer() {
                     )}
                     {filtres.pmr && <Chip label={t.pmr} onDelete={() => setFiltres({ ...filtres, pmr: false })} />}
                 </Box>
-                <Badge badgeContent={actifs} color="primary">
-                    <ButtonCustom variant="outlined" startIcon={<TuneIcon />} onClick={() => setPanneau(true)}>
-                        {t.filtrer}
-                    </ButtonCustom>
-                </Badge>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <TextField
+                        select
+                        size="small"
+                        label={t.trierPar}
+                        value={tri}
+                        onChange={(e) => changerTri(lireTri(e.target.value))}
+                        sx={{ minWidth: 170, "& .MuiOutlinedInput-root": { borderRadius: "2em" } }}
+                    >
+                        {TRIS.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {t.tris[option]}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <Badge badgeContent={actifs} color="primary">
+                        <ButtonCustom variant="outlined" startIcon={<TuneIcon />} onClick={() => setPanneau(true)}>
+                            {t.filtrer}
+                        </ButtonCustom>
+                    </Badge>
+                </Box>
             </Box>
 
             {erreur && <Alert severity="error">{erreur}</Alert>}
@@ -103,9 +135,16 @@ function Explorer() {
             ) : resultats.length > 0 ? (
                 // Les cartes qui réapparaissent après un changement de filtre arrivent aussi en cascade
                 <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: { xs: 2, md: 4 }, ...entreeEnCascade() }}>
-                    {resultats.map((spr) => (
-                        <CardSPR key={spr.id} spr={spr} />
-                    ))}
+                    {resultats.map((spr) =>
+                        // Trié par note ou par réservations, la carte montre le chiffre qui la classe
+                        tri === "note" ? (
+                            <CardSPR key={spr.id} spr={spr} variante="rated" noteMoyenne={spr.note_moyenne ?? undefined} />
+                        ) : tri === "reservations" ? (
+                            <CardSPR key={spr.id} spr={spr} variante="booked" reservations={spr.reservations} />
+                        ) : (
+                            <CardSPR key={spr.id} spr={spr} />
+                        ),
+                    )}
                 </Box>
             ) : (
                 donnees && (

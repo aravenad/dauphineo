@@ -1,10 +1,11 @@
 import { Link as RouterLink } from "react-router";
 import { Alert, Skeleton } from "@mui/material";
-import api, { type Spr } from "../api";
+import api from "../api";
 import { useApi, useTitre } from "../hooks";
 import SearchSection from "../components/SearchSection";
 import ExploreSection from "../components/ExploreSection";
 import CardSPR from "../components/CardSPR";
+import { trier, type Tri } from "../components/filtres";
 import { ButtonCustom } from "../components/mui_custom";
 import { useTextes } from "../i18n";
 
@@ -17,6 +18,9 @@ const TEXTES = {
         explorez: "Explorez",
         explorezSous: "Découvrez tous les sites patrimoniaux",
         voir: (n: number | string) => `Voir les ${n} sites`,
+        voirPlus: "Voir plus",
+        voirPlusNotes: "Voir plus de sites, classés par note",
+        voirPlusReserves: "Voir plus de sites, classés par réservations",
     },
     en: {
         mieuxNotes: "Top rated",
@@ -26,6 +30,9 @@ const TEXTES = {
         explorez: "Explore",
         explorezSous: "Discover every heritage site",
         voir: (n: number | string) => `See all ${n} sites`,
+        voirPlus: "See more",
+        voirPlusNotes: "See more sites, sorted by rating",
+        voirPlusReserves: "See more sites, sorted by bookings",
     },
 };
 
@@ -35,37 +42,46 @@ function Squelettes() {
     return Array.from({ length: PAR_SECTION }, (_, i) => <Skeleton key={i} variant="rounded" sx={{ aspectRatio: "1", height: "auto", borderRadius: "1em" }} />);
 }
 
+/** Renvoie vers l'explorateur déjà trié ; le libellé accessible dit sur quoi. */
+function VoirPlus({ tri, libelle }: { tri: Tri; libelle: string }) {
+    const t = useTextes(TEXTES);
+    return (
+        <ButtonCustom variant="outlined" size="large" component={RouterLink} to={`/explorer?tri=${tri}`} aria-label={libelle}>
+            {t.voirPlus}
+        </ButtonCustom>
+    );
+}
+
 function Home() {
     useTitre();
     const t = useTextes(TEXTES);
     const liste = useApi(() => api.listSpr(), []);
-    const top = useApi(() => api.topSpr(), []);
-    const parId = new Map<number, Spr>((liste.donnees ?? []).map((spr) => [spr.id, spr]));
-    const pret = liste.donnees && top.donnees;
+    const sprs = liste.donnees ?? [];
 
-    const mieuxNotes = (top.donnees?.mieux_notes ?? []).filter(({ id }) => parId.has(id)).slice(0, PAR_SECTION);
-    const plusReserves = (top.donnees?.plus_reserves ?? []).filter(({ id }) => parId.has(id)).slice(0, PAR_SECTION);
-    const decouvrir = [...(liste.donnees ?? [])].sort((a, b) => a.nom_commune.localeCompare(b.nom_commune, "fr")).slice(0, PAR_SECTION);
+    // Le même tri que l'explorateur : « Voir plus » y reprend la liste là où l'accueil s'arrête
+    const mieuxNotes = trier(sprs, "note").filter((spr) => spr.note_moyenne !== null).slice(0, PAR_SECTION);
+    const plusReserves = trier(sprs, "reservations").filter((spr) => spr.reservations > 0).slice(0, PAR_SECTION);
+    const decouvrir = trier(sprs, "nom").slice(0, PAR_SECTION);
 
     return (
         <>
             <SearchSection sprList={liste.donnees ?? []} />
 
-            {(liste.erreur || top.erreur) && (
+            {liste.erreur && (
                 <Alert severity="error" sx={{ mt: 4 }}>
-                    {liste.erreur ?? top.erreur}
+                    {liste.erreur}
                 </Alert>
             )}
 
-            {(pret ? mieuxNotes.length > 0 : !top.erreur) && (
-                <ExploreSection titre={t.mieuxNotes} sousTitre={t.mieuxNotesSous}>
-                    {pret ? mieuxNotes.map(({ id, note_moyenne }) => <CardSPR key={id} spr={parId.get(id)!} variante="rated" noteMoyenne={note_moyenne} />) : <Squelettes />}
+            {(liste.donnees ? mieuxNotes.length > 0 : !liste.erreur) && (
+                <ExploreSection titre={t.mieuxNotes} sousTitre={t.mieuxNotesSous} action={<VoirPlus tri="note" libelle={t.voirPlusNotes} />}>
+                    {liste.donnees ? mieuxNotes.map((spr) => <CardSPR key={spr.id} spr={spr} variante="rated" noteMoyenne={spr.note_moyenne ?? undefined} />) : <Squelettes />}
                 </ExploreSection>
             )}
 
-            {(pret ? plusReserves.length > 0 : !top.erreur) && (
-                <ExploreSection titre={t.plusReserves} sousTitre={t.plusReservesSous}>
-                    {pret ? plusReserves.map(({ id, reservations }) => <CardSPR key={id} spr={parId.get(id)!} variante="booked" reservations={reservations} />) : <Squelettes />}
+            {(liste.donnees ? plusReserves.length > 0 : !liste.erreur) && (
+                <ExploreSection titre={t.plusReserves} sousTitre={t.plusReservesSous} action={<VoirPlus tri="reservations" libelle={t.voirPlusReserves} />}>
+                    {liste.donnees ? plusReserves.map((spr) => <CardSPR key={spr.id} spr={spr} variante="booked" reservations={spr.reservations} />) : <Squelettes />}
                 </ExploreSection>
             )}
 

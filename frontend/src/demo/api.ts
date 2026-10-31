@@ -58,9 +58,6 @@ const MESSAGE_INSCRIPTION = () => t(
 
 const CLE = "dauphineo.demo";
 
-/** SprController::TAILLE_CLASSEMENT côté Laravel. */
-const TAILLE_CLASSEMENT = 4;
-
 async function empreinte(motDePasse: string): Promise<string> {
     const octets = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`dauphineo:${motDePasse}`));
     return Array.from(new Uint8Array(octets), (o) => o.toString(16).padStart(2, "0")).join("");
@@ -183,25 +180,19 @@ function pseudoLibre(e: Etat, prenom: string): string {
 }
 
 const demo: Api = {
-    listSpr: async () => SPR,
-    getSpr: async (id) => sprOu404(id),
-    topSpr: async () => {
+    listSpr: async () => {
         const e = await charger();
-        const plusReserves = SPR
-            .map((spr) => ({ id: spr.id, reservations: e.reservations.filter((r) => r.id_spr === spr.id).length }))
-            .filter((s) => s.reservations > 0)
-            .sort((a, b) => b.reservations - a.reservations || a.id - b.id)
-            .slice(0, TAILLE_CLASSEMENT);
-        const mieuxNotes = SPR
-            .map((spr) => {
-                const notes = e.avis.filter((a) => a.id_spr === spr.id).map((a) => a.note);
-                return { id: spr.id, note_moyenne: notes.length ? notes.reduce((x, y) => x + y, 0) / notes.length : 0 };
-            })
-            .filter((s) => s.note_moyenne > 0)
-            .sort((a, b) => b.note_moyenne - a.note_moyenne || a.id - b.id)
-            .slice(0, TAILLE_CLASSEMENT);
-        return { plus_reserves: plusReserves, mieux_notes: mieuxNotes };
+        return SPR.map((spr) => {
+            const notes = e.avis.filter((a) => a.id_spr === spr.id).map((a) => a.note);
+            return {
+                ...spr,
+                note_moyenne: notes.length ? notes.reduce((x, y) => x + y, 0) / notes.length : null,
+                nb_avis: notes.length,
+                reservations: e.reservations.filter((r) => r.id_spr === spr.id).length,
+            };
+        });
     },
+    getSpr: async (id) => sprOu404(id),
     visitesSpr: async (id) => {
         sprOu404(id);
         const e = await charger();

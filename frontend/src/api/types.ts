@@ -26,9 +26,12 @@ export interface Spr {
     images: Image[];
 }
 
-export interface Top {
-    plus_reserves: { id: number; reservations: number }[];
-    mieux_notes: { id: number; note_moyenne: number }[];
+/** Un SPR de la liste, avec de quoi le classer dans l'explorateur. */
+export interface SprClasse extends Spr {
+    /** null tant que personne n'a noté le site. */
+    note_moyenne: number | null;
+    nb_avis: number;
+    reservations: number;
 }
 
 /** Visite encore réservable, avec son créneau et son guide. */
@@ -137,9 +140,8 @@ export interface Recommandations {
 }
 
 export interface Api {
-    listSpr(): Promise<Spr[]>;
+    listSpr(): Promise<SprClasse[]>;
     getSpr(id: number): Promise<Spr>;
-    topSpr(): Promise<Top>;
     visitesSpr(id: number): Promise<Visite[]>;
     avisSpr(id: number): Promise<Avis[]>;
     login(email: string, motDePasse: string): Promise<Connexion>;

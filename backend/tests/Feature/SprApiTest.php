@@ -7,6 +7,17 @@ it('liste les 46 SPR avec leurs images', function () {
         ->assertJsonStructure(['*' => ['id', 'nom_commune', 'capacite_de_visite', 'mot_cle', 'is_pmr', 'temps_de_visite', 'courte_description', 'images']]);
 });
 
+it('compte les réservations et la note moyenne de chaque SPR', function () {
+    $sprs = collect($this->getJson('/api/spr')->assertOk()->json())->keyBy('id');
+
+    // Mêmes chiffres que le classement de l'accueil
+    $top = $this->getJson('/api/spr/top')->json();
+    expect($sprs[18]['reservations_count'])->toBe($top['most_visited'][0]['reservations_count'])
+        ->and(round((float) $sprs[44]['avis_avg_note'], 2))->toBe((float) $top['best_rated'][0]['average_note'])
+        ->and($sprs[44]['avis_count'])->toBe(3)
+        ->and($sprs->where('reservations_count', 0))->not->toBeEmpty();
+});
+
 it('détaille un SPR avec ses guides, ses avis et la répartition des notes', function () {
     $this->getJson('/api/spr/18')
         ->assertOk()
