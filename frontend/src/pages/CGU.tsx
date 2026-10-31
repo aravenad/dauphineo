@@ -27,14 +27,14 @@ function CGU() {
       titre="Conditions générales d'utilisation"
       intro="Les règles qui encadrent l'utilisation de Dauphinéo, que vous soyez simple visiteur ou inscrit."
     >
-      <SectionLegale icone={<DescriptionOutlinedIcon />} titre="1. Objet">
+      <SectionLegale icone={<DescriptionOutlinedIcon />} titre="Objet">
         <Typography>
           Les présentes CGU ont pour objectif de définir les modalités et conditions d’utilisation des services proposés par Dauphinéo. Elles
           s’appliquent à tous les utilisateurs de la plateforme, qu’ils soient simples visiteurs ou inscrits.
         </Typography>
       </SectionLegale>
 
-      <SectionLegale icone={<LanguageIcon />} titre="2. Accès au site">
+      <SectionLegale icone={<LanguageIcon />} titre="Accès au site">
         <GrilleCartes colonnes={2}>
           <CarteInfo icone={<ScheduleIcon fontSize="small" />} titre="Disponibilité">
             Dauphinéo s’efforce d’assurer l’accès à son site 24h/24, 7j/7. L’accès peut toutefois être temporairement suspendu pour des raisons
@@ -46,7 +46,7 @@ function CGU() {
         </GrilleCartes>
       </SectionLegale>
 
-      <SectionLegale icone={<AccountCircleOutlinedIcon />} titre="3. Inscription et compte utilisateur">
+      <SectionLegale icone={<AccountCircleOutlinedIcon />} titre="Inscription et compte utilisateur">
         <GrilleCartes>
           <CarteInfo icone={<PersonAddAltOutlinedIcon fontSize="small" />} titre="Création de compte">
             Certains services nécessitent un compte, créé avec des informations exactes et à jour (nom, prénom, email, mot de passe, etc.).
@@ -62,7 +62,7 @@ function CGU() {
         </GrilleCartes>
       </SectionLegale>
 
-      <SectionLegale icone={<RuleIcon />} titre="4. Utilisation des services">
+      <SectionLegale icone={<RuleIcon />} titre="Utilisation des services">
         <Typography>
           Vous vous engagez à utiliser les services conformément aux lois en vigueur et aux présentes CGU. Il est notamment interdit de :
         </Typography>
@@ -79,7 +79,7 @@ function CGU() {
         </GrilleCartes>
       </SectionLegale>
 
-      <SectionLegale icone={<CopyrightIcon />} titre="5. Propriété intellectuelle">
+      <SectionLegale icone={<CopyrightIcon />} titre="Propriété intellectuelle">
         <Typography>
           Les contenus présents sur le site Dauphinéo (textes, images, logos) sont la propriété de Dauphinéo ou de ses partenaires et protégés
           par les lois sur la propriété intellectuelle. Toute reproduction, distribution, modification ou exploitation non autorisée est
@@ -91,7 +91,7 @@ function CGU() {
         </Typography>
       </SectionLegale>
 
-      <SectionLegale icone={<ShieldOutlinedIcon />} titre="6. Protection des données personnelles">
+      <SectionLegale icone={<ShieldOutlinedIcon />} titre="Protection des données personnelles">
         <Typography>
           Les données personnelles collectées sur le site sont traitées conformément à notre{" "}
           <Link component={RouterLink} to="/reglementation">
@@ -101,28 +101,28 @@ function CGU() {
         </Typography>
       </SectionLegale>
 
-      <SectionLegale icone={<BalanceIcon />} titre="7. Responsabilité">
+      <SectionLegale icone={<BalanceIcon />} titre="Responsabilité">
         <Typography>
           Dauphinéo met tout en œuvre pour assurer l'exactitude des informations diffusées sur son site. Cependant, l'éditeur ne peut garantir
           l'exactitude ou l'exhaustivité des informations disponibles.
         </Typography>
       </SectionLegale>
 
-      <SectionLegale icone={<UpdateIcon />} titre="8. Modification des CGU">
+      <SectionLegale icone={<UpdateIcon />} titre="Modification des CGU">
         <Typography>
           Dauphinéo se réserve le droit de modifier les présentes CGU à tout moment. Les modifications sont effectives dès leur publication sur
           cette page.
         </Typography>
       </SectionLegale>
 
-      <SectionLegale icone={<GavelIcon />} titre="9. Droit applicable et juridiction">
+      <SectionLegale icone={<GavelIcon />} titre="Droit applicable et juridiction">
         <Typography>
           Les présentes CGU sont régies par le droit français. Tout litige sera soumis aux juridictions compétentes du ressort du siège de
           Dauphinéo.
         </Typography>
       </SectionLegale>
 
-      <SectionLegale icone={<MailOutlineIcon />} titre="10. Contact">
+      <SectionLegale icone={<MailOutlineIcon />} titre="Contact">
         <Typography>Pour toute question concernant ces CGU, vous pouvez nous joindre :</Typography>
         <GrilleCartes colonnes={2}>
           <CarteInfo icone={<MailOutlineIcon fontSize="small" />} titre="Par email">
