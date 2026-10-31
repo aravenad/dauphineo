@@ -24,7 +24,7 @@ class Avis extends Model
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Attributs exposés en JSON.
      *
      * @var array<int, string>
      */
@@ -35,7 +35,9 @@ class Avis extends Model
         'note',
         'created_at',
         'id_spr',
-        'id_utilisateur'
+        'id_utilisateur',
+        'utilisateur',
+        'spr',
     ];
 
     /**

@@ -13,6 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         // Création des types ENUM
+        // migrate:fresh supprime les tables mais pas les types : on repart de zéro
+        DB::statement("DROP TYPE IF EXISTS statut_reservation, statut_paiement CASCADE");
         DB::statement("CREATE TYPE statut_reservation AS ENUM ('confirmee', 'annulee', 'termine')");
         DB::statement("CREATE TYPE statut_paiement AS ENUM ('payee', 'non_reglee', 'en_attente')");
 

@@ -1,66 +1,41 @@
 <?php
 
-use Illuminate\Http\Request;
 use App\Models\Avis;
 use App\Models\Utilisateur;
-use App\Models\Spr;
+use Laravel\Sanctum\Sanctum;
 
-
-/**
- * Test for reviews API
- * @category Test n°2 - Create a new review
- * @param Request $request
- */
-
-it('creates a new review', function () {
-
-    $avisData = Avis::factory()->make()->toArray();
-
-
-    $response = $this->postJson('/api/avis', $avisData);
-
-    $response->assertStatus(201)
-        ->assertJsonStructure([
-            'titre',
-            'commentaire',
-            'note',
-            'id_utilisateur',
-            'id_spr',
-        ]);
-
+it('liste les avis d\'un SPR avec le pseudo de leur auteur', function () {
+    $this->getJson('/api/spr/18/avis')
+        ->assertOk()
+        ->assertJsonStructure(['*' => ['id', 'titre', 'note', 'utilisateur' => ['pseudo']]]);
 });
 
-/**
- * Test for reviews API
- * @category Test n°3 - Get a review by ID
- * @param string $id
- */
-it('lists a review by ID', function () {
-    $avis = Avis::factory()->create();
-    $response = $this->get("/api/avis/{$avis->id}");
-    $response->assertStatus(200);
+it('exige une connexion pour publier un avis', function () {
+    $this->postJson('/api/avis', [])->assertUnauthorized();
 });
 
-/**
- * Test for reviews API
- * @category Test n°4 - Delete a review by SPR
- * @param string $id
- */
-it('deletes a review by SPR', function () {
+it('publie un avis puis refuse un doublon', function () {
+    Sanctum::actingAs(Utilisateur::factory()->create());
+    $avis = ['titre' => 'Superbe', 'commentaire' => 'Guide passionnant.', 'note' => 5, 'id_spr' => 2];
 
-    // Créer un utilisateur
-    $utilisateur = Utilisateur::factory()->create();
+    $this->postJson('/api/avis', $avis)->assertCreated()->assertJsonPath('note', 5);
+    $this->postJson('/api/avis', $avis)->assertConflict();
+});
 
-    // Créer un avis lié à un utilisateur et à un SPR
-    $avis = Avis::factory()->create([
-        'id_utilisateur' => $utilisateur->id,
-        'id_spr' => 1
-    ]);
+it('valide la note', function () {
+    Sanctum::actingAs(Utilisateur::factory()->create());
 
-    // Envoyer une requête DELETE pour supprimer un avis
-    $response = $this->delete("/api/avis/{$avis->id}");
+    $this->postJson('/api/avis', ['titre' => 'x', 'commentaire' => 'x', 'note' => 6, 'id_spr' => 2])
+        ->assertUnprocessable()->assertJsonValidationErrors('note');
+});
 
-    // Vérifier que l'avis a été supprimé avec succès
-    $response->assertStatus(204);
-    $this->assertDatabaseMissing('avis', ['id' => $avis->id]);
+it('ne supprime que ses propres avis', function () {
+    $avis = Avis::first();
+
+    Sanctum::actingAs(Utilisateur::factory()->create());
+    $this->deleteJson("/api/avis/{$avis->id}")->assertForbidden();
+
+    Sanctum::actingAs($avis->utilisateur);
+    $this->deleteJson("/api/avis/{$avis->id}")->assertNoContent();
+    expect(Avis::find($avis->id))->toBeNull();
 });

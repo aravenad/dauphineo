@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Models\Spr;
-use App\Models\Creneaux;
-use App\Services\AvisService;
 use App\Http\Controllers\Controller;
+use App\Models\Creneaux;
+use App\Models\Spr;
+use App\Models\Visite;
+use App\Services\AvisService;
+use Carbon\Carbon;
 
 /**
  * @OA\Tag(
- *     name="SPR",
- *     description="Endpoints for spr"
+ *     name="spr",
+ *     description="Endpoints for the Sites Patrimoniaux Remarquables"
  * )
  */
 class SprController extends Controller
@@ -19,147 +20,130 @@ class SprController extends Controller
     /**
      * @OA\Get(
      *     path="/api/spr",
-     *     tags={"SPR"},
-     *     summary="Fetch all SPR",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     )
+     *     tags={"spr"},
+     *     summary="List every SPR with its images",
+     *     @OA\Response(response=200, description="Success")
      * )
      */
     public function index()
     {
-        return Spr::all();
+        return Spr::with('images')->orderBy('id')->get();
     }
 
     /**
      * @OA\Get(
      *     path="/api/spr/{id}",
-     *     tags={"SPR"},
-     *     summary="Show one SPR",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     )
+     *     tags={"spr"},
+     *     summary="Get a SPR with its images, reviews, guides and upcoming availabilities",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=404, description="SPR not found")
      * )
      */
     public function show(string $id)
     {
-        // Pour un seul SPR, on envoie les images du SPR, les creneaux auxquels sont disponibles les guides et les avis du SPR
         $spr = Spr::with([
-            'images', 
+            'images',
             'guides.disponibilites' => function ($query) {
-                $query->where('date_jour', '>=', Carbon::now())->orderBy('date_jour', 'asc');
+                $query->where('date_jour', '>=', Carbon::today())->orderBy('date_jour');
             },
-            'guides.disponibilites.creneaux', 
+            'guides.disponibilites.creneaux',
+            'guides.disponibilites.visite',
             'avis' => function ($query) {
-                $query->orderBy('created_at', 'desc');
+                $query->latest();
             },
-            'avis.utilisateur:id,pseudo'
-            ])->findOrFail($id);
-        $repartitionNotes = AvisService::getNotesMoyennes($spr->id);
-       
+            'avis.utilisateur:id,pseudo',
+        ])->findOrFail($id);
+
         return response()->json([
             'spr' => $spr,
-            'moyenne_notes' => $repartitionNotes
+            'moyenne_notes' => AvisService::getNotesMoyennes($spr->id),
         ]);
     }
 
     /**
      * @OA\Get(
      *     path="/api/spr/{id}/creneaux",
-     *     tags={"SPR"},
-     *     summary="Retrieve slots a the given SPR",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer",
-     *             minimum=1
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of slots for the specified SPR",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1, description="ID of the creneau"),
-     *                 @OA\Property(property="heure_debut", type="string", format="time", example="08:00:00", description="Start time of the creneau"),
-     *                 @OA\Property(property="heure_fin", type="string", format="time", example="09:00:00", description="End time of the creneau"),
-     *                 @OA\Property(property="id_spr", type="integer", example=1, description="ID of the associated SPR")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="SPR not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="error", type="string", example="SPR not found")
-     *         )
-     *     )
+     *     tags={"spr"},
+     *     summary="List the daily time slots of a SPR",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=404, description="SPR not found")
      * )
      */
-    public function getCreneauxBySpr($id)
+    public function getCreneauxBySpr(string $id)
     {
-        $creneaux = Creneaux::where('id_spr', $id)->get();
+        Spr::findOrFail($id);
 
-        if ($creneaux->isEmpty()) {
-            return response()->json(['error' => 'No creneaux found for the given SPR'], 404);
-        }
-
-        return $creneaux;
+        return Creneaux::where('id_spr', $id)->orderBy('heure_debut')->get();
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/spr/{id}/visites",
+     *     tags={"spr"},
+     *     summary="List the upcoming visits of a SPR with their slot, guide and remaining places",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=404, description="SPR not found")
+     * )
+     */
+    public function getVisitesBySpr(string $id)
+    {
+        Spr::findOrFail($id);
+
+        return Visite::query()
+            ->join('disponibilite', 'disponibilite.id', '=', 'visite.id_disponibilite')
+            ->join('creneaux', 'creneaux.id', '=', 'disponibilite.id_creneaux')
+            ->join('guide', 'guide.id', '=', 'disponibilite.id_guide')
+            ->where('visite.id_spr', $id)
+            ->where('visite.date_visite', '>=', Carbon::today())
+            ->orderBy('visite.date_visite')
+            ->orderBy('creneaux.heure_debut')
+            ->get([
+                'visite.id',
+                'visite.date_visite',
+                'visite.capacite_actuelle',
+                'visite.capacite_max',
+                'creneaux.heure_debut',
+                'creneaux.heure_fin',
+                'guide.id as id_guide',
+                'guide.nom as guide_nom',
+                'guide.prenom as guide_prenom',
+            ]);
+    }
 
     /**
      * @OA\Get(
      *     path="/api/spr/top",
-     *     tags={"SPR"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Fetch top 3 visited and top 3 rated SPR",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     )
+     *     tags={"spr"},
+     *     summary="Get the three most booked and the three best rated SPR",
+     *     @OA\Response(response=200, description="Success")
      * )
      */
     public function topSpr()
     {
-        try {
-            // Les 3 SPR les plus visités
-            $mostVisited = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
-                ->join('reservation', 'spr.id', '=', 'reservation.id_spr')
-                ->selectRaw('COUNT(reservation.id) as reservations_count')
-                ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
-                ->orderByDesc('reservations_count')
-                ->limit(3)
-                ->get();
+        $mostVisited = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
+            ->join('reservation', 'spr.id', '=', 'reservation.id_spr')
+            ->selectRaw('COUNT(reservation.id) as reservations_count')
+            ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
+            ->orderByDesc('reservations_count')
+            ->orderBy('spr.id')
+            ->limit(3)
+            ->get();
 
-            // Les 3 SPR les mieux notés
-            $bestRated = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
-                ->join('avis', 'spr.id', '=', 'avis.id_spr')
-                ->selectRaw('AVG(avis.note) as average_note')
-                ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
-                ->orderByDesc('average_note')
-                ->limit(3)
-                ->get();
+        $bestRated = Spr::select('spr.id', 'spr.nom_commune', 'spr.code_departement')
+            ->join('avis', 'spr.id', '=', 'avis.id_spr')
+            ->selectRaw('ROUND(AVG(avis.note), 2) as average_note')
+            ->groupBy('spr.id', 'spr.nom_commune', 'spr.code_departement')
+            ->orderByDesc('average_note')
+            ->orderBy('spr.id')
+            ->limit(3)
+            ->get();
 
-            return response()->json([
-                'most_visited' => $mostVisited,
-                'best_rated' => $bestRated
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        return response()->json([
+            'most_visited' => $mostVisited,
+            'best_rated' => $bestRated,
+        ]);
     }
 }

@@ -1,78 +1,40 @@
 <?php
+
 use App\Models\Utilisateur;
-use Illuminate\Http\Request;
+use Laravel\Sanctum\Sanctum;
 
-/**
- * @test show the authenticated user
- * @group utilisateur
- */
-it('returns the authenticated user', function() {
-
-    $user = Utilisateur::factory()->create();
-    $response = $this->actingAs($user)->getJson('/api/utilisateur');
-
-    $response->assertStatus(200);
-    $response->assertJson([
-        'id' => $user->id,
-        'nom' => $user->nom,
-        'prenom' => $user->prenom,
-        'email' => $user->email,
-        'pseudo' => $user->pseudo,
-    ]);
+it('protège l\'espace utilisateur', function () {
+    $this->getJson('/api/utilisateur')->assertUnauthorized();
 });
 
-/**
- * @test update the authenticated user
- * @group utilisateur
- */
-it("updates the authenticated user", function() {
+it('affiche et modifie son profil', function () {
+    Sanctum::actingAs(Utilisateur::where('pseudo', 'demo')->first());
 
-    $user = Utilisateur::factory()->make();
-    $this->actingAs($user);
-
-    $data = [
-        'nom' => 'Doe',
-        'prenom' => 'John',
-        'email' => \Faker\Factory::create()->email,
-    ];
-
-    $response = $this->putJson('/api/utilisateur', $data);
-    $response->assertStatus(201);
+    $this->getJson('/api/utilisateur')->assertOk()->assertJsonPath('pseudo', 'demo')->assertJsonMissingPath('mot_de_passe');
+    $this->putJson('/api/utilisateur', ['prenom' => 'Camille'])->assertOk()->assertJsonPath('prenom', 'Camille');
+    $this->putJson('/api/utilisateur', ['email' => 'jean.dupont@dauphineo.test'])->assertUnprocessable();
 });
 
-/**
- * @test destroy the authenticated user
- * @group utilisateur
- */
-it("destroys the authenticated user", function() {
+it('liste ses réservations, ses visites et ses avis', function () {
+    Sanctum::actingAs(Utilisateur::where('pseudo', 'jeandupont')->first());
 
-    $user = Utilisateur::factory()->create();
-    $this->actingAs($user);
-
-    $response = $this->deleteJson('/api/utilisateur');
-    $response->assertStatus(204);
+    $this->getJson('/api/utilisateur/reservations')->assertOk()->assertJsonCount(2);
+    $this->getJson('/api/utilisateur/visites')->assertOk()->assertJsonCount(2, 'v_future')->assertJsonCount(0, 'v_passees');
+    $this->getJson('/api/utilisateur/avis')->assertOk()->assertJsonStructure(['*' => ['note', 'spr' => ['nom_commune']]]);
 });
 
-/**
- * @test get user's reservation(s)
- * @group utilisateur
- */
-it("returns the user's reservation(s)", function() {
-    $user = Utilisateur::factory()->make();
-    $this->actingAs($user);
+it('se déconnecte en révoquant le jeton courant', function () {
+    $utilisateur = Utilisateur::factory()->create();
+    $jeton = $utilisateur->createToken('test')->plainTextToken;
 
-    $response = $this->getJson('/api/utilisateur/reservations');
-    $response->assertStatus(200);
+    $this->withToken($jeton)->postJson('/api/utilisateur/logout')->assertOk();
+    expect($utilisateur->tokens()->count())->toBe(0);
 });
 
-/**
- * @test logout the authenticated user
- * @group utilisateur
- */
-it("logs out the authenticated user", function() {
-    $user = Utilisateur::factory()->create();
-    $this->actingAs($user);
+it('supprime son compte', function () {
+    $utilisateur = Utilisateur::where('pseudo', 'jeandupont')->first();
+    Sanctum::actingAs($utilisateur);
 
-    $response = $this->postJson('/api/utilisateur/logout');
-    $response->assertStatus(200);
+    $this->deleteJson('/api/utilisateur')->assertNoContent();
+    expect(Utilisateur::find($utilisateur->id))->toBeNull();
 });

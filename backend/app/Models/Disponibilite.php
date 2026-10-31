@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Disponibilite extends Model
 {
@@ -39,6 +40,14 @@ class Disponibilite extends Model
     public function creneaux(): BelongsTo
     {
         return $this->belongsTo(Creneaux::class, 'id_creneaux');
+    }
+
+    /**
+     * Get the visit created by the availability trigger.
+     */
+    public function visite(): HasOne
+    {
+        return $this->hasOne(Visite::class, 'id_disponibilite');
     }
 
 

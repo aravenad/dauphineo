@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Models\Reservation;
-use App\Models\Utilisateur;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-
+use App\Models\Reservation;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Tag(
  *     name="utilisateur",
- *     description="Endpoints for utilisateur"
+ *     description="Endpoints for the signed-in user"
  * )
  */
 class UtilisateurController extends Controller
@@ -22,37 +20,15 @@ class UtilisateurController extends Controller
      * @OA\Get(
      *     path="/api/utilisateur",
      *     tags={"utilisateur"},
-     *     summary="Show one user",
      *     security={{"bearerAuth": {}}},
-     *       @OA\Response(
-     *         response=200,
-     *         description="User found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="nom", type="string", example="Doe"),
-     *                 @OA\Property(property="prenom", type="string", example="John"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *         )
-     *     ),
-     *     @OA\Response(
-     *       response=404,
-     *       description="User not found",
-     *        @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="User not found")
-     *         )
-     *     )
+     *     summary="Get the signed-in user",
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=401, description="Unauthenticated")
      * )
      */
-    public function show()
+    public function show(Request $request)
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            return response()->json($user, 200);
-        } else {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        return $request->user();
     }
 
     /**
@@ -60,105 +36,51 @@ class UtilisateurController extends Controller
      *     path="/api/utilisateur",
      *     tags={"utilisateur"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Update user",
+     *     summary="Update the signed-in user",
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 @OA\Property(property="nom", type="string", example="Doe"),
-     *                 @OA\Property(property="prenom", type="string", example="John"),
-     *                 @OA\Property(property="pseudo", type="string", example="john.doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@gmail.com"),
-     *                 @OA\Property(property="mot_de_passe", type="string", example="securepassword123"),
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="User updated successfully",
      *         @OA\JsonContent(
-     *             type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="prenom", type="string", example="John"),
-     *                 @OA\Property(property="pseudo", type="string", example="john.doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@gmail.com")
+     *             @OA\Property(property="nom", type="string"),
+     *             @OA\Property(property="prenom", type="string"),
+     *             @OA\Property(property="email", type="string"),
+     *             @OA\Property(property="mot_de_passe", type="string", minLength=8),
      *         )
      *     ),
-     *     @OA\Response(
-     *       response=404,
-     *       description="User not found",
-     *        @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="User not found")
-     *         )
-     *     )
+     *     @OA\Response(response=200, description="User updated"),
+     *     @OA\Response(response=422, description="Validation error")
      * )
      */
     public function update(Request $request)
     {
-        if (Auth::check()) {
+        $user = $request->user();
 
-            $user = $request->user();
+        $data = $request->validate([
+            'nom' => 'sometimes|string|max:50',
+            'prenom' => 'sometimes|string|max:50',
+            'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('utilisateur', 'email')->ignore($user->id)],
+            'mot_de_passe' => 'sometimes|string|min:8',
+        ]);
 
-            $request->validate([
-                'nom' => 'string|max:255',
-                'prenom' => 'string|max:255',
-                'email' => 'string|email|max:255',
-                'mot_de_passe' => 'string|min:8'
-            ]);
+        $user->update($data);
 
-            $user->update($request->all());
-
-            return response()->json([
-                'message' => 'User updated successfully',
-                'user' => $user,
-            ], 201);
-        }
+        return response()->json($user);
     }
 
     /**
      * @OA\Delete(
      *     path="/api/utilisateur",
-     *     security={{"bearerAuth": {}}},
      *     tags={"utilisateur"},
-     *     summary="Delete one user",
-     *     @OA\Response(
-     *         response=204,
-     *         description="User deleted successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="User deleted")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *       response=404,
-     *       description="User not found",
-     *        @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="User not found")
-     *         )
-     *     )
+     *     security={{"bearerAuth": {}}},
+     *     summary="Delete the signed-in user and their data",
+     *     @OA\Response(response=204, description="User deleted")
      * )
      */
-    public function destroy()
+    public function destroy(Request $request)
     {
-        if (Auth::check()) {
+        $user = $request->user();
+        $user->tokens()->delete();
+        $user->delete();
 
-            $id = Auth::id();
-            $user = Utilisateur::find($id);
-
-            if (!$user) {
-                return response()->json([
-                    'message' => 'Utilisateur non trouvé'
-                ]);
-            }
-            $user->delete();
-            return response()->json([
-                'message' => 'User deleted successfully'
-            ], 204);
-        }
+        return response()->noContent();
     }
 
     /**
@@ -166,83 +88,55 @@ class UtilisateurController extends Controller
      *     path="/api/utilisateur/reservations",
      *     tags={"utilisateur"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Fetch user's reservations",
-     *       @OA\Response(
-     *         response=200,
-     *         description="User found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="prix", type="string", example="10.99"),
-     *                 @OA\Property(property="taille", type="string", example="3"),
-     *                 @OA\Property(property="id_utilisateur", type="integer", example="1"),
-     *                 @OA\Property(property="id_visite", type="integer", example="1"),
-     *                 @OA\Property(property="id_spr", type="integer", example="1"),
-     *                 @OA\Property(property="id_guide", type="integer", example="2"),
-     *                 @OA\Property(property="created_at", type="string", example="2025-01-14 10:56:02.000"),
-     *         )
-     *     ),
-     *     @OA\Response(
-     *       response=404,
-     *       description="User not found",
-     *        @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="User not found")
-     *         )
-     *     )
+     *     summary="List the reservations of the signed-in user",
+     *     @OA\Response(response=200, description="Success")
      * )
      */
-    public function getUserReservations()
+    public function getUserReservations(Request $request)
     {
-        if (Auth::check()) {
-
-            $id = Auth::id();
-
-            $reservations = Utilisateur::with(['reservations'])->where('id', $id)->get();
-            return $reservations;
-        };
+        return $request->user()->reservations()
+            ->with(['spr:id,nom_commune', 'guide:id,nom,prenom', 'visite.disponibilite.creneaux'])
+            ->latest()
+            ->get();
     }
 
     /**
      * @OA\Get(
-     *     tags={"utilisateur"},
      *     path="/api/utilisateur/visites",
+     *     tags={"utilisateur"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Fetch all user's visits",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="No visits found for this user"
-     *     )
+     *     summary="Split the reservations of the signed-in user into upcoming and past visits",
+     *     @OA\Response(response=200, description="Success")
      * )
      */
-    public function getUserVisites()
+    public function getUserVisites(Request $request)
     {
-        if (!Auth::check()) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        $reservations = Reservation::with(['guide:id,nom,prenom', 'spr:id,nom_commune', 'visite.disponibilite.creneaux'])
+            ->where('id_utilisateur', $request->user()->id)
+            ->get();
 
-        $userAuthId = Auth::id();
-
-        $reservations = Reservation::with(['guide', 'spr', 'visite'])
-            ->where('id_utilisateur', $userAuthId)
-            ->get(['id', 'id_utilisateur', 'id_visite', 'id_spr', 'id_guide']);
-
-        $futureVisits = $reservations->filter(function ($reservation) {
-            return $reservation->visite->date_visite >= Carbon::today();
-        });
-
-        $pastVisits = $reservations->filter(function ($reservation) {
-            return $reservation->visite->date_visite < Carbon::today();
-        });
+        [$futures, $passees] = $reservations->partition(
+            fn ($reservation) => $reservation->visite->date_visite->gte(Carbon::today())
+        );
 
         return response()->json([
-            'v_future' => $futureVisits,
-            'v_passees' => $pastVisits
+            'v_future' => $futures->sortBy('visite.date_visite')->values(),
+            'v_passees' => $passees->sortByDesc('visite.date_visite')->values(),
         ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/utilisateur/avis",
+     *     tags={"utilisateur"},
+     *     security={{"bearerAuth": {}}},
+     *     summary="List the reviews written by the signed-in user",
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
+    public function getUserAvis(Request $request)
+    {
+        return $request->user()->avis()->with('spr:id,nom_commune')->latest()->get();
     }
 
     /**
@@ -250,38 +144,14 @@ class UtilisateurController extends Controller
      *     path="/api/utilisateur/logout",
      *     tags={"utilisateur"},
      *     security={{"bearerAuth": {}}},
-     *     summary="User logout",
-     *     @OA\Response(
-     *         response=200,
-     *         description="User logged out",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Déconnexion réussie")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="No user logged in",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Aucun utilisateur connecté")
-     *         )
-     *     )
+     *     summary="Revoke the current access token",
+     *     @OA\Response(response=200, description="Logged out")
      * )
      */
     public function logout(Request $request)
     {
-        $user = $request->user();
+        $request->user()->currentAccessToken()->delete();
 
-         if (Auth::check()) {
-
-            $user->tokens->each(function ($token) {
-                $token->delete();
-            });
-
-            return response()->json([
-                'message' => 'Déconnexion réussie'
-            ]);
-        }
+        return response()->json(['message' => 'Déconnexion réussie']);
     }
 }

@@ -1,55 +1,41 @@
 <?php
 
-/** 
- * Test for SPR API
- * @category Test n°1 - Fetch all spr
- */
-
-it('ensures fetching all SPR', function () {
-    $response = $this->get('/api/spr');
-    $response->assertStatus(200)
-    ->assertJsonStructure([
-        '*' => [
-            'id',
-            'code_departement',
-            'nom_du_departement',
-            'nom_commune',
-            'capacite_de_visite',
-            'mot_cle',
-            'is_pmr',
-            'temps_de_visite'
-        ]
-    ]);
+it('liste les 20 SPR avec leurs images', function () {
+    $this->getJson('/api/spr')
+        ->assertOk()
+        ->assertJsonCount(20)
+        ->assertJsonStructure(['*' => ['id', 'nom_commune', 'capacite_de_visite', 'mot_cle', 'is_pmr', 'temps_de_visite', 'courte_description', 'images']]);
 });
 
-
-/**
- * Test for SPR API
- * @category Test n°2 - Show one SPR
- * @param integer $id
- */
-
-it('shows one SPR', function() {
-    $response = $this->get('/api/spr/1');
-    $response->assertStatus(200);
+it('détaille un SPR avec ses guides, ses avis et la répartition des notes', function () {
+    $this->getJson('/api/spr/18')
+        ->assertOk()
+        ->assertJsonPath('spr.id', 18)
+        ->assertJsonStructure([
+            'spr' => ['images', 'guides' => [['disponibilites' => [['creneaux', 'visite']]]], 'avis'],
+            'moyenne_notes' => ['5_etoiles', '1_etoile'],
+        ]);
 });
 
-/**
- * Test for SPR API
- * @category Test n°3 - Get slots by SPR
- * @param integer $id
- */
-it('lists all slots for a given spr', function () {
-    $rand = rand(1,20);
-    $response = $this->get("/api/spr/$rand/creneaux");
-    $response->assertStatus(200);
+it('renvoie 404 pour un SPR inconnu', function () {
+    $this->getJson('/api/spr/999')->assertNotFound();
+});
 
-    $response->assertJsonStructure([
-        '*' => [
-            'id',
-            'heure_debut',
-            'heure_fin',
-            'id_spr'
-        ]
-    ]);
+it('liste les visites à venir d\'un SPR', function () {
+    $visites = $this->getJson('/api/spr/18/visites')
+        ->assertOk()
+        ->assertJsonStructure(['*' => ['id', 'date_visite', 'capacite_actuelle', 'capacite_max', 'heure_debut', 'heure_fin', 'guide_nom']])
+        ->json();
+
+    expect($visites)->not->toBeEmpty();
+    // Les réservations de démonstration ont retiré 9 places à la première visite
+    expect($visites[0]['capacite_actuelle'])->toBe($visites[0]['capacite_max'] - 9);
+});
+
+it('classe les SPR les plus réservés et les mieux notés', function () {
+    $this->getJson('/api/spr/top')
+        ->assertOk()
+        ->assertJsonPath('most_visited.0.id', 18)
+        ->assertJsonCount(3, 'most_visited')
+        ->assertJsonCount(3, 'best_rated');
 });

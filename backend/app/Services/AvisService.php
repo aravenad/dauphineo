@@ -1,29 +1,31 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\Avis;
-class AvisService 
+
+class AvisService
 {
-    public static function getNotesMoyennes($sprId): array {
+    /**
+     * Part de chaque note (de 1 à 5 étoiles) parmi les avis d'un SPR.
+     *
+     * @return array<string, float>
+     */
+    public static function getNotesMoyennes(int $sprId): array
+    {
+        $parNote = Avis::where('id_spr', $sprId)
+            ->selectRaw('note, COUNT(*) as total')
+            ->groupBy('note')
+            ->pluck('total', 'note');
 
-        $totalAvis = Avis::where('id_spr', $sprId)->count();
+        $totalAvis = $parNote->sum();
 
-        if ($totalAvis === 0) {
-            return [
-                '5_etoiles' => 0,
-                '4_etoiles' => 0,
-                '3_etoiles' => 0,
-                '2_etoiles' => 0,
-                '1_etoile' => 0,
-            ];
+        $repartition = [];
+        foreach ([5, 4, 3, 2, 1] as $note) {
+            $cle = $note === 1 ? '1_etoile' : "{$note}_etoiles";
+            $repartition[$cle] = $totalAvis === 0 ? 0 : round(($parNote[$note] ?? 0) / $totalAvis, 2);
         }
 
-        return [
-            '5_etoiles' => round(Avis::where('id_spr', $sprId)->where('note', 5)->count() / $totalAvis, 2),
-            '4_etoiles' => round(Avis::where('id_spr', $sprId)->where('note', 4)->count() / $totalAvis, 2),
-            '3_etoiles' => round(Avis::where('id_spr', $sprId)->where('note', 3)->count() / $totalAvis, 2),
-            '2_etoiles' => round(Avis::where('id_spr', $sprId)->where('note', 2)->count() / $totalAvis, 2),
-            '1_etoile' => round(Avis::where('id_spr', $sprId)->where('note', 1)->count() / $totalAvis, 2),
-        ];
+        return $repartition;
     }
 }

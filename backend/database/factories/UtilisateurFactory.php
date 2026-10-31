@@ -28,7 +28,8 @@ class UtilisateurFactory extends Factory
             'mot_de_passe' => static::$password ??= Hash::make('mot_de_passe'),
             'email' => fake()->unique()->safeEmail(),
             'pseudo' => fake()->unique()->userName(),
-            'verif_age' => fake()->boolean()
+            'verif_age' => true,
+            'derniere_activite' => now(),
         ];
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Avis;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Avis;
+use App\Models\Spr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -16,6 +17,22 @@ use Illuminate\Support\Facades\Auth;
 class AvisController extends Controller
 {
     /**
+     * @OA\Get(
+     *     path="/api/spr/{id}/avis",
+     *     tags={"avis"},
+     *     summary="List the reviews of a SPR, newest first",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Success")
+     * )
+     */
+    public function indexBySpr(string $id)
+    {
+        $spr = Spr::findOrFail($id);
+
+        return $spr->avis()->with('utilisateur:id,pseudo')->latest()->get();
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/avis",
      *     tags={"avis"},
@@ -23,58 +40,37 @@ class AvisController extends Controller
      *     summary="Create a review",
      *     @OA\RequestBody(
      *         required=true,
-     *          @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 @OA\Property(property="titre", type="string", example="Une expérience inoubliable"),
-     *                 @OA\Property(property="commentaire", type="string", example="J'ai visité ce SPR, c'était génial !"),
-     *                 @OA\Property(property="note", type="integer", example="5"),
-     *                 @OA\Property(property="id_utilisateur", type="integer", example="1"),
-     *                 @OA\Property(property="id_spr", type="integer", example="1"),
-     *             )
+     *         @OA\JsonContent(
+     *             @OA\Property(property="titre", type="string", example="Une expérience inoubliable"),
+     *             @OA\Property(property="commentaire", type="string", example="J'ai visité ce SPR, c'était génial !"),
+     *             @OA\Property(property="note", type="integer", minimum=1, maximum=5, example=5),
+     *             @OA\Property(property="id_spr", type="integer", example=1),
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Review created successfully",
-     *           @OA\JsonContent(
-     *             type="object",
-     *              @OA\Property(property="titre", type="string", example="Une expérience inoubliable"),
-     *                 @OA\Property(property="commentaire", type="string", example="J'ai visité ce SPR, c'était génial !"),
-     *                 @OA\Property(property="note", type="integer", example="5"),
-     *                 @OA\Property(property="id_spr", type="integer", example="1"),
-     *         )
-     *     )
+     *     @OA\Response(response=201, description="Review created"),
+     *     @OA\Response(response=409, description="The user already reviewed this SPR")
      * )
      */
     public function store(Request $request)
     {
-        if(!Auth::check()) {
-            return response()->json(['message' => 'Vous devez être connecté pour laisser un avis.'], 401);
-        }
-
         $data = $request->validate([
             'titre' => 'required|string|max:255',
-            'commentaire' => 'required|string',
-            'note' => 'required|integer|between:0,5',
-            'id_spr' => 'required|integer',
+            'commentaire' => 'required|string|max:2000',
+            'note' => 'required|integer|between:1,5',
+            'id_spr' => 'required|integer|exists:spr,id',
         ]);
 
         $data['id_utilisateur'] = Auth::id();
 
-        // Vérification si l'utilisateur a déjà laissé un avis pour ce SPR
-        $existingAvis = Avis::where('id_utilisateur', $data['id_utilisateur'])
+        $existe = Avis::where('id_utilisateur', $data['id_utilisateur'])
             ->where('id_spr', $data['id_spr'])
-            ->first();
+            ->exists();
 
-        // Si un avis existe déjà, retourner une erreur
-        if ($existingAvis) {
-            return response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 400);
+        if ($existe) {
+            return response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 409);
         }
 
-        // Création de l'avis
-        $avis = Avis::create($data);
+        $avis = Avis::create($data)->load('utilisateur:id,pseudo');
 
         return response()->json($avis, 201);
     }
@@ -83,41 +79,15 @@ class AvisController extends Controller
      * @OA\Get(
      *     path="/api/avis/{id}",
      *     tags={"avis"},
-     *     security={{"bearerAuth": {}}},
-     *     summary="Show one review",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success",
-     *           @OA\JsonContent(
-     *             type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="titre", type="string", example="Super visite"),
-     *                 @OA\Property(property="commentaire", type="string", example="Très belle expérience, guide au top !"),
-     *                 @OA\Property(property="note", type="integer", example="5"),
-     *                 @OA\Property(property="date_de_publication", type="string", example="2024-03-02T18:00:00.000000Z"),
-     *                 @OA\Property(property="id_spr", type="integer", example="1"),
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Review not found",
-     *          @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Review not found")
-     *         )
-     *     )
+     *     summary="Get a review",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=404, description="Review not found")
      * )
      */
     public function show(string $id)
     {
-        $avis = Avis::findOrFail($id);
-        return response()->json($avis);
+        return Avis::with('utilisateur:id,pseudo')->findOrFail($id);
     }
 
     /**
@@ -125,32 +95,22 @@ class AvisController extends Controller
      *     path="/api/avis/{id}",
      *     tags={"avis"},
      *     security={{"bearerAuth": {}}},
-     *     summary="Delete one review",
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=204,
-     *         description="Review deleted successfully"
-     *     )
+     *     summary="Delete one of your reviews",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=204, description="Review deleted"),
+     *     @OA\Response(response=403, description="The review belongs to someone else")
      * )
      */
     public function destroy(string $id)
     {
-        if(Auth::check()) {
+        $avis = Avis::findOrFail($id);
 
-            $userAuthId = Auth::id();
-            $avis = Avis::findOrFail($id);
-
-            if ($userAuthId !== $avis->id_utilisateur) {
-                return response()->json(['message' => 'Vous n\'êtes pas autorisé à supprimer cet avis.'], 403);
-            }
-
-            $avis->delete();
-            return response()->noContent();
+        if ($avis->id_utilisateur !== Auth::id()) {
+            return response()->json(['message' => 'Vous n\'êtes pas autorisé à supprimer cet avis.'], 403);
         }
+
+        $avis->delete();
+
+        return response()->noContent();
     }
 }
