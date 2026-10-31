@@ -10,8 +10,12 @@ interface SPRPhotosProps {
 }
 
 /** Une grande photo et jusqu'à deux petites ; toutes s'ouvrent dans la galerie. */
-function SPRPhotos({ images, commune }: SPRPhotosProps) {
+function SPRPhotos({ images: toutes, commune }: SPRPhotosProps) {
     const [selection, setSelection] = useState<number | null>(null);
+    // Les photos sont hébergées par des sites tiers : celles qui ne répondent plus sont retirées
+    const [cassees, setCassees] = useState<ReadonlySet<number>>(new Set());
+    const images = toutes.filter((image) => !cassees.has(image.id));
+    const retirer = (id: number) => setCassees((ids) => new Set(ids).add(id));
 
     if (images.length === 0) {
         return null;
@@ -49,6 +53,7 @@ function SPRPhotos({ images, commune }: SPRPhotosProps) {
                             component="img"
                             src={image.image_url}
                             alt=""
+                            onError={() => retirer(image.id)}
                             sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.3s ease" }}
                         />
                     </ButtonBase>
@@ -65,7 +70,7 @@ function SPRPhotos({ images, commune }: SPRPhotosProps) {
                 )}
             </Box>
 
-            <SPRPhotosDetailed images={images} selection={selection} commune={commune} onClose={() => setSelection(null)} />
+            <SPRPhotosDetailed images={images} selection={selection} commune={commune} onClose={() => setSelection(null)} onErreur={retirer} />
         </>
     );
 }

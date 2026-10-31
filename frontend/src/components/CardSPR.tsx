@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Box, Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router";
 import StarIcon from "@mui/icons-material/Star";
@@ -37,7 +38,9 @@ function SousTitre({ variante, reservations, noteMoyenne }: Omit<CardSPRProps, "
 }
 
 function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardSPRProps) {
-    const image = spr.images[0]?.image_url;
+    // Les photos sont hébergées par des sites tiers : on passe à la suivante si l'une ne répond plus
+    const [essai, setEssai] = useState(0);
+    const image = spr.images[essai]?.image_url;
 
     return (
         <Card sx={{ boxShadow: "none", borderRadius: "1em", height: "100%", backgroundColor: "transparent" }}>
@@ -53,6 +56,7 @@ function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardS
                             image={image}
                             alt=""
                             loading="lazy"
+                            onError={() => setEssai((i) => i + 1)}
                             sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.3s ease" }}
                         />
                     ) : (

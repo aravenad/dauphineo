@@ -11,10 +11,14 @@ interface SPRPhotosDetailedProps {
     selection: number | null;
     commune: string;
     onClose: () => void;
+    /** Signale une photo qui ne se charge pas, pour la retirer de la galerie. */
+    onErreur: (id: number) => void;
 }
 
-function SPRPhotosDetailed({ images, selection, commune, onClose }: SPRPhotosDetailedProps) {
-    const [courante, setCourante] = useState(selection ?? 0);
+function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SPRPhotosDetailedProps) {
+    const [choisie, setCourante] = useState(selection ?? 0);
+    // Une photo retirée en cours de route peut laisser l'index hors de la liste
+    const courante = Math.min(choisie, Math.max(images.length - 1, 0));
 
     useEffect(() => {
         if (selection !== null) setCourante(selection);
@@ -46,6 +50,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose }: SPRPhotosDet
                             component="img"
                             src={images[courante].image_url}
                             alt={`Photo ${courante + 1} sur ${images.length}`}
+                            onError={() => onErreur(images[courante].id)}
                             sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "0.5em" }}
                         />
                     )}
@@ -91,7 +96,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose }: SPRPhotosDet
                                 background: "none",
                             }}
                         >
-                            <Box component="img" src={image.image_url} alt="" sx={{ display: "block", width: 96, height: 64, objectFit: "cover" }} />
+                            <Box component="img" src={image.image_url} alt="" onError={() => onErreur(image.id)} sx={{ display: "block", width: 96, height: 64, objectFit: "cover" }} />
                         </Box>
                     ))}
                 </Box>

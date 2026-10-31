@@ -40,11 +40,26 @@ export function formaterMotsCles(motCle: string): string {
     return motsCles(motCle).map(libelleMotCle).join(", ");
 }
 
-/** « SAINT-ANTOINE-L'ABBAYE » devient « Saint-Antoine-L'Abbaye ». */
+/** Mots de liaison laissés en minuscules dans un nom composé, comme « Saint-Baudille-de-la-Tour ». */
+const LIAISONS = new Set(["au", "aux", "de", "des", "du", "en", "et", "la", "le", "les", "lès", "sous", "sur"]);
+
+function majuscule(mot: string): string {
+    return mot.replace(/(^|[\s'])(\p{L})/gu, (_, separateur: string, lettre: string) => separateur + lettre.toLocaleUpperCase("fr-FR"));
+}
+
+/** « SAINT-ANTOINE-L'ABBAYE » devient « Saint-Antoine-l'Abbaye », « HIÈRES-SUR-AMBY » devient « Hières-sur-Amby ». */
 export function nomCommune(nom: string): string {
     return nom
         .toLocaleLowerCase("fr-FR")
-        .replace(/(^|[\s'-])(\p{L})/gu, (_, separateur: string, lettre: string) => separateur + lettre.toLocaleUpperCase("fr-FR"));
+        .split("-")
+        .map((partie, i) => {
+            if (i === 0) return majuscule(partie);
+            if (LIAISONS.has(partie)) return partie;
+            // Élision : « l'abbaye » devient « l'Abbaye »
+            const elision = /^([ld]')(.+)$/u.exec(partie);
+            return elision ? elision[1] + majuscule(elision[2]) : majuscule(partie);
+        })
+        .join("-");
 }
 
 /** Pour comparer sans accents, majuscules ni tirets. */
