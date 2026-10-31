@@ -10,6 +10,7 @@ import { useSession } from "../session";
 import { formaterDate, formaterHeure, formaterPrix, nomCommune } from "../utils/format";
 import Profil from "../components/Profil";
 import Confidentialite from "../components/Confidentialite";
+import Confirmation from "../components/Confirmation";
 import { ButtonCustom } from "../components/mui_custom";
 
 function aVenir(reservation: Reservation): boolean {
@@ -18,17 +19,28 @@ function aVenir(reservation: Reservation): boolean {
 
 function MesReservations() {
     const { donnees, erreur, chargement, recharger } = useApi(() => api.mesReservations(), []);
+    const [aAnnuler, setAAnnuler] = useState<Reservation | null>(null);
+    const [enCours, setEnCours] = useState(false);
     const [erreurAnnulation, setErreurAnnulation] = useState("");
 
-    const annuler = async (reservation: Reservation) => {
-        if (!window.confirm(`Annuler la visite de ${nomCommune(reservation.spr.nom_commune)} du ${formaterDate(reservation.date_visite)} ?`)) return;
+    const demander = (reservation: Reservation) => {
+        setErreurAnnulation("");
+        setAAnnuler(reservation);
+    };
+
+    const annuler = async () => {
+        if (!aAnnuler) return;
+        setEnCours(true);
         setErreurAnnulation("");
         try {
-            await api.annulerReservation(reservation.id);
+            await api.annulerReservation(aAnnuler.id);
+            setAAnnuler(null);
+            recharger();
         } catch (e) {
             setErreurAnnulation(messageErreur(e, "La réservation n'a pas pu être annulée."));
+        } finally {
+            setEnCours(false);
         }
-        recharger();
     };
 
     if (chargement && !donnees) {
@@ -50,7 +62,6 @@ function MesReservations() {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {erreurAnnulation && <Alert severity="error">{erreurAnnulation}</Alert>}
             {reservations.map((reservation) => (
                 <Card key={reservation.id} variant="outlined" sx={{ borderRadius: "1em", opacity: aVenir(reservation) ? 1 : 0.6 }}>
                     <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2 }}>
@@ -66,7 +77,7 @@ function MesReservations() {
                             </Typography>
                         </Box>
                         {aVenir(reservation) ? (
-                            <ButtonCustom variant="outlined" color="error" onClick={() => void annuler(reservation)}>
+                            <ButtonCustom variant="outlined" color="error" onClick={() => demander(reservation)}>
                                 Annuler
                             </ButtonCustom>
                         ) : (
@@ -75,6 +86,25 @@ function MesReservations() {
                     </CardContent>
                 </Card>
             ))}
+
+            <Confirmation
+                open={aAnnuler !== null}
+                titre="Annuler cette visite ?"
+                confirmer="Annuler la visite"
+                retour="Garder ma réservation"
+                enCours={enCours}
+                erreur={erreurAnnulation}
+                onConfirmer={() => void annuler()}
+                onFermer={() => setAAnnuler(null)}
+            >
+                {aAnnuler && (
+                    <>
+                        Votre visite de <strong>{nomCommune(aAnnuler.spr.nom_commune)}</strong> du {formaterDate(aAnnuler.date_visite)}, de{" "}
+                        {formaterHeure(aAnnuler.heure_debut)} à {formaterHeure(aAnnuler.heure_fin)}, sera annulée et le créneau libéré pour
+                        d'autres visiteurs.
+                    </>
+                )}
+            </Confirmation>
         </Box>
     );
 }

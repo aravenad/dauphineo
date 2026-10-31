@@ -5,6 +5,7 @@ import { useApi } from "../hooks";
 import { useSession } from "../session";
 import Rating from "./Rating";
 import CardAvis from "./CardAvis";
+import Confirmation from "./Confirmation";
 import FormulaireAvis from "./FormulaireAvis";
 import { ButtonCustom } from "./mui_custom";
 
@@ -25,6 +26,8 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
   const [local, setLocal] = useState<{ sprId: number; avis: Avis[] } | null>(null);
   const [visibles, setVisibles] = useState(PAR_PAGE);
   const [formulaire, setFormulaire] = useState(false);
+  const [aSupprimer, setASupprimer] = useState<number | null>(null);
+  const [enCours, setEnCours] = useState(false);
   const [erreurAction, setErreurAction] = useState("");
 
   const avis = trier(local?.sprId === sprId ? local.avis : (donnees ?? []));
@@ -32,14 +35,23 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
 
   const ecrire = () => (utilisateur ? setFormulaire(true) : ouvrirConnexion());
 
-  const supprimer = async (id: number) => {
-    if (!window.confirm("Supprimer votre avis ?")) return;
+  const demander = (id: number) => {
+    setErreurAction("");
+    setASupprimer(id);
+  };
+
+  const supprimer = async () => {
+    if (aSupprimer === null) return;
+    setEnCours(true);
     setErreurAction("");
     try {
-      await api.supprimerAvis(id);
-      setLocal({ sprId, avis: avis.filter((a) => a.id !== id) });
+      await api.supprimerAvis(aSupprimer);
+      setLocal({ sprId, avis: avis.filter((a) => a.id !== aSupprimer) });
+      setASupprimer(null);
     } catch (e) {
       setErreurAction(messageErreur(e, "L'avis n'a pas pu être supprimé."));
+    } finally {
+      setEnCours(false);
     }
   };
 
@@ -57,7 +69,6 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
       </Box>
 
       {erreur && <Alert severity="error">{erreur}</Alert>}
-      {erreurAction && <Alert severity="error" sx={{ mb: 2 }}>{erreurAction}</Alert>}
 
       {chargement && !local ? (
         <Skeleton variant="rounded" height={200} />
@@ -79,7 +90,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
                   note={a.note}
                   date={a.created_at}
                   pseudo={a.utilisateur?.pseudo ?? "Visiteur"}
-                  onSupprimer={utilisateur?.id === a.id_utilisateur ? () => void supprimer(a.id) : undefined}
+                  onSupprimer={utilisateur?.id === a.id_utilisateur ? () => demander(a.id) : undefined}
                 />
               ))
             )}
@@ -113,6 +124,18 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
           />
         </DialogContent>
       </Dialog>
+
+      <Confirmation
+        open={aSupprimer !== null}
+        titre="Supprimer votre avis ?"
+        confirmer="Supprimer l'avis"
+        enCours={enCours}
+        erreur={erreurAction}
+        onConfirmer={() => void supprimer()}
+        onFermer={() => setASupprimer(null)}
+      >
+        Votre note et votre commentaire seront retirés de la fiche. Vous pourrez ensuite publier un nouvel avis.
+      </Confirmation>
     </Box>
   );
 };
