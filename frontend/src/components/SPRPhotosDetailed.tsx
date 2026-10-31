@@ -44,14 +44,15 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                 </IconButton>
             </DialogTitle>
             <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Box sx={{ position: "relative", display: "grid", placeItems: "center", height: { xs: "45vh", md: "60vh" } }}>
+                {/* Cadre de hauteur fixe : quel que soit le format de la photo, la légende et les vignettes restent visibles */}
+                <Box sx={{ position: "relative", flex: "0 0 auto", height: "min(62vh, calc(100dvh - 320px))", minHeight: 220, borderRadius: "0.75em", overflow: "hidden", backgroundColor: "primary.dark" }}>
                     {images[courante] && (
                         <Box
                             component="img"
                             src={images[courante].image_url}
                             alt={`Photo ${courante + 1} sur ${images.length}`}
                             onError={() => onErreur(images[courante].id)}
-                            sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "0.5em" }}
+                            sx={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }}
                         />
                     )}
                     {images.length > 1 && (
@@ -59,14 +60,14 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                             <IconButton
                                 onClick={() => suivante(-1)}
                                 aria-label="Photo précédente"
-                                sx={{ position: "absolute", left: 0, backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.50" } }}
+                                sx={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.100" } }}
                             >
                                 <ChevronLeftIcon />
                             </IconButton>
                             <IconButton
                                 onClick={() => suivante(1)}
                                 aria-label="Photo suivante"
-                                sx={{ position: "absolute", right: 0, backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.50" } }}
+                                sx={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.100" } }}
                             >
                                 <ChevronRightIcon />
                             </IconButton>
@@ -91,7 +92,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                         </>
                     )}
                 </Typography>
-                <Box sx={{ display: "flex", gap: 1, overflowX: "auto", justifyContent: { md: "center" } }}>
+                <Box sx={{ display: "flex", gap: 1, overflowX: "auto", flex: "0 0 auto", justifyContent: { md: "center" } }}>
                     {images.map((image, index) => (
                         <Box
                             key={image.id}

@@ -1,5 +1,5 @@
 import { Link as RouterLink } from "react-router";
-import { Alert, Box, Skeleton, Typography } from "@mui/material";
+import { Alert, Skeleton } from "@mui/material";
 import api, { type Spr } from "../api";
 import { useApi, useTitre } from "../hooks";
 import SearchSection from "../components/SearchSection";
@@ -26,15 +26,6 @@ function Home() {
 
     return (
         <>
-            <Box sx={{ textAlign: "center", mb: "2em" }}>
-                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
-                    Que souhaitez-vous visiter ?
-                </Typography>
-                <Typography color="text.secondary" fontSize="1.3em">
-                    Accédez aux sites patrimoniaux remarquables de l'Isère et réservez votre guide
-                </Typography>
-            </Box>
-
             <SearchSection sprList={liste.donnees ?? []} />
 
             {(liste.erreur || top.erreur) && (

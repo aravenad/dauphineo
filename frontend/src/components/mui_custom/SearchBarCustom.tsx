@@ -105,11 +105,13 @@ function SearchBarCustom({ placeholder = "Rechercher...", sprList, isHeader = fa
     };
 
     return (
-        <Box ref={conteneur} sx={{ position: "relative", width: "500px", maxWidth: "100%" }}>
+        <Box ref={conteneur} sx={{ position: "relative", width: isHeader ? "500px" : "100%", maxWidth: "100%" }}>
             <Search
                 isHeader={isHeader}
                 onAnimationEnd={() => setSecousse(false)}
                 sx={{
+                    // Dans le bandeau d'accueil, la recherche est l'action principale : plus haute et plus lisible
+                    ...(!isHeader && { py: 1, fontSize: "1.15rem", boxShadow: "0 8px 24px rgba(22, 37, 33, 0.25)" }),
                     animation: secousse ? "secousse 0.3s ease" : "none",
                     "@keyframes secousse": {
                         "0%, 100%": { transform: "translateX(0)" },

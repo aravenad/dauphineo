@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router";
-import { Alert, Container, Typography } from "@mui/material";
+import { Alert, Box, Container, Typography } from "@mui/material";
 import { Header, Footer } from "./components";
+import RetourEnHaut from "./components/RetourEnHaut";
 import { Home, Reglementation, FAQ, MentionsLeg, CGU, SPR, Explorer, MonCompte } from "./pages";
 import { modeDemo } from "./api";
 import { useTitre } from "./hooks";
@@ -24,7 +25,8 @@ function App() {
     }, [pathname]);
 
     return (
-        <>
+        // Le pied de page reste en bas de l'écran même quand la page est courte
+        <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
             {modeDemo && (
                 <Alert severity="info" sx={{ borderRadius: 0, justifyContent: "center" }}>
                     Version de démonstration : les données sont simulées dans votre navigateur et les recommandations
@@ -32,7 +34,7 @@ function App() {
                 </Alert>
             )}
             <Header />
-            <Container component="main" sx={{ padding: "2em" }} disableGutters>
+            <Container component="main" sx={{ flex: "1 0 auto", padding: "2em" }} disableGutters>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/reglementation" element={<Reglementation />} />
@@ -46,7 +48,8 @@ function App() {
                 </Routes>
             </Container>
             <Footer />
-        </>
+            <RetourEnHaut />
+        </Box>
     );
 }
 

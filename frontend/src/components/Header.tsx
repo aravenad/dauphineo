@@ -20,6 +20,11 @@ function Header() {
             direction={{ xs: "column", md: "row" }}
             spacing={{ xs: 2, md: 0 }}
             sx={{
+                // Fixée en haut sur grand écran ; sur mobile, l'en-tête sur trois lignes masquerait trop de contenu
+                position: { xs: "static", md: "sticky" },
+                top: 0,
+                zIndex: "appBar",
+                backgroundColor: "background.paper",
                 padding: { xs: "1em", md: "1em 3em", lg: "1em 6em" },
                 borderBottom: "1px solid",
                 borderBottomColor: "rgba(0,0,0,0.2)",
