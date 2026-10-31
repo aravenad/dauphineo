@@ -34,19 +34,21 @@ const footerSections: { title: string; links: Lien[] }[] = [
   },
 ];
 
-const styleLien = { paddingY: 1, color: "common.white", textDecoration: "none", "&:hover": { textDecoration: "underline" } };
+// Titres en surtitre vert clair, liens en blanc atténué : contrastes de 7,1:1 et 9:1 sur le fond du pied de page
+const styleTitre = { fontWeight: 700, letterSpacing: "0.1em", color: "#7FB8AF" };
+const styleLien = { paddingY: 0.75, color: "rgba(252, 250, 249, 0.75)", textDecoration: "none", "&:hover": { color: "common.white", textDecoration: "underline" } };
 
 function Footer() {
   return (
     <Box component="footer" sx={{ bgcolor: "primary.dark", paddingX: { xs: "1.5em", md: "6em" }, paddingTop: "2em" }}>
       <Box component="img" src={LogoVert} alt="Dauphinéo" sx={{ width: { xs: "40%", md: "10%" }, height: "auto" }} />
       <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 2, md: 0 }} sx={{ justifyContent: "space-between", marginTop: "2em" }}>
-        {footerSections.map((section) => (
-          <Box component="nav" aria-label={section.title} key={section.title} sx={{ flex: 1 }}>
-            <Typography variant="body1" sx={{ fontWeight: 500, color: "primary.light" }}>
+        {footerSections.map((section, i) => (
+          <Box component="nav" aria-labelledby={`pied-${i}`} key={section.title} sx={{ flex: 1 }}>
+            <Typography variant="overline" component="h2" id={`pied-${i}`} sx={styleTitre}>
               {section.title}
             </Typography>
-            <List>
+            <List sx={{ paddingTop: 0.5 }}>
               {section.links.map((link) => (
                 <ListItem key={link.text} sx={{ padding: 0 }}>
                   {link.to ? (
