@@ -2,12 +2,27 @@ import { useState } from "react";
 import { Box, ButtonBase } from "@mui/material";
 import type { Image } from "../api";
 import { attributsImage } from "../utils/images";
+import { useImageChargee } from "../animations";
 import { ButtonCustom } from "./mui_custom";
 import SPRPhotosDetailed from "./SPRPhotosDetailed";
 
 interface SPRPhotosProps {
     images: Image[];
     commune: string;
+}
+
+function Photo({ image, onErreur }: { image: Image; onErreur: () => void }) {
+    const { imageProps, style } = useImageChargee();
+    return (
+        <Box
+            component="img"
+            {...attributsImage(image.image_url, "(max-width: 899px) 100vw, 50vw", [500, 960, 1280])}
+            {...imageProps}
+            alt=""
+            onError={onErreur}
+            sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block", ...style }}
+        />
+    );
 }
 
 /** Une grande photo et jusqu'à deux petites ; toutes s'ouvrent dans la galerie. */
@@ -50,13 +65,7 @@ function SPRPhotos({ images: toutes, commune }: SPRPhotosProps) {
                             "&:hover img": { transform: "scale(1.02)" },
                         }}
                     >
-                        <Box
-                            component="img"
-                            {...attributsImage(image.image_url, "(max-width: 899px) 100vw, 50vw", [500, 960, 1280])}
-                            alt=""
-                            onError={() => retirer(image.id)}
-                            sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.3s ease" }}
-                        />
+                        <Photo image={image} onErreur={() => retirer(image.id)} />
                     </ButtonBase>
                 ))}
 

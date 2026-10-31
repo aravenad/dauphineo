@@ -5,6 +5,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import type { Image } from "../api";
 import { attributsImage } from "../utils/images";
+import { useImageChargee } from "../animations";
 
 interface SPRPhotosDetailedProps {
     images: Image[];
@@ -14,6 +15,21 @@ interface SPRPhotosDetailedProps {
     onClose: () => void;
     /** Signale une photo qui ne se charge pas, pour la retirer de la galerie. */
     onErreur: (id: number) => void;
+}
+
+/** Photo principale : remontée à chaque changement (clé) pour repartir en fondu */
+function PhotoAgrandie({ image, alt, onErreur }: { image: Image; alt: string; onErreur: () => void }) {
+    const { imageProps, style } = useImageChargee();
+    return (
+        <Box
+            component="img"
+            {...attributsImage(image.image_url, "(max-width: 899px) 100vw, 900px", [500, 960, 1280])}
+            {...imageProps}
+            alt={alt}
+            onError={onErreur}
+            sx={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", ...style }}
+        />
+    );
 }
 
 function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SPRPhotosDetailedProps) {
@@ -48,12 +64,11 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                 {/* Cadre de hauteur fixe : quel que soit le format de la photo, la légende et les vignettes restent visibles */}
                 <Box sx={{ position: "relative", flex: "0 0 auto", height: "min(62vh, calc(100dvh - 320px))", minHeight: 220, borderRadius: "0.75em", overflow: "hidden", backgroundColor: "primary.dark" }}>
                     {images[courante] && (
-                        <Box
-                            component="img"
-                            {...attributsImage(images[courante].image_url, "(max-width: 899px) 100vw, 900px", [500, 960, 1280])}
+                        <PhotoAgrandie
+                            key={images[courante].id}
+                            image={images[courante]}
                             alt={`Photo ${courante + 1} sur ${images.length}`}
-                            onError={() => onErreur(images[courante].id)}
-                            sx={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }}
+                            onErreur={() => onErreur(images[courante].id)}
                         />
                     )}
                     {images.length > 1 && (
