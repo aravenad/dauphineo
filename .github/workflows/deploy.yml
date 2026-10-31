@@ -17,7 +17,7 @@ concurrency:
 jobs:
   api:
     name: Tests de l'API
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     services:
       postgres:
         image: postgres:17
@@ -48,7 +48,7 @@ jobs:
 
   site:
     name: Site de démonstration
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: frontend
@@ -79,7 +79,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
