@@ -16,7 +16,6 @@ const MOTS_CLES_INTERETS: Record<Interet, string[]> = {
 const MOTS_CLES_EXPERIENCES: Record<Experience, string[]> = {
     balade: ["promenade", "nature"],
     decouverte: ["musee", "architecture"],
-    visite_guidee: ["chateau", "abbaye", "musee"],
     exploration: ["archeologie", "chateau"],
     immersion: ["medieval", "abbaye"],
 };
@@ -31,7 +30,7 @@ const LIBELLES: Record<Interet | Experience, string> = {
     archeologie: "archéologie", architecture: "architecture", medieval: "médiéval",
     nature: "nature", religion: "patrimoine religieux", villages: "villages",
     jardins: "jardins", balade: "balade", decouverte: "découverte",
-    visite_guidee: "visite guidée", exploration: "exploration", immersion: "immersion",
+    exploration: "exploration", immersion: "immersion",
 };
 
 /** Convertit « 02:30:00 » en 2.5. */
@@ -46,7 +45,8 @@ export function formaterDuree(nbHeures: number): string {
     return m === 0 ? `${h} h` : `${h} h ${String(m).padStart(2, "0")}`;
 }
 
-function evaluer(preferences: Preferences, spr: Spr): { score: number; raison: string } {
+/** Score sur 100, raison sur la durée et l'accessibilité, et libellés des réponses que le SPR satisfait. */
+function evaluer(preferences: Preferences, spr: Spr): { score: number; raison: string; criteres: string[] } {
     const motsCles = spr.mot_cle.trim().split(/\s+/);
     let points = 0;
     let maximum = 0;
@@ -73,18 +73,15 @@ function evaluer(preferences: Preferences, spr: Spr): { score: number; raison: s
     points += Math.max(0, 2 - ecart);
 
     const raisons: string[] = [];
-    if (retenus.length > 0) {
-        raisons.push(`Correspond à vos envies : ${retenus.join(", ")}.`);
-    }
     raisons.push(`Visite de ${formaterDuree(duree)}${ecart === 0 ? ", comme vous le souhaitez." : "."}`);
     if (preferences.pmr) {
         raisons.push("Accessible aux personnes à mobilité réduite.");
     }
 
-    return { score: Math.round((100 * points) / maximum), raison: raisons.join(" ") };
+    return { score: Math.round((100 * points) / maximum), raison: raisons.join(" "), criteres: retenus };
 }
 
-export function recommander(preferences: Preferences, sprs: Spr[], limite = 3) {
+export function recommander(preferences: Preferences, sprs: Spr[], limite = 6) {
     return sprs
         .filter((spr) => (!preferences.pmr || spr.is_pmr) && spr.capacite_de_visite >= preferences.taille_groupe)
         .sort((a, b) => a.id - b.id)

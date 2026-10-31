@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
     Alert,
     Box,
@@ -8,11 +8,17 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    IconButton,
     LinearProgress,
     Slider,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import CheckIcon from "@mui/icons-material/Check";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import api, { messageErreur, type Duree, type Experience, type Interet, type Preferences, type Recommandations } from "../api";
 import CardSPR from "./CardSPR";
 import { ButtonCustom } from "./mui_custom";
@@ -37,7 +43,6 @@ const DUREES: [Duree, string][] = [
 const EXPERIENCES: [Experience, string][] = [
     ["balade", "🚶 Balade"],
     ["decouverte", "🎨 Découverte"],
-    ["visite_guidee", "📚 Visite guidée"],
     ["exploration", "🧭 Exploration"],
     ["immersion", "🏘️ Immersion"],
 ];
@@ -54,6 +59,131 @@ const PREFERENCES_INITIALES: Preferences = { taille_groupe: 2, interets: [], dur
 
 function basculer<T>(liste: T[], valeur: T): T[] {
     return liste.includes(valeur) ? liste.filter((v) => v !== valeur) : [...liste, valeur];
+}
+
+/** Espace entre deux résultats, en pixels ; la piste a une marge intérieure de moitié pour laisser déborder le survol des cartes. */
+const ECART = 24;
+
+function capitaliser(texte: string): string {
+    return texte.charAt(0).toUpperCase() + texte.slice(1);
+}
+
+function Resultat({ spr, raison, criteres, onOuvrir }: Recommandations["recommandations"][number] & { onOuvrir: () => void }) {
+    return (
+        <Box sx={{ scrollSnapAlign: "start", minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
+            <Box onClick={onOuvrir}>
+                <CardSPR spr={spr} />
+            </Box>
+            {criteres.length > 0 && (
+                <Box component="ul" aria-label="Vos réponses satisfaites" sx={{ listStyle: "none", m: 0, p: 0, display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+                    {criteres.map((critere) => (
+                        <Chip
+                            key={critere}
+                            component="li"
+                            size="small"
+                            icon={<CheckIcon />}
+                            label={capitaliser(critere)}
+                            sx={{ backgroundColor: "primary.light", color: "primary.dark", "& .MuiChip-icon": { color: "primary.main" } }}
+                        />
+                    ))}
+                </Box>
+            )}
+            <Typography variant="body2" sx={{ px: 0.5, color: "text.primary", opacity: 0.8 }}>
+                {raison}
+            </Typography>
+        </Box>
+    );
+}
+
+/** Résultats en piste horizontale : trois par vue sur ordinateur, deux sur tablette, un sur mobile, avec flèches et balayage. */
+function CarrouselResultats({ resultat, onOuvrir }: { resultat: Recommandations; onOuvrir: () => void }) {
+    const piste = useRef<HTMLDivElement>(null);
+    const [position, setPosition] = useState({ premier: 0, parVue: 1, debut: true, fin: true });
+    const total = resultat.recommandations.length;
+
+    const mesurer = useCallback(() => {
+        const element = piste.current;
+        const carte = element?.firstElementChild as HTMLElement | null;
+        if (!element || !carte) return;
+        const pas = carte.offsetWidth + ECART;
+        setPosition({
+            premier: Math.round(element.scrollLeft / pas),
+            parVue: Math.max(1, Math.round(element.clientWidth / pas)),
+            debut: element.scrollLeft <= 1,
+            fin: element.scrollLeft + element.clientWidth >= element.scrollWidth - 1,
+        });
+    }, []);
+
+    useEffect(() => {
+        mesurer();
+        window.addEventListener("resize", mesurer);
+        return () => window.removeEventListener("resize", mesurer);
+    }, [mesurer, resultat]);
+
+    const defiler = (sens: 1 | -1) => {
+        const element = piste.current;
+        if (!element) return;
+        const reduit = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        element.scrollBy({ left: sens * element.clientWidth, behavior: reduit ? "auto" : "smooth" });
+    };
+
+    const dernier = Math.min(position.premier + position.parVue, total);
+    const defilable = !(position.debut && position.fin);
+
+    return (
+        <Box sx={{ display: "flex", flexDirection: "column", minHeight: 0 }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1, mb: 1, flexWrap: "wrap" }}>
+                <Chip
+                    icon={resultat.source === "claude" ? <AutoAwesomeIcon /> : undefined}
+                    label={resultat.source === "claude" ? "Proposé par Claude Haiku" : "Proposé par le moteur local"}
+                    color={resultat.source === "claude" ? "primary" : "default"}
+                    variant="outlined"
+                />
+                {defilable && (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                        <Typography variant="body2" aria-live="polite" sx={{ mr: 0.5, whiteSpace: "nowrap" }}>
+                            {position.premier + 1}
+                            {dernier > position.premier + 1 && ` à ${dernier}`} sur {total}
+                        </Typography>
+                        <IconButton onClick={() => defiler(-1)} disabled={position.debut} aria-label="Résultats précédents" sx={{ border: 1, borderColor: "grey.300" }}>
+                            <ChevronLeftIcon />
+                        </IconButton>
+                        <IconButton onClick={() => defiler(1)} disabled={position.fin} aria-label="Résultats suivants" sx={{ border: 1, borderColor: "grey.300" }}>
+                            <ChevronRightIcon />
+                        </IconButton>
+                    </Box>
+                )}
+            </Box>
+            <Box
+                ref={piste}
+                onScroll={mesurer}
+                sx={{
+                    display: "grid",
+                    gridAutoFlow: "column",
+                    gridAutoColumns: {
+                        xs: "100%",
+                        sm: `calc((100% - ${ECART}px) / 2)`,
+                        md: `calc((100% - ${2 * ECART}px) / 3)`,
+                    },
+                    gap: `${ECART}px`,
+                    alignItems: "start",
+                    overflowX: "auto",
+                    scrollSnapType: "x mandatory",
+                    scrollPaddingInline: `${ECART / 2}px`,
+                    px: `${ECART / 2}px`,
+                    pt: 1.5,
+                    pb: 1,
+                    mx: `-${ECART / 2}px`,
+                    scrollbarWidth: "none",
+                    "&::-webkit-scrollbar": { display: "none" },
+                }}
+            >
+                {resultat.recommandations.map((recommandation) => (
+                    <Resultat key={recommandation.spr.id} {...recommandation} onOuvrir={onOuvrir} />
+                ))}
+            </Box>
+        </Box>
+    );
 }
 
 function Options<T extends string | boolean>({ options, choisis, onChoix }: { options: [T, string][]; choisis: T[]; onChoix: (valeur: T) => void }) {
@@ -78,8 +208,10 @@ interface QuestionnaireProps {
     onClose: () => void;
 }
 
-/** Cinq questions, puis trois sites recommandés par Claude Haiku ou par le moteur local. */
+/** Cinq questions, puis trois sites choisis par Claude Haiku ou jusqu'à six classés par le moteur local. */
 function Questionnaire({ open, onClose }: QuestionnaireProps) {
+    const theme = useTheme();
+    const mobile = useMediaQuery(theme.breakpoints.down("sm"));
     const [etape, setEtape] = useState(0);
     const [preferences, setPreferences] = useState<Preferences>(PREFERENCES_INITIALES);
     const [envoi, setEnvoi] = useState(false);
@@ -147,49 +279,48 @@ function Questionnaire({ open, onClose }: QuestionnaireProps) {
     };
 
     return (
-        <Dialog open={open} onClose={fermer} fullWidth maxWidth={resultat ? "md" : "sm"} aria-labelledby="titre-questionnaire">
-            <DialogTitle id="titre-questionnaire" sx={{ textAlign: "center", fontWeight: "bold" }}>
+        <Dialog
+            open={open}
+            onClose={fermer}
+            fullWidth
+            fullScreen={mobile}
+            maxWidth="md"
+            aria-labelledby="titre-questionnaire"
+            // Même fenêtre à chaque étape : celle des résultats
+            PaperProps={{ sx: { height: { sm: "min(700px, calc(100dvh - 64px))" }, borderRadius: { sm: "1.5em" } } }}
+        >
+            <DialogTitle id="titre-questionnaire" sx={{ textAlign: "center", fontWeight: "bold", pb: 1 }}>
                 {resultat ? "Nos recommandations" : "Trouver le site qui vous correspond"}
             </DialogTitle>
 
             {resultat ? (
-                <DialogContent>
-                    <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                        <Chip
-                            icon={resultat.source === "claude" ? <AutoAwesomeIcon /> : undefined}
-                            label={resultat.source === "claude" ? "Proposé par Claude Haiku" : "Proposé par le moteur local"}
-                            color={resultat.source === "claude" ? "primary" : "default"}
-                            variant="outlined"
-                        />
-                    </Box>
+                <DialogContent sx={{ pt: "8px !important" }}>
                     {resultat.recommandations.length === 0 ? (
-                        <Typography textAlign="center">Aucun site ne correspond à ces critères. Essayez d'en assouplir quelques-uns.</Typography>
-                    ) : (
-                        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" }, gap: 3 }}>
-                            {resultat.recommandations.map(({ spr, raison }) => (
-                                <Box key={spr.id} onClick={fermer}>
-                                    <CardSPR spr={spr} />
-                                    <Typography variant="body2" color="text.secondary" sx={{ px: 0.5 }}>
-                                        {raison}
-                                    </Typography>
-                                </Box>
-                            ))}
+                        <Box sx={{ height: "100%", display: "grid", placeItems: "center" }}>
+                            <Typography textAlign="center">Aucun site ne correspond à ces critères. Essayez d'en assouplir quelques-uns.</Typography>
                         </Box>
+                    ) : (
+                        <CarrouselResultats resultat={resultat} onOuvrir={fermer} />
                     )}
                 </DialogContent>
             ) : (
-                <DialogContent>
+                <DialogContent sx={{ display: "flex", flexDirection: "column", pt: "8px !important" }}>
+                    <Typography variant="body2" textAlign="center" sx={{ mb: 1 }}>
+                        Question {etape + 1} sur {QUESTIONS.length}
+                    </Typography>
                     <LinearProgress
                         variant="determinate"
                         value={((etape + 1) / QUESTIONS.length) * 100}
-                        aria-label={`Question ${etape + 1} sur ${QUESTIONS.length}`}
-                        sx={{ borderRadius: 1, mb: 3 }}
+                        aria-hidden
+                        sx={{ borderRadius: 1, height: 6, maxWidth: 480, width: "100%", mx: "auto" }}
                     />
-                    <Typography variant="h6" component="p" textAlign="center" sx={{ mb: 3 }} aria-live="polite">
-                        {QUESTIONS[etape]}
-                    </Typography>
-                    {contenu()}
-                    {erreur && <Alert severity="error" sx={{ mt: 3 }}>{erreur}</Alert>}
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", py: 4, maxWidth: 640, width: "100%", mx: "auto" }}>
+                        <Typography variant="h6" component="p" textAlign="center" sx={{ mb: 4, fontSize: { xs: "1.15rem", sm: "1.35rem" } }} aria-live="polite">
+                            {QUESTIONS[etape]}
+                        </Typography>
+                        {contenu()}
+                        {erreur && <Alert severity="error" sx={{ mt: 3 }}>{erreur}</Alert>}
+                    </Box>
                 </DialogContent>
             )}
 

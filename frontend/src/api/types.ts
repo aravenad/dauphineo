@@ -98,7 +98,7 @@ export interface Reservation {
 }
 
 export type Interet = "archeologie" | "architecture" | "medieval" | "nature" | "religion" | "villages" | "jardins";
-export type Experience = "balade" | "decouverte" | "visite_guidee" | "exploration" | "immersion";
+export type Experience = "balade" | "decouverte" | "exploration" | "immersion";
 export type Duree = "court" | "moyen" | "long";
 
 export interface Preferences {
@@ -112,7 +112,8 @@ export interface Preferences {
 export interface Recommandations {
     /** « claude » quand Claude Haiku a répondu, « local » pour le moteur de repli. */
     source: "claude" | "local";
-    recommandations: { spr: Spr; score: number; raison: string }[];
+    /** criteres : libellés des centres d'intérêt et expériences choisis que le site satisfait. */
+    recommandations: { spr: Spr; score: number; raison: string; criteres: string[] }[];
 }
 
 export interface Api {

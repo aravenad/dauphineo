@@ -43,11 +43,32 @@ function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardS
     const image = spr.images[essai]?.image_url;
 
     return (
-        <Card sx={{ boxShadow: "none", borderRadius: "1em", height: "100%", backgroundColor: "transparent" }}>
+        <Card sx={{ boxShadow: "none", borderRadius: "1em", height: "100%", backgroundColor: "transparent", overflow: "visible" }}>
             <CardActionArea
                 component={RouterLink}
                 to={`/spr/${spr.id}`}
-                sx={{ height: "100%", borderRadius: "1em", "&:hover img": { transform: "scale(1.04)" } }}
+                sx={{
+                    height: "100%",
+                    borderRadius: "1em",
+                    isolation: "isolate",
+                    // Comme sur YouTube, le survol dessine un fond qui déborde autour de la photo et du texte
+                    "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        inset: "-8px -8px -4px",
+                        zIndex: -1,
+                        borderRadius: "1.25em",
+                        backgroundColor: "primary.light",
+                        opacity: 0,
+                        transform: "scale(0.97)",
+                        transition: "opacity 0.2s ease, transform 0.2s ease",
+                    },
+                    "&:hover::before, &.Mui-focusVisible::before": { opacity: 1, transform: "none" },
+                    "&.Mui-focusVisible::before": { outline: "2px solid", outlineColor: "primary.main" },
+                    "& .MuiCardActionArea-focusHighlight": { display: "none" },
+                    "&:hover img": { transform: "scale(1.04)" },
+                    "@media (prefers-reduced-motion: reduce)": { "&::before, & img": { transition: "none" }, "&:hover img": { transform: "none" } },
+                }}
             >
                 <Box sx={{ aspectRatio: "1", borderRadius: "1em", overflow: "hidden", backgroundColor: "primary.light" }}>
                     {image ? (

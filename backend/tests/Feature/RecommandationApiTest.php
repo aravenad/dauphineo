@@ -9,7 +9,7 @@ $preferences = [
     'interets' => ['medieval', 'architecture'],
     'duree' => 'moyen',
     'pmr' => true,
-    'experiences' => ['visite_guidee'],
+    'experiences' => ['exploration'],
 ];
 
 function avecClaude(ClaudeRecommender $claude): void
@@ -27,8 +27,8 @@ it('recommande avec le moteur local sans clé API', function () use ($preference
     $reponse = $this->postJson('/api/recommandations', $preferences)
         ->assertOk()
         ->assertJsonPath('source', 'local')
-        ->assertJsonCount(3, 'recommandations')
-        ->assertJsonStructure(['recommandations' => [['spr' => ['id', 'nom_commune', 'images'], 'score', 'raison']]])
+        ->assertJsonCount(6, 'recommandations')
+        ->assertJsonStructure(['recommandations' => [['spr' => ['id', 'nom_commune', 'images'], 'score', 'raison', 'criteres']]])
         ->json('recommandations');
 
     expect(collect($reponse)->pluck('spr.is_pmr')->unique()->all())->toBe([true]);
@@ -46,7 +46,8 @@ it('utilise les raisons de Claude quand l\'appel réussit', function () use ($pr
         ->assertOk()
         ->assertJsonPath('source', 'claude')
         ->assertJsonPath('recommandations.0.spr.id', 18)
-        ->assertJsonPath('recommandations.0.raison', 'Raison rédigée par Claude.');
+        ->assertJsonPath('recommandations.0.raison', 'Raison rédigée par Claude.')
+        ->assertJsonStructure(['recommandations' => [['criteres']]]);
 });
 
 it('se replie sur le moteur local si Claude échoue', function () use ($preferences) {
@@ -57,7 +58,23 @@ it('se replie sur le moteur local si Claude échoue', function () use ($preferen
     $this->postJson('/api/recommandations', $preferences)
         ->assertOk()
         ->assertJsonPath('source', 'local')
-        ->assertJsonCount(3, 'recommandations');
+        ->assertJsonCount(6, 'recommandations');
+});
+
+it('refuse le type d\'expérience « visite guidée », proposé par tous les SPR', function () use ($preferences) {
+    $this->postJson('/api/recommandations', [...$preferences, 'experiences' => ['visite_guidee']])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['experiences.0']);
+});
+
+it('liste les réponses satisfaites par chaque SPR', function () use ($preferences) {
+    $criteres = $this->postJson('/api/recommandations', $preferences)
+        ->assertOk()
+        ->json('recommandations.*.criteres');
+
+    expect($criteres)->each->toBeArray();
+    expect(collect($criteres)->flatten()->unique()->diff(['médiéval', 'architecture', 'exploration'])->all())->toBe([]);
+    expect(collect($criteres)->flatten())->not->toBeEmpty();
 });
 
 it('écarte les SPR trop petits pour le groupe', function () use ($preferences) {

@@ -9,7 +9,7 @@ final class Preferences
 {
     public const INTERETS = ['archeologie', 'architecture', 'medieval', 'nature', 'religion', 'villages', 'jardins'];
 
-    public const EXPERIENCES = ['balade', 'decouverte', 'visite_guidee', 'exploration', 'immersion'];
+    public const EXPERIENCES = ['balade', 'decouverte', 'exploration', 'immersion'];
 
     public const DUREES = ['court', 'moyen', 'long'];
 

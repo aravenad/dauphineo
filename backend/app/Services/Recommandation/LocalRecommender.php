@@ -26,7 +26,6 @@ class LocalRecommender
     public const MOTS_CLES_EXPERIENCES = [
         'balade' => ['promenade', 'nature'],
         'decouverte' => ['musee', 'architecture'],
-        'visite_guidee' => ['chateau', 'abbaye', 'musee'],
         'exploration' => ['archeologie', 'chateau'],
         'immersion' => ['medieval', 'abbaye'],
     ];
@@ -42,7 +41,7 @@ class LocalRecommender
         'archeologie' => 'archéologie', 'architecture' => 'architecture', 'medieval' => 'médiéval',
         'nature' => 'nature', 'religion' => 'patrimoine religieux', 'villages' => 'villages',
         'jardins' => 'jardins', 'balade' => 'balade', 'decouverte' => 'découverte',
-        'visite_guidee' => 'visite guidée', 'exploration' => 'exploration', 'immersion' => 'immersion',
+        'exploration' => 'exploration', 'immersion' => 'immersion',
     ];
 
     /**
@@ -61,9 +60,9 @@ class LocalRecommender
 
     /**
      * @param  Collection<int, Spr>  $candidats
-     * @return list<array{spr: Spr, score: int, raison: string}>
+     * @return list<array{spr: Spr, score: int, raison: string, criteres: list<string>}>
      */
-    public function recommander(Preferences $preferences, Collection $candidats, int $limite = 3): array
+    public function recommander(Preferences $preferences, Collection $candidats, int $limite = 6): array
     {
         return $candidats
             ->map(fn (Spr $spr) => ['spr' => $spr, ...$this->evaluer($preferences, $spr)])
@@ -74,7 +73,9 @@ class LocalRecommender
     }
 
     /**
-     * @return array{score: int, raison: string}
+     * Score sur 100, raison sur la durée et l'accessibilité, et libellés des réponses que le SPR satisfait.
+     *
+     * @return array{score: int, raison: string, criteres: list<string>}
      */
     public function evaluer(Preferences $preferences, Spr $spr): array
     {
@@ -100,9 +101,6 @@ class LocalRecommender
         $points += max(0, 2 - $ecart);
 
         $raisons = [];
-        if ($retenus !== []) {
-            $raisons[] = 'Correspond à vos envies : '.implode(', ', $retenus).'.';
-        }
         $raisons[] = 'Visite de '.self::formaterDuree($heures).($ecart == 0 ? ', comme vous le souhaitez.' : '.');
         if ($preferences->pmr) {
             $raisons[] = 'Accessible aux personnes à mobilité réduite.';
@@ -111,6 +109,7 @@ class LocalRecommender
         return [
             'score' => (int) round(100 * $points / $maximum),
             'raison' => implode(' ', $raisons),
+            'criteres' => $retenus,
         ];
     }
 
