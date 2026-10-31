@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Visite extends Model
@@ -48,16 +49,27 @@ class Visite extends Model
         return $this->hasMany(Reservation::class, 'id_visite', 'id');
     }
 
-    
-    public function guide()
+
+    /**
+     * Get the guide availability that created the visit
+     */
+    public function disponibilite(): BelongsTo
+    {
+        return $this->belongsTo(Disponibilite::class, 'id_disponibilite');
+    }
+
+    /**
+     * Get the guide leading the visit
+     */
+    public function guide(): HasOneThrough
     {
         return $this->hasOneThrough(
             Guide::class,
-            Reservation::class,
-            'id_visite', // Clé étrangère sur reservation
-            'id',        // Clé primaire sur guide
-            'id',        // Clé primaire sur visite
-            'id_guide'   // Clé étrangère sur reservation
+            Disponibilite::class,
+            'id',               // Clé primaire sur disponibilite
+            'id',               // Clé primaire sur guide
+            'id_disponibilite', // Clé étrangère sur visite
+            'id_guide'          // Clé étrangère sur disponibilite
         );
     }
 }

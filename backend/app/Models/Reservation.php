@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     use HasFactory;
+
+    /** Prix d'une place, calculé côté serveur. */
+    public const PRIX_PAR_PERSONNE = 12.0;
+
     protected $table = 'reservation';
 
 
@@ -18,9 +22,7 @@ class Reservation extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'date',
         'prix',
-        'heure',
         'statut_reservation',
         'statut_paiement',
         'taille',
@@ -31,24 +33,12 @@ class Reservation extends Model
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'taille',
-    ];
-
-
-    /**
      * Casts for specific attributes.
      * Permet de définir le type des colonnes de la table.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'date' => 'date',
-        'heure' => 'datetime:H:i:s',
         'prix' => 'float',
         'taille' => 'integer',
     ];

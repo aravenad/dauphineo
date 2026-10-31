@@ -17,8 +17,6 @@ class Guide extends Authenticatable
 
     protected $table = 'guide';
 
-    public $timestamps = false;
-
     /**
      * The attributes that are mass assignable.
      */
@@ -30,6 +28,7 @@ class Guide extends Authenticatable
         'pseudo',
         'verif_age',
         'id_spr',
+        'is_certif',
         'derniere_activite'
     ];
 
@@ -38,6 +37,7 @@ class Guide extends Authenticatable
      */
     protected $hidden = [
         'mot_de_passe',
+        'email',
         'remember_token',
         'derniere_activite',
         'verif_age',
@@ -54,7 +54,13 @@ class Guide extends Authenticatable
     {
         return [
             'mot_de_passe' => 'hashed',
+            'is_certif' => 'boolean',
         ];
+    }
+
+    public function getAuthPassword(): string
+    {
+        return $this->mot_de_passe;
     }
 
     /**

@@ -28,7 +28,9 @@ class Spr extends Model
         'capacite_de_visite',
         'mot_cle',
         'is_pmr',
-        'temps_de_visite'
+        'temps_de_visite',
+        'courte_description',
+        'longue_description',
     ];
 
     /**
@@ -39,7 +41,8 @@ class Spr extends Model
     protected $casts = [
         'is_pmr' => 'boolean',
         'capacite_de_visite' => 'integer',
-        'temps_de_visite' => 'integer'
+        // Colonne TIME : « 02:00:00 »
+        'temps_de_visite' => 'string',
     ];
 
     /**

@@ -34,7 +34,7 @@ return new class extends Migration
         Schema::create('images', function (Blueprint $table) {
             $table->id();
             $table->string('image_url', 500)->notNullable();
-            $table->foreignId('id_spr')->constrained('spr');
+            $table->foreignId('id_spr')->constrained('spr')->onDelete('cascade');
         });
 
         // Création de la table UTILISATEUR
@@ -81,6 +81,8 @@ return new class extends Migration
             $table->date('date_jour')->notNullable();
             $table->foreignId('id_guide')->constrained('guide')->onDelete('cascade');
             $table->foreignId('id_creneaux')->constrained('creneaux')->onDelete('cascade');
+            // Un guide ne peut pas être disponible deux fois sur le même créneau
+            $table->unique(['id_guide', 'date_jour', 'id_creneaux']);
         });
 
         // Création de la table VISITE
@@ -90,7 +92,7 @@ return new class extends Migration
             $table->integer('capacite_max')->notNullable();
             $table->date('date_visite')->notNullable();
             $table->foreignId('id_spr')->constrained('spr')->onDelete('cascade');
-            $table->foreignId('id_disponibilite')->constrained('disponibilite')->onDelete('cascade');
+            $table->foreignId('id_disponibilite')->unique()->constrained('disponibilite')->onDelete('cascade');
         });
 
         // Création de la table RESERVATION
@@ -113,11 +115,16 @@ return new class extends Migration
             $table->id();
             $table->text('titre')->notNullable();
             $table->text('commentaire')->notNullable();
-            $table->integer('note')->notNullable()->check('note >= 1 AND note <= 5');
+            $table->integer('note')->notNullable();
             $table->foreignId('id_utilisateur')->constrained('utilisateur')->onDelete('cascade');
             $table->foreignId('id_spr')->constrained('spr')->onDelete('cascade');
             $table->timestamps();
+            // Un seul avis par utilisateur et par SPR
+            $table->unique(['id_utilisateur', 'id_spr']);
         });
+
+        DB::statement('ALTER TABLE avis ADD CONSTRAINT avis_note_check CHECK (note BETWEEN 1 AND 5)');
+        DB::statement('ALTER TABLE reservation ADD CONSTRAINT reservation_taille_check CHECK (taille > 0)');
     }
 
     /**
@@ -132,10 +139,9 @@ return new class extends Migration
         Schema::dropIfExists('creneaux');
         Schema::dropIfExists('guide');
         Schema::dropIfExists('utilisateur');
-        Schema::dropIfExists('image');
+        Schema::dropIfExists('images');
         Schema::dropIfExists('spr');
-        DB::statement("DROP TYPE statut_reservation");
-        DB::statement("DROP TYPE statut_paiement");
-        DB::statement("DROP TYPE statut_avis");
+        DB::statement("DROP TYPE IF EXISTS statut_reservation");
+        DB::statement("DROP TYPE IF EXISTS statut_paiement");
     }
 };
