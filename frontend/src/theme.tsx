@@ -5,7 +5,7 @@ import SatoshiMedium from './assets/fonts/Satoshi-Medium.ttf'
 import SatoshiBold from './assets/fonts/Satoshi-Bold.ttf'
 import SatoshiBlack from './assets/fonts/Satoshi-Black.ttf'
 
-let theme = createTheme({
+const theme = createTheme({
   palette: {
     common :{
       black: "#1E1E1E",

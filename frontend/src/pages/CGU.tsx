@@ -1,4 +1,5 @@
-import { Box, Typography, Divider } from "@mui/material";
+import { Box, Typography, Divider, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router";
 
 function CGU() {
   return (
@@ -88,7 +89,7 @@ function CGU() {
       </Typography>
       <Typography>
         Les données personnelles collectées sur le site sont traitées conformément à notre{" "}
-        <a href="/Reglementation">Politique de Confidentialité</a>. Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, d’effacement et d’opposition concernant vos données.
+        <Link component={RouterLink} to="/reglementation">Politique de Confidentialité</Link>. Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, d’effacement et d’opposition concernant vos données.
       </Typography>
 
       <Divider sx={{ marginY: "2em" }} />

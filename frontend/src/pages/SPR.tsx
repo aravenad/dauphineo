@@ -1,192 +1,105 @@
-import React from "react";
-import { useLocation } from "react-router";
-import { Box, Typography, Button, Chip } from "@mui/material";
-import SPRPhotos from "../components/SPRPhotos.tsx";
-import SPRMap from "../components/SPRMap.tsx";
-import AvisSection from "../components/AvisSection.tsx";
+import { useEffect } from "react";
+import { Link as RouterLink, useParams } from "react-router";
+import { Alert, Box, Button, Chip, Skeleton, Typography } from "@mui/material";
+import AccessibleIcon from "@mui/icons-material/Accessible";
+import ScheduleIcon from "@mui/icons-material/Schedule";
+import GroupsIcon from "@mui/icons-material/Groups";
+import api from "../api";
+import { useApi } from "../hooks";
+import { formaterDuree, heures, nomCommune } from "../utils/format";
+import SPRPhotos from "../components/SPRPhotos";
+import SPRMap from "../components/SPRMap";
+import AvisSection from "../components/AvisSection";
+import MotsCles from "../components/MotsCles";
+import ReservationSection from "../components/ReservationSection";
 
-const emojiMap: Record<string, string> = {
-    archeologie: "🏺",
-    architecture: "🏛️",
-    nature: "🌳",
-    abbaye: "⛪",
-    chateau: "🏰",
-    medieval: "🛡️",
-    musee: "🖼️",
-    promenade: "🚶",
-    urbain: "🏙️",
-};
+function SPR() {
+    const id = Number(useParams().id);
+    const { donnees: spr, erreur, chargement } = useApi(
+        () => (Number.isInteger(id) && id > 0 ? api.getSpr(id) : Promise.reject(new Error())),
+        [id],
+    );
+    const nom = spr ? nomCommune(spr.nom_commune) : "";
 
-const SPR: React.FC = () => {
-    const location = useLocation();
-    const sprData = location.state?.spr;
+    useEffect(() => {
+        if (nom) document.title = `${nom} | Dauphinéo`;
+        return () => {
+            document.title = "Dauphinéo";
+        };
+    }, [nom]);
 
-    if (!sprData) {
-        return <Typography>Aucune donnée disponible pour ce SPR.</Typography>;
-    } else{
-        console.log(sprData)
-    }
+    const retour = (
+        <Button component={RouterLink} to="/explorer" sx={{ color: "text.secondary", textTransform: "none", fontSize: "1rem", mb: 1 }}>
+            ← Retour à la liste des SPR
+        </Button>
+    );
 
-    const capitalizeWords = (str: string) => {
-        return str
-            .toLowerCase()
-            .split(/(\s|-|')/)
-            .map((word) => (word === "-" || word === "'" ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-            .join("");
-    };
-
-    const renderPills = (keywords: string) => {
-        const keywordArray = keywords.split(" ");
+    if (chargement && !spr) {
         return (
-            <Box
-                sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: 1,
-                    marginTop: 2,
-                }}
-            >
-                {keywordArray.map((keyword) => (
-                    <Chip
-                        key={keyword}
-                        label={`${emojiMap[keyword] || ""} ${keyword.charAt(0).toUpperCase()}${keyword.slice(1)}`}
-                        sx={{
-                            backgroundColor: "#f5f5f5",
-                            borderRadius: "16px",
-                            padding: "1.05em 0.5em",
-                            fontSize: "1rem",
-                            fontWeight: 500,
-                            display: "flex",
-                            alignItems: "center",
-                            marginRight: "0.5em",
-                            border : "1px solid #e0e0e0"
-                        }}
-                    />
-                ))}
+            <Box>
+                {retour}
+                <Skeleton variant="text" width="40%" height={64} />
+                <Skeleton variant="rounded" height={520} sx={{ mt: 2, borderRadius: "1em" }} />
             </Box>
         );
-    };
+    }
 
-    const renderPMRPill = (isPMR: boolean) => {
+    if (erreur || !spr) {
         return (
-            <Chip
-                label={isPMR ? "♿️ • Site adapté aux PMR" : "♿️ • Non adaptés aux PMR"}
-                sx={{
-                    backgroundColor: isPMR ? "#1976ff" : "#e0e0e0",
-                    color: isPMR ? "white" : "#9e9e9e",
-                    textDecoration: isPMR ? "none" : "line-through",
-                    borderRadius: "16px",
-                    padding: "1.05em 0.5em",
-                    fontSize: "1rem",
-                    fontWeight: 500,
-                }}
-            />
+            <Box>
+                {retour}
+                <Alert severity="error">{erreur ?? "Ce site patrimonial est introuvable."}</Alert>
+            </Box>
         );
-    };
+    }
 
     return (
         <Box>
-            {/* Bouton Retour à l'accueil */}
-            <Box sx={{ textAlign: "left", mb: "1em", mt: "0" }}>
-                <Button
-                    variant="text"
-                    sx={{
-                        color: "gray",
-                        textTransform: "none",
-                        fontSize: "1rem",
-                    }}
-                    href={"/explorer"}
-                >
-                    ← Retour à la liste des SPR
-                </Button>
-            </Box>
+            {retour}
 
-            {/* Titre du SPR */}
-            <Typography
-                variant="h3"
-                gutterBottom
-                sx={{ fontWeight: "bold", textAlign: "left", mb: "0" }}
-            >
-                {capitalizeWords(sprData.nom_commune)}
+            <Typography variant="h3" component="h1" fontWeight="bold">
+                {nom}
+            </Typography>
+            <Typography fontSize="1.2em" color="text.secondary" sx={{ mb: 3 }}>
+                {spr.courte_description}
             </Typography>
 
-            {/* Flexbox pour description et bouton */}
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: "2em",
-                }}
-            >
-                {/* Placeholder pour la description */}
-                <Typography variant="body1" sx={{ maxWidth: "60%" }} fontSize="1.2em">
-                    {sprData.courte_description}
-                </Typography>
+            <SPRPhotos images={spr.images} commune={nom} />
 
-                {/* Lien "Se proposer en tant que guide" */}
-                <Button
-                    variant="text"
-                    sx={{
-                        color: "gray",
-                        textTransform: "none",
-                        fontSize: "1rem",
-                        textDecoration: "underline",
-                        "&:hover": {
-                            textDecoration: "underline",
-                        },
-                    }}
-                >
-                    Se proposer en tant que guide
-                </Button>
-            </Box>
-
-            {/* Composant SPRPhotos */}
-            <SPRPhotos images={sprData.images} />
-
-            {/* Nouvelle section : Description et Map */}
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    mt: "4em",
-                    gap: "1em",
-                }}
-            >
-                {/* Colonne de gauche : Description */}
-                <Box sx={{ flex: "3", display: "flex", flexDirection: "column", gap: "1em" }}>
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            fontWeight: "bold",
-                        }}
-                    >
+            <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, mt: 6 }}>
+                <Box sx={{ flex: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+                    <Typography variant="h5" component="h2" fontWeight="bold">
                         Description
                     </Typography>
-                    <Typography variant="body1" fontSize="1.15rem" paddingRight="1em" textAlign="justify">
-                        {sprData.longue_description}
+                    <Typography fontSize="1.1rem" sx={{ hyphens: "auto" }} lang="fr">
+                        {spr.longue_description}
                     </Typography>
-
-                    {/* Pills pour les mots-clés */}
-                    {renderPills(sprData.mot_cle)}
-
-                    {/* Pill PMR */}
-                    <Box sx={{ marginTop: 0 }}>{renderPMRPill(sprData.is_pmr)}</Box>
+                    <MotsCles motCle={spr.mot_cle} taille="medium" />
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                        <Chip icon={<ScheduleIcon />} label={`Visite de ${formaterDuree(heures(spr.temps_de_visite))}`} />
+                        <Chip icon={<GroupsIcon />} label={`Jusqu'à ${spr.capacite_de_visite} visiteurs par créneau`} />
+                        <Chip
+                            icon={<AccessibleIcon />}
+                            label={spr.is_pmr ? "Adapté aux personnes à mobilité réduite" : "Non adapté aux personnes à mobilité réduite"}
+                            color={spr.is_pmr ? "primary" : "default"}
+                            variant={spr.is_pmr ? "filled" : "outlined"}
+                        />
+                    </Box>
                 </Box>
-
-                {/* Colonne de droite : SPRMap */}
-                <Box sx={{display : "flex", flex: "2", alignItems : "center"}}>
-                    <SPRMap commune={sprData.nom_commune} />
+                <Box sx={{ flex: 2 }}>
+                    <SPRMap commune={nom} />
                 </Box>
             </Box>
 
-            <Box sx={{ marginTop: "150px" }}>
-                <AvisSection sprId={sprData.id} id_utilisateur={1} />
+            <Box sx={{ mt: 6 }}>
+                <ReservationSection sprId={spr.id} />
+            </Box>
+
+            <Box sx={{ mt: 8 }}>
+                <AvisSection sprId={spr.id} />
             </Box>
         </Box>
     );
-};
-
+}
 
 export default SPR;

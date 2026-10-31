@@ -1,161 +1,85 @@
 import React, { useState } from "react";
-import { Box, TextField, Typography, Button, Rating, Stack, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { createReview } from "../api/endpoints/avis.tsx";
+import { Alert, Box, TextField, Typography, Button, Rating, Stack } from "@mui/material";
+import api, { messageErreur, type Avis } from "../api";
 
 interface FormulaireAvisProps {
-  onClose?: () => void;
-  sprId: number; // Fonction pour fermer le popup
-  id_utilisateur: number;
+  sprId: number;
+  onPublie: (avis: Avis) => void;
+  onAnnuler: () => void;
 }
 
-const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ onClose, sprId }) => {
-  const [titre, setTitre] = useState<string>("");
-  const [rating, setRating] = useState<number | null>(null);
-  const [comment, setComment] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const [successMessage, setSuccessMessage] = useState<string>("");
+const MAX_TITRE = 80;
+const MAX_COMMENTAIRE = 1000;
 
-  const handleSubmit = async () => {
-    // Vérification de tous les champs requis
-    if (!rating || !titre.trim() || !comment.trim()) {
-      setErrorMessage("Veuillez remplir tous les champs.");
-      return;
-    }
-    if (titre.length > 26) {
-      setErrorMessage("Le titre doit contenir au maximum 26 caractères.");
-      return;
-    }
-    if (comment.length > 150) {
-      setErrorMessage("Le commentaire doit contenir au maximum 150 caractères.");
+const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ sprId, onPublie, onAnnuler }) => {
+  const [titre, setTitre] = useState("");
+  const [note, setNote] = useState<number | null>(null);
+  const [commentaire, setCommentaire] = useState("");
+  const [erreur, setErreur] = useState("");
+  const [envoi, setEnvoi] = useState(false);
+
+  const envoyer = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!note || !titre.trim() || !commentaire.trim()) {
+      setErreur("Donnez une note, un titre et un commentaire.");
       return;
     }
 
+    setEnvoi(true);
+    setErreur("");
     try {
-      const response = await createReview({
-        titre: titre.trim(),
-        commentaire: comment.trim(),
-        note: rating,
-        id_utilisateur: 2,
-        id_spr: sprId,
-      });
-
-      setSuccessMessage("Avis envoyé avec succès !");
-      setTitre("");
-      setRating(null);
-      setComment("");
-      setErrorMessage("");
-      if (onClose) onClose();
-    } catch (error) {
-      console.error("Erreur lors de l'envoi :", error);
-      setErrorMessage("Une erreur est survenue lors de l'envoi de l'avis.");
+      onPublie(await api.publierAvis({ titre: titre.trim(), commentaire: commentaire.trim(), note, id_spr: sprId }));
+    } catch (e) {
+      setErreur(messageErreur(e, "L'avis n'a pas pu être publié."));
+    } finally {
+      setEnvoi(false);
     }
   };
 
   return (
-    <Box sx={{ position: "relative" }}>
-      <Typography variant="h6" sx={{ mb: 2 }}>
-        Laisser un avis
-      </Typography>
+    <Box component="form" onSubmit={envoyer} noValidate>
       <Stack spacing={2}>
-        {/* Message informatif */}
-        <Typography variant="body2" color="textSecondary" sx={{ fontStyle: "italic" }}>
-          * Vous ne pouvez poster qu'un seul avis par SPR.
+        <Typography variant="body2" color="text.secondary">
+          Vous pouvez laisser un seul avis par site.
         </Typography>
 
-        {/* Bouton de fermeture */}
-        {onClose && (
-          <IconButton
-            onClick={onClose}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              color: "gray",
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        )}
-
-        {/* Champ pour le titre */}
-        <TextField
-          label="Titre de l'avis"
-          value={titre}
-          onChange={(e) => setTitre(e.target.value)}
-          fullWidth
-          required
-          helperText={
-            <Typography
-              variant="caption"
-              sx={{
-                color: titre.length > 26 ? "red" : "textSecondary",
-              }}
-            >
-              {titre.length}/26 caractères
-            </Typography>
-          }
-        />
-
-        {/* Note avec étoiles */}
         <Box>
           <Typography component="legend" sx={{ mb: 1 }}>
             Note
           </Typography>
-          <Rating
-            name="rating"
-            value={rating}
-            onChange={(event, newValue) => setRating(newValue)}
-            precision={1}
-            size="large"
-          />
+          <Rating name="note" value={note} onChange={(_, valeur) => setNote(valeur)} size="large" />
         </Box>
 
-        {/* Champ pour le commentaire */}
+        <TextField
+          label="Titre de l'avis"
+          value={titre}
+          onChange={(e) => setTitre(e.target.value.slice(0, MAX_TITRE))}
+          required
+          fullWidth
+          helperText={`${titre.length}/${MAX_TITRE} caractères`}
+        />
+
         <TextField
           label="Commentaire"
           multiline
-          rows={4}
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
+          minRows={4}
+          value={commentaire}
+          onChange={(e) => setCommentaire(e.target.value.slice(0, MAX_COMMENTAIRE))}
           required
-          helperText={
-            <Typography
-              variant="caption"
-              sx={{
-                color: comment.length > 150 ? "red" : "textSecondary",
-              }}
-            >
-              {comment.length}/150 caractères
-            </Typography>
-          }
+          fullWidth
+          helperText={`${commentaire.length}/${MAX_COMMENTAIRE} caractères`}
         />
 
-        {/* Messages d'erreur et de succès */}
-        {errorMessage && (
-          <Typography color="error" variant="body2">
-            {errorMessage}
-          </Typography>
-        )}
-        {successMessage && (
-          <Typography color="success" variant="body2">
-            {successMessage}
-          </Typography>
-        )}
+        {erreur && <Alert severity="error">{erreur}</Alert>}
 
-        {/* Bouton d'envoi */}
-        <Button
-          variant="contained"
-          onClick={handleSubmit}
-          sx={{
-            backgroundColor: "#407E76",
-            "&:hover": {
-              backgroundColor: "#2F5E58",
-            },
-          }}
-        >
-          Envoyer
-        </Button>
+        <Stack direction="row" spacing={2} sx={{ justifyContent: "flex-end" }}>
+          <Button onClick={onAnnuler} sx={{ textTransform: "none" }}>
+            Annuler
+          </Button>
+          <Button type="submit" variant="contained" disabled={envoi} sx={{ textTransform: "none", borderRadius: "2em" }}>
+            Publier
+          </Button>
+        </Stack>
       </Stack>
     </Box>
   );

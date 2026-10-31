@@ -1,160 +1,67 @@
-import { useEffect, useState } from "react";
-import {
-    Stack,
-    Box,
-    Link,
-    Avatar,
-    IconButton,
-    Button,
-} from "@mui/material";
-import { Language } from "@mui/icons-material";
+import { useState } from "react";
+import { Avatar, Box, IconButton, Link, ListItemIcon, Menu, MenuItem, Stack, Tooltip } from "@mui/material";
+import { AccountCircleOutlined, Logout } from "@mui/icons-material";
+import { Link as RouterLink, useNavigate } from "react-router";
 import LogoVert from "../assets/dauphineo_logo_vert.png";
-import { SearchBarCustom } from "./mui_custom";
-import ConnexionDialog from "./ConnexionDialog";  // Assurez-vous que ConnexionDialog est importé correctement
-import { fetchSPR } from "../api/endpoints/spr.tsx";
-import { logoutUser } from "../api/endpoints/users.tsx";
+import { ButtonCustom, SearchBarCustom } from "./mui_custom";
+import api from "../api";
+import { useApi } from "../hooks";
+import { useSession } from "../session";
 
 function Header() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // État de connexion
-    const [sprList, setSprList] = useState<any[]>([]); // Liste des SPR
-
-    // Charger l'état de connexion et les informations utilisateur au montage
-    useEffect(() => {
-        const loadUserData = () => {
-            const token = localStorage.getItem("accessToken");
-
-            if (token) {
-                setIsLoggedIn(true);
-            } else {
-                setIsLoggedIn(false);
-            }
-        };
-
-        loadUserData();
-    }, []);
-
-    // Charger les données SPR depuis l'API
-    useEffect(() => {
-        const loadSPRData = async () => {
-            try {
-                const allSPR = await fetchSPR();
-                setSprList(allSPR);
-            } catch (err) {
-                console.error("Erreur lors de la récupération des données SPR :", err);
-            }
-        };
-
-        loadSPRData();
-    }, []);
-
-    // Fonction pour gérer la déconnexion
-    const handleLogout = async () => {
-        const token = localStorage.getItem("accessToken");
-
-        if (token) {
-            try {
-                // Effectuer la déconnexion via l'API avec le token Bearer
-                await logoutUser(token); // Passer le token à l'API
-
-                // Supprimer le token et les informations de l'utilisateur dans localStorage
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("user");
-
-                // Mettre à jour l'état de connexion
-                setIsLoggedIn(false);
-                console.log("Déconnexion réussie");
-            } catch (error) {
-                console.error("Erreur lors de la déconnexion:", error);
-            }
-        } else {
-            console.log("Aucun token trouvé, déconnexion impossible");
-        }
-    };
+    const { utilisateur, verification, ouvrirConnexion, deconnecter } = useSession();
+    const { donnees: sprList } = useApi(() => api.listSpr(), []);
+    const [menu, setMenu] = useState<HTMLElement | null>(null);
+    const navigate = useNavigate();
 
     return (
         <Stack
-            direction="row"
+            component="header"
+            direction={{ xs: "column", md: "row" }}
+            spacing={{ xs: 2, md: 0 }}
             sx={{
-                padding: "1em 6em",
+                padding: { xs: "1em", md: "1em 3em", lg: "1em 6em" },
                 borderBottom: "1px solid",
                 borderBottomColor: "rgba(0,0,0,0.2)",
-                justifyContent: "space-around",
+                justifyContent: "space-between",
                 alignItems: "center",
-                height: "100px",
+                minHeight: "100px",
             }}
         >
-            {/* Logo */}
-            <Box>
-                <Link href="/#">
-                    <Box
-                        component="img"
-                        src={LogoVert}
-                        alt="logo"
-                        sx={{
-                            width: "auto",
-                            height: "60px",
-                        }}
-                    />
-                </Link>
-            </Box>
+            <Link component={RouterLink} to="/" aria-label="Dauphinéo, accueil">
+                <Box component="img" src={LogoVert} alt="" sx={{ display: "block", height: "60px" }} />
+            </Link>
 
-            {/* Barre de recherche */}
-            <SearchBarCustom
-                placeholder="Recherche rapide"
-                sprList={sprList}
-                isHeader={true}
-            />
+            <SearchBarCustom placeholder="Recherche rapide" sprList={sprList ?? []} isHeader />
 
-            {/* Menu et actions */}
-            <Stack direction="row" sx={{ alignItems: "center" }} spacing={4}>
-                <Link
-                    href="/explorer"
-                    variant="body1"
-                    sx={{
-                        fontWeight: 500,
-                        color: "common.black",
-                        textDecoration: "none",
-                    }}
-                >
+            <Stack component="nav" direction="row" spacing={3} sx={{ alignItems: "center" }}>
+                <Link component={RouterLink} to="/explorer" variant="body1" sx={{ fontWeight: 500, color: "common.black", textDecoration: "none" }}>
                     Explorer
                 </Link>
-                <IconButton
-                    aria-label="language-selector"
-                    sx={(theme) => ({
-                        color: theme.palette.common.black,
-                    })}
-                >
-                    <Language />
-                </IconButton>
-
-                {/* Affichage conditionnel : avatar ou bouton de connexion / déconnexion */}
-                {isLoggedIn ? (
+                {utilisateur ? (
                     <>
-                        <Avatar
-                            sx={{
-                                bgcolor: "info.main",
-                                width: 35,
-                                height: 35,
-                                fontSize: "1rem",
-                            }}
-                            alt="Avatar utilisateur"
-                        >
-                        </Avatar>
-                        <Button
-                            variant="outlined"
-                            onClick={handleLogout}
-                            sx={{
-                                fontWeight: 500,
-                                color: "common.black",
-                                textDecoration: "none",
-                            }}
-                        >
-                            Se déconnecter
-                        </Button>
+                        <Tooltip title="Mon compte">
+                            <IconButton onClick={(e) => setMenu(e.currentTarget)} aria-label="Ouvrir le menu du compte" aria-haspopup="menu">
+                                <Avatar sx={{ bgcolor: "info.main", width: 35, height: 35, fontSize: "1rem" }}>
+                                    {utilisateur.prenom.charAt(0).toUpperCase()}
+                                </Avatar>
+                            </IconButton>
+                        </Tooltip>
+                        <Menu anchorEl={menu} open={Boolean(menu)} onClose={() => setMenu(null)}>
+                            <MenuItem onClick={() => { setMenu(null); navigate("/mon-compte"); }}>
+                                <ListItemIcon><AccountCircleOutlined fontSize="small" /></ListItemIcon>
+                                Mon compte
+                            </MenuItem>
+                            <MenuItem onClick={() => { setMenu(null); void deconnecter().then(() => navigate("/")); }}>
+                                <ListItemIcon><Logout fontSize="small" /></ListItemIcon>
+                                Se déconnecter
+                            </MenuItem>
+                        </Menu>
                     </>
                 ) : (
-                    // Passer setIsLoggedIn au composant ConnexionDialog
-                    <ConnexionDialog setIsLoggedIn={setIsLoggedIn} />
+                    <ButtonCustom variant="contained" onClick={ouvrirConnexion} disabled={verification}>
+                        Se connecter
+                    </ButtonCustom>
                 )}
             </Stack>
         </Stack>

@@ -1,183 +1,98 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router";
-import CardSPR from "../components/CardSPR";
-import { fetchSPR } from "../api/endpoints/spr";
-import { ButtonCustom } from "../components/mui_custom";
+import { useState } from "react";
+import { Alert, Badge, Box, Chip, Skeleton, Typography } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
+import api, { type Spr } from "../api";
+import { useApi } from "../hooks";
+import { heures, libelleMotCle, normaliser } from "../utils/format";
+import CardSPR from "../components/CardSPR";
 import FilterPanel from "../components/FilterPanel";
+import { DUREE_MAX, FILTRES_VIDES, type Filtres } from "../components/filtres";
+import { ButtonCustom } from "../components/mui_custom";
 
-type SPR = {
-    id: number;
-    nom_commune: string;
-    mot_cle: string;
-    temps_de_visite: number;
-    is_pmr: boolean;
-};
-
-type Filters = {
-    keywords: string[];
-    maxVisitTime: number;
-    isAccessible: boolean;
-};
-
-const Explorer: React.FC = () => {
-    const [sprList, setSprList] = useState<SPR[]>([]);
-    const [filteredSprList, setFilteredSprList] = useState<SPR[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<null | Error>(null);
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [filters, setFilters] = useState<Filters>({
-        keywords: [],
-        maxVisitTime: 5,
-        isAccessible: false,
+function filtrer(sprs: Spr[], filtres: Filtres): Spr[] {
+    const recherche = normaliser(filtres.recherche.trim());
+    return sprs.filter((spr) => {
+        const motsCles = spr.mot_cle.split(/\s+/);
+        return (
+            normaliser(spr.nom_commune).includes(recherche) &&
+            filtres.motsCles.every((mot) => motsCles.includes(mot)) &&
+            (filtres.dureeMax >= DUREE_MAX || heures(spr.temps_de_visite) <= filtres.dureeMax) &&
+            (!filtres.pmr || spr.is_pmr)
+        );
     });
-    const [isFiltered, setIsFiltered] = useState(false);
+}
 
-    const navigate = useNavigate();
+function Explorer() {
+    const { donnees, erreur, chargement } = useApi(() => api.listSpr(), []);
+    const [filtres, setFiltres] = useState<Filtres>(FILTRES_VIDES);
+    const [panneau, setPanneau] = useState(false);
 
-    useEffect(() => {
-        const loadSPR = async () => {
-            try {
-                const data: SPR[] = await fetchSPR();
-                if (!Array.isArray(data)) throw new Error("Données reçues invalides.");
-                setSprList(data.sort((a, b) => a.nom_commune.localeCompare(b.nom_commune)));
-                setFilteredSprList(data);
-            } catch (err) {
-                setError(err as Error);
-                console.error("Erreur lors de la récupération des SPR :", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadSPR();
-    }, []);
-
-    useEffect(() => {
-        if (!isFiltered) {
-            setFilteredSprList(sprList);
-            return;
-        }
-
-        try {
-            const filtered = sprList.filter((spr) => {
-                const matchesKeywords =
-                    filters.keywords.length === 0 ||
-                    (spr.mot_cle && filters.keywords.every((keyword) => spr.mot_cle.includes(keyword)));
-                const matchesTime = filters.maxVisitTime === 5 || spr.temps_de_visite <= filters.maxVisitTime;
-                const matchesAccessibility = !filters.isAccessible || spr.is_pmr;
-
-                return matchesKeywords && matchesTime && matchesAccessibility;
-            });
-
-            setFilteredSprList(filtered);
-        } catch (filterError) {
-            console.error("Erreur lors de l'application des filtres :", filterError);
-            setFilteredSprList([]);
-        }
-    }, [filters, isFiltered, sprList]);
-
-    if (loading) {
-        return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
-
-    if (error) {
-        return (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <Typography color="error">
-                    Erreur : {error.message || "Impossible de charger les SPR."}
-                </Typography>
-            </Box>
-        );
-    }
+    const sprs = [...(donnees ?? [])].sort((a, b) => a.nom_commune.localeCompare(b.nom_commune, "fr"));
+    const resultats = filtrer(sprs, filtres);
+    const actifs = filtres.motsCles.length + (filtres.dureeMax < DUREE_MAX ? 1 : 0) + (filtres.pmr ? 1 : 0) + (filtres.recherche.trim() ? 1 : 0);
 
     return (
-        <Box sx={{ padding: "2em", position: "relative", minHeight: "100vh" }}>
-            <Box
-                sx={{
-                    textAlign: "center",
-                    marginBottom: "2em",
-                    animation: "fadeIn 0.4s ease-in-out",
-                    "@keyframes fadeIn": {
-                        from: { opacity: 0, transform: "translateY(-20px)" },
-                        to: { opacity: 1, transform: "translateY(0)" },
-                    },
-                }}
-            >
-                <Typography variant="h2" component="h1" fontWeight={800} margin="0.1em 0 0">
+        <Box>
+            <Box sx={{ textAlign: "center", mb: 3 }}>
+                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
                     Explorez le patrimoine
                 </Typography>
-                <Typography
-                    variant="subtitle1"
-                    fontWeight={400}
-                    color="text.secondary"
-                    marginBottom="2em"
-                    fontSize="1.4em"
-                >
-                    Cliquez sur un lieu pour en savoir plus et réserver votre guide
+                <Typography color="text.secondary" fontSize="1.3em">
+                    Choisissez un lieu pour en savoir plus et réserver votre guide
                 </Typography>
             </Box>
 
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", marginBottom: "2em" }}>
-                <ButtonCustom variant="outlined" color="error" size="large" onClick={() => navigate("/#")}>
-                    &larr; Retour
-                </ButtonCustom>
-                <ButtonCustom
-                    variant="outlined"
-                    color="primary"
-                    size="large"
-                    sx={{
-                        borderRadius: "50%",
-                        minWidth: "42.25px",
-                        minHeight: "42.25px",
-                        padding: 0,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                    onClick={() => setIsFilterOpen(true)}
-                >
-                    <TuneIcon />
-                </ButtonCustom>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 3 }}>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center" }} aria-live="polite">
+                    <Typography color="text.secondary">
+                        {donnees ? `${resultats.length} site${resultats.length > 1 ? "s" : ""} sur ${sprs.length}` : " "}
+                    </Typography>
+                    {filtres.recherche.trim() && <Chip label={`« ${filtres.recherche.trim()} »`} onDelete={() => setFiltres({ ...filtres, recherche: "" })} />}
+                    {filtres.motsCles.map((mot) => (
+                        <Chip key={mot} label={libelleMotCle(mot)} onDelete={() => setFiltres({ ...filtres, motsCles: filtres.motsCles.filter((m) => m !== mot) })} />
+                    ))}
+                    {filtres.dureeMax < DUREE_MAX && (
+                        <Chip label={`${String(filtres.dureeMax).replace(".", ",")} h maximum`} onDelete={() => setFiltres({ ...filtres, dureeMax: DUREE_MAX })} />
+                    )}
+                    {filtres.pmr && <Chip label="♿ Accessible PMR" onDelete={() => setFiltres({ ...filtres, pmr: false })} />}
+                </Box>
+                <Badge badgeContent={actifs} color="primary">
+                    <ButtonCustom variant="outlined" startIcon={<TuneIcon />} onClick={() => setPanneau(true)}>
+                        Filtrer
+                    </ButtonCustom>
+                </Badge>
             </Box>
 
-            {filteredSprList.length > 0 ? (
-                <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around", gap: "30px" }}>
-                    {filteredSprList.map((spr) => (
-                        <Box
-                            key={spr.id}
-                            sx={{
-                                flexBasis: "calc(25% - 20px)",
-                                flexGrow: 0,
-                                maxWidth: "calc(25% - 30px)",
-                                marginBottom: "30px"
-                            }}
-                        >
-                            <CardSPR id={spr.id} variante="regular" />
-                        </Box>
+            {erreur && <Alert severity="error">{erreur}</Alert>}
+
+            {chargement && !donnees ? (
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: { xs: 2, md: 4 } }}>
+                    {Array.from({ length: 8 }, (_, i) => (
+                        <Skeleton key={i} variant="rounded" sx={{ aspectRatio: "1", height: "auto", borderRadius: "1em" }} />
+                    ))}
+                </Box>
+            ) : resultats.length > 0 ? (
+                <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" }, gap: { xs: 2, md: 4 } }}>
+                    {resultats.map((spr) => (
+                        <CardSPR key={spr.id} spr={spr} />
                     ))}
                 </Box>
             ) : (
-                <Typography variant="h6" color="text.secondary" sx={{ textAlign: "center", marginTop: "2em" }}>
-                    Aucun site patrimonial remarquable ne correspond à vos critères de recherche.
-                </Typography>
+                donnees && (
+                    <Box sx={{ textAlign: "center", mt: 4 }}>
+                        <Typography variant="h6" color="text.secondary" gutterBottom>
+                            Aucun site patrimonial remarquable ne correspond à ces critères.
+                        </Typography>
+                        <ButtonCustom variant="outlined" onClick={() => setFiltres(FILTRES_VIDES)}>
+                            Réinitialiser les filtres
+                        </ButtonCustom>
+                    </Box>
+                )
             )}
 
-            {isFilterOpen && (
-                <FilterPanel
-                    onClose={() => setIsFilterOpen(false)}
-                    onApply={(updatedFilters: Filters) => setFilters(updatedFilters)}
-                    filters={filters}
-                    setIsFiltered={setIsFiltered}
-                />
-            )}
+            <FilterPanel open={panneau} filtres={filtres} resultats={resultats.length} onChange={setFiltres} onClose={() => setPanneau(false)} />
         </Box>
     );
-};
+}
 
 export default Explorer;

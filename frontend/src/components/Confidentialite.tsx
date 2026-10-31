@@ -1,224 +1,117 @@
-import { useState } from "react";
-import { Box, Typography, TextField} from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import {ButtonCustom} from "./mui_custom";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router";
+import { Alert, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Typography } from "@mui/material";
+import api, { messageErreur } from "../api";
+import { useSession } from "../session";
+import ChampMotDePasse from "./ChampMotDePasse";
+import { erreurMotDePasse } from "./validation";
+import { ButtonCustom } from "./mui_custom";
 
-const Confidentialite = () => {
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [newPasswordError, setNewPasswordError] = useState("");
-    const [confirmPasswordError, setConfirmPasswordError] = useState("");
-    const [isEightChars, setIsEightChars] = useState(false);
-    const [hasUppercase, setHasUppercase] = useState(false);
-    const [hasDigit, setHasDigit] = useState(false);
-    const [hasSpecialChar, setHasSpecialChar] = useState(false);
+function Confidentialite() {
+    const { oublier } = useSession();
+    const navigate = useNavigate();
+    const [motDePasse, setMotDePasse] = useState("");
+    const [confirmation, setConfirmation] = useState("");
+    const [touche, setTouche] = useState(false);
+    const [envoi, setEnvoi] = useState(false);
+    const [message, setMessage] = useState<{ type: "success" | "error"; texte: string } | null>(null);
+    const [suppression, setSuppression] = useState(false);
+    const [erreurSuppression, setErreurSuppression] = useState("");
 
-    // Validation dynamique du nouveau mot de passe
-    const validatePassword = (value: string) => {
-        setIsEightChars(value.length >= 8);
-        setHasUppercase(/[A-Z]/.test(value));
-        setHasDigit(/\d/.test(value)); // Vérifie au moins un chiffre
-        setHasSpecialChar(/[!@#$%^&*(),.?":{}|<>]/.test(value)); // Vérifie au moins un caractère spécial
-    };
+    const erreur = erreurMotDePasse(motDePasse);
+    const differents = confirmation !== motDePasse;
 
-    // Gestion du changement du champ "nouveau mot de passe"
-    const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setNewPassword(value);
-        validatePassword(value);
-
-        // Validation des erreurs spécifiques
-        if (/\s/.test(value)) {
-            setNewPasswordError("Le mot de passe ne doit pas contenir d'espaces.");
-        } else if (
-            value.length < 8 ||
-            !/[A-Z]/.test(value) ||
-            !/\d/.test(value) ||
-            !/[!@#$%^&*(),.?":{}|<>]/.test(value)
-        ) {
-            setNewPasswordError(
-                "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial."
-            );
-        } else {
-            setNewPasswordError("");
+    const changer = async (e: FormEvent) => {
+        e.preventDefault();
+        setTouche(true);
+        if (erreur || differents) return;
+        setEnvoi(true);
+        setMessage(null);
+        try {
+            await api.updateMe({ mot_de_passe: motDePasse });
+            setMotDePasse("");
+            setConfirmation("");
+            setTouche(false);
+            setMessage({ type: "success", texte: "Votre mot de passe a été modifié." });
+        } catch (erreurApi) {
+            setMessage({ type: "error", texte: messageErreur(erreurApi, "Le mot de passe n'a pas pu être modifié.") });
+        } finally {
+            setEnvoi(false);
         }
     };
 
-    // Gestion du changement du champ "confirmation"
-    const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setConfirmPassword(value);
-
-        if (newPassword && value !== newPassword) {
-            setConfirmPasswordError("Les mots de passe ne correspondent pas.");
-        } else {
-            setConfirmPasswordError("");
+    const supprimer = async () => {
+        setErreurSuppression("");
+        try {
+            await api.deleteMe();
+            oublier();
+            navigate("/");
+        } catch (erreurApi) {
+            setErreurSuppression(messageErreur(erreurApi, "Le compte n'a pas pu être supprimé."));
         }
-    };
-
-    // Réinitialisation des champs
-    const handleCancel = () => {
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setNewPasswordError("");
-        setConfirmPasswordError("");
-        setIsEightChars(false);
-        setHasUppercase(false);
-        setHasDigit(false);
-        setHasSpecialChar(false);
     };
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                padding: "20px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-            }}
-        >
-            {/* Titre */}
-            <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "left" }}>
-                Informations personnelles
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box component="form" onSubmit={changer} noValidate sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Typography variant="h6" component="h2" fontWeight="bold">
+                    Changer de mot de passe
+                </Typography>
+                {message && <Alert severity={message.type} role="status">{message.texte}</Alert>}
+                <ChampMotDePasse
+                    label="Nouveau mot de passe"
+                    autoComplete="new-password"
+                    value={motDePasse}
+                    onChange={(e) => setMotDePasse(e.target.value)}
+                    error={touche && Boolean(erreur)}
+                    helperText={touche && erreur ? erreur : "8 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial."}
+                    fullWidth
+                />
+                <ChampMotDePasse
+                    label="Confirmer le mot de passe"
+                    autoComplete="new-password"
+                    value={confirmation}
+                    onChange={(e) => setConfirmation(e.target.value)}
+                    error={touche && differents}
+                    helperText={touche && differents ? "Les deux mots de passe ne correspondent pas." : " "}
+                    fullWidth
+                />
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <ButtonCustom type="submit" variant="contained" disabled={envoi || !motDePasse}>
+                        {envoi ? "Modification…" : "Modifier le mot de passe"}
+                    </ButtonCustom>
+                </Box>
+            </Box>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography variant="h6" component="h2" fontWeight="bold">
+                Supprimer mon compte
             </Typography>
-
-            {/* Mot de passe actuel */}
-            <TextField
-                label="Mot de passe actuel"
-                variant="outlined"
-                type="password"
-                fullWidth
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-
-            {/* Nouveau mot de passe */}
-            <TextField
-                label="Nouveau mot de passe"
-                variant="outlined"
-                type="password"
-                fullWidth
-                value={newPassword}
-                onChange={handleNewPasswordChange}
-                error={Boolean(newPasswordError)}
-                helperText={newPasswordError}
-            />
-
-            {/* Confirmation du mot de passe */}
-            <TextField
-                label="Confirmation du mot de passe"
-                variant="outlined"
-                type="password"
-                fullWidth
-                value={confirmPassword}
-                onChange={handleConfirmPasswordChange}
-                error={Boolean(confirmPasswordError)}
-                helperText={confirmPasswordError}
-            />
-
-            {/* Conditions pour un mot de passe sûr */}
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    backgroundColor: "#f8f8f8",
-                    padding: "10px 15px",
-                    borderRadius: "8px",
-                    marginTop: "10px",
-                    gap: "10px",
-                }}
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        width: "100%",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            width: "50%",
-                        }}
-                    >
-                        {isEightChars ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
-                        <Typography variant="body2">8 caractères</Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            width: "50%",
-                        }}
-                    >
-                        {hasUppercase ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
-                        <Typography variant="body2">1 majuscule</Typography>
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        width: "100%",
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            width: "50%",
-                        }}
-                    >
-                        {hasDigit ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
-                        <Typography variant="body2">1 chiffre</Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            width: "50%",
-                        }}
-                    >
-                        {hasSpecialChar ? <CheckIcon sx={{ color: "green" }} /> : <CloseIcon sx={{ color: "gray" }} />}
-                        <Typography variant="body2">1 caractère spécial</Typography>
-                    </Box>
-                </Box>
-            </Box>
-
-            {/* Boutons Annuler et Mettre à jour */}
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: "20px",
-                }}
-            >
-                <ButtonCustom variant="outlined" color="secondary" onClick={handleCancel}>
-                    Annuler
-                </ButtonCustom>
-                <ButtonCustom
-                    variant="contained"
-                    color="primary"
-                    disabled={
-                        !isEightChars || !hasUppercase || !hasDigit || !hasSpecialChar || Boolean(newPasswordError) || Boolean(confirmPasswordError)
-                    }
-                >
-                    Mettre à jour
+            <Typography color="text.secondary">
+                Vos réservations et vos avis seront supprimés avec votre compte. Cette action est définitive.
+            </Typography>
+            <Box>
+                <ButtonCustom variant="outlined" color="error" onClick={() => setSuppression(true)}>
+                    Supprimer mon compte
                 </ButtonCustom>
             </Box>
+
+            <Dialog open={suppression} onClose={() => setSuppression(false)}>
+                <DialogTitle>Supprimer votre compte ?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Vos réservations et vos avis seront supprimés. Cette action est définitive.</DialogContentText>
+                    {erreurSuppression && <Alert severity="error" sx={{ mt: 2 }}>{erreurSuppression}</Alert>}
+                </DialogContent>
+                <DialogActions>
+                    <ButtonCustom onClick={() => setSuppression(false)}>Annuler</ButtonCustom>
+                    <ButtonCustom variant="contained" color="error" onClick={() => void supprimer()}>
+                        Supprimer définitivement
+                    </ButtonCustom>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
-};
+}
 
 export default Confidentialite;

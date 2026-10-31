@@ -1,30 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
-import { fetchSPRById } from "../../api/endpoints/spr.tsx";
+import type { Spr } from "../../api";
+import { formaterMotsCles, nomCommune, normaliser } from "../../utils/format";
 
 interface SearchBarCustomProps {
     placeholder?: string;
-    sprList: any[];
+    sprList: Spr[];
     isHeader?: boolean;
 }
 
-const Search = styled("div")<{ isHeader: boolean }>(({ theme, isHeader }) => ({
+const Search = styled("div", { shouldForwardProp: (prop) => prop !== "isHeader" })<{ isHeader: boolean }>(({ theme, isHeader }) => ({
     position: "relative",
     borderRadius: "2em",
     backgroundColor: theme.palette.common.white,
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "480px",
-    maxWidth: "100%",
+    width: "100%",
     display: "flex",
     alignItems: "center",
     padding: "5px 15px",
     boxShadow: isHeader ? "0px 2px 6px rgba(0, 0, 0, 0.2)" : "none",
     border: isHeader ? "1px solid #f0f0f0" : "none",
+    "&:focus-within": {
+        outline: `2px solid ${theme.palette.primary.main}`,
+    },
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -46,260 +47,156 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const normalizeString = (str: string) => {
-    return str
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/-/g, " ")
-        .toLowerCase();
-};
+function chercher(saisie: string, sprList: Spr[]): Spr[] {
+    const recherche = normaliser(saisie.trim());
+    if (!recherche) return [];
+    return sprList.filter((spr) => normaliser(spr.nom_commune).includes(recherche)).slice(0, 4);
+}
 
-const capitalizeWords = (str: string) => {
-    return str
-        .toLowerCase()
-        .split(/(\s|-|')/)
-        .map((word) => (word === "-" || word === "'" ? word : word.charAt(0).toUpperCase() + word.slice(1)))
-        .join("");
-};
-
-const findMatchingSPR = (input: string, sprList: any[]) => {
-    if (input.trim().length < 1) return [];
-    const normalizedInput = normalizeString(input);
-    return sprList
-        .filter((spr) => normalizeString(spr.nom_commune).includes(normalizedInput))
-        .slice(0, 4);
-};
-
-const emojiMap: Record<string, string> = {
-    archeologie: "\ud83c\udffa",
-    architecture: "\ud83c\udfdb\ufe0f",
-    nature: "\ud83c\udf33",
-    abbaye: "\u26ea",
-    chateau: "\ud83c\udff0",
-    medieval: "\ud83d\udee1\ufe0f",
-    musee: "\ud83c\udfae",
-    promenade: "\ud83d\udecf",
-    urbain: "\ud83c\udfe2",
-};
-
-export const formatKeywords = (keywords: string) => {
-    return keywords
-        .split(" ")
-        .map((keyword) => {
-            const emoji = emojiMap[keyword] || "❓";
-            const capitalizedKeyword = keyword.charAt(0).toUpperCase() + keyword.slice(1);
-            return `${emoji} ${capitalizedKeyword}`;
-        })
-        .join(", ");
-};
-
-const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Rechercher...", sprList, isHeader = false }) => {
-    const [query, setQuery] = useState("");
-    const [filteredResults, setFilteredResults] = useState<any[]>([]);
-    const [highlightedResult, setHighlightedResult] = useState(0);
+/** Recherche de SPR par commune, au clavier comme à la souris (motif combobox). */
+function SearchBarCustom({ placeholder = "Rechercher...", sprList, isHeader = false }: SearchBarCustomProps) {
+    const [saisie, setSaisie] = useState("");
+    const [ouvert, setOuvert] = useState(false);
+    const [actif, setActif] = useState(-1);
+    const [secousse, setSecousse] = useState(false);
     const navigate = useNavigate();
-    const containerRef = useRef<HTMLDivElement>(null);
+    const conteneur = useRef<HTMLDivElement>(null);
+    const idListe = useId();
 
-    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setQuery(value);
-        setFilteredResults(findMatchingSPR(value, sprList));
-        setHighlightedResult(0);
-    };
-
-    const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-        const inputElement = event.currentTarget;
-
-        const applyHighlight = (index: number) => {
-            filteredResults.forEach((result, idx) => {
-                const element = document.getElementById(`result-${result.id}`);
-                if (element) {
-                    if (idx + 1 === index) {
-                        element.style.transform = "scale(1.05) translateX(10px)";
-                        element.style.transition = "transform 0.2s ease";
-                    } else {
-                        element.style.transform = "scale(1) translateX(0)";
-                    }
-                }
-            });
-        };
-
-        const applyWiggle = () => {
-            if (inputElement) {
-                const style = document.createElement("style");
-                style.innerHTML = `
-                @keyframes wiggle {
-                    0%, 100% {
-                        transform: translateX(0);
-                    }
-                    25% {
-                        transform: translateX(-5px);
-                    }
-                    50% {
-                        transform: translateX(5px);
-                    }
-                    75% {
-                        transform: translateX(-5px);
-                    }
-                }
-            `;
-                document.head.appendChild(style);
-
-                (inputElement as HTMLElement).style.animation = "wiggle 0.3s ease";
-                inputElement.addEventListener(
-                    "animationend",
-                    () => {
-                        (inputElement as HTMLElement).style.animation = "";
-                        document.head.removeChild(style);
-                    },
-                    { once: true }
-                );
-            }
-        };
-
-        if (event.key === "ArrowDown") {
-            event.preventDefault();
-            setHighlightedResult((prev) => {
-                const newIndex = Math.min(prev + 1, filteredResults.length);
-                applyHighlight(newIndex);
-                return newIndex;
-            });
-        } else if (event.key === "ArrowUp") {
-            event.preventDefault();
-            setHighlightedResult((prev) => {
-                const newIndex = Math.max(prev - 1, 0);
-                applyHighlight(newIndex);
-                return newIndex;
-            });
-        } else if (event.key === "Enter") {
-            if (filteredResults.length === 0) {
-                applyWiggle();
-                return;
-            }
-            const selectedResult = highlightedResult === 0 ? filteredResults[highlightedResult] : filteredResults[highlightedResult - 1];
-            if (selectedResult) {
-                try {
-                    const spr = await fetchSPRById(selectedResult.id);
-                    navigate(`/spr`, { state: { spr: spr.spr } });
-                    setQuery("");
-                    setFilteredResults([]);
-                } catch (error) {
-                    console.error("Erreur lors de la récupération du SPR :", error);
-                }
-            }
-        } else if (event.key === "Escape") {
-            setQuery("");
-            setFilteredResults([]);
-        }
-    };
-
-    const handleResultClick = async (id: number) => {
-        try {
-            const spr = await fetchSPRById(id);
-            navigate(`/spr`, { state: { spr: spr.spr } });
-        } catch (error) {
-            console.error("Erreur lors de la récupération du SPR :", error);
-        }
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-            setFilteredResults([]);
-        }
-    };
+    const resultats = ouvert ? chercher(saisie, sprList) : [];
 
     useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+        const clicExterieur = (event: MouseEvent) => {
+            if (conteneur.current && !conteneur.current.contains(event.target as Node)) {
+                setOuvert(false);
+            }
         };
+        document.addEventListener("mousedown", clicExterieur);
+        return () => document.removeEventListener("mousedown", clicExterieur);
     }, []);
 
+    const choisir = (spr: Spr) => {
+        setSaisie("");
+        setOuvert(false);
+        setActif(-1);
+        navigate(`/spr/${spr.id}`);
+    };
+
+    const auClavier = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setOuvert(true);
+            setActif((i) => Math.min(i + 1, resultats.length - 1));
+        } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            setActif((i) => Math.max(i - 1, 0));
+        } else if (event.key === "Enter") {
+            event.preventDefault();
+            const choix = resultats[Math.max(actif, 0)];
+            if (choix) {
+                choisir(choix);
+            } else {
+                setSecousse(true);
+            }
+        } else if (event.key === "Escape") {
+            setOuvert(false);
+            setActif(-1);
+        }
+    };
+
     return (
-        <Box
-            ref={containerRef}
-            sx={{
-                position: "relative",
-                width: "500px",
-                maxWidth: "100%",
-            }}
-        >
-            <Search isHeader={isHeader}>
+        <Box ref={conteneur} sx={{ position: "relative", width: "500px", maxWidth: "100%" }}>
+            <Search
+                isHeader={isHeader}
+                onAnimationEnd={() => setSecousse(false)}
+                sx={{
+                    animation: secousse ? "secousse 0.3s ease" : "none",
+                    "@keyframes secousse": {
+                        "0%, 100%": { transform: "translateX(0)" },
+                        "25%, 75%": { transform: "translateX(-5px)" },
+                        "50%": { transform: "translateX(5px)" },
+                    },
+                }}
+            >
                 <SearchIconWrapper>
                     <SearchIcon sx={{ color: "common.black" }} />
                 </SearchIconWrapper>
                 <StyledInputBase
                     placeholder={placeholder}
-                    value={query}
-                    onChange={handleSearch}
-                    onKeyDown={handleKeyDown}
-                    inputProps={{ "aria-label": "search" }}
+                    value={saisie}
+                    onChange={(e) => {
+                        setSaisie(e.target.value);
+                        setOuvert(true);
+                        setActif(-1);
+                    }}
+                    onKeyDown={auClavier}
+                    inputProps={{
+                        role: "combobox",
+                        "aria-label": placeholder,
+                        "aria-expanded": resultats.length > 0,
+                        "aria-controls": idListe,
+                        "aria-autocomplete": "list",
+                        "aria-activedescendant": actif >= 0 && resultats[actif] ? `${idListe}-${resultats[actif].id}` : undefined,
+                    }}
                 />
             </Search>
 
-            {filteredResults.length > 0 && (
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: "calc(100% + 5px)",
-                        width: "100%",
-                        zIndex: 10,
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "5px",
-                    }}
-                >
-                    {filteredResults.map((result) => (
-                        <Box
-                            key={result.id}
-                            id={`result-${result.id}`}
-                            onClick={() => handleResultClick(result.id)}
-                            sx={{
-                                padding: "5px 15px",
-                                marginLeft: "0px",
-                                height: "40px",
-                                display: "flex",
-                                alignItems: "center",
-                                backgroundColor: "#fff",
-                                borderRadius: "50px",
-                                boxShadow: isHeader ? "0px 4px 12px rgba(0, 0, 0, 0.3)" : "0px 2px 6px rgba(0, 0, 0, 0.1)",
-                                fontSize: "0.9rem",
-                                textAlign: "left",
-                                transition: "transform 0.2s ease, background-color 0.2s ease",
-                                animation: `${filteredResults.length !== sprList.length ? "fadeIn" : "none"} 0.3s ease`,
-                                width: "fit-content",
-                                whiteSpace: "nowrap",
-                                "&:hover": {
-                                    backgroundColor: "#f9f9f9",
-                                    cursor: "pointer",
-                                    transform: "scale(1.05) translateX(10px) !important",
-                                    transition: "transform 0.2s ease, background-color 0.2s ease !important",
-                                },
-                                "@keyframes fadeIn": {
-                                    from: { opacity: 0, transform: "translateY(-10px)" },
-                                    to: { opacity: 1, transform: "translateY(0)" },
-                                },
-                                "@keyframes fadeOut": {
-                                    from: { opacity: 1, transform: "translateY(0)" },
-                                    to: { opacity: 0, transform: "translateY(-10px)" },
-                                },
-                            }}
-                        >
-                            <Typography variant="body1" sx={{ fontWeight: 500, fontSize: "1.15em" }}>
-                                {capitalizeWords(result.nom_commune)}&nbsp;&middot;&nbsp;
-                            </Typography>
-                            <Typography
-                                variant={"body2"}
-                                sx={{ color: "dimgray", display: "flex", alignItems: "center", fontSize: "1em" }}
-                            >
-                                {formatKeywords(result.mot_cle)}
-                            </Typography>
-                        </Box>
-                    ))}
-                </Box>
-            )}
+            <Box
+                id={idListe}
+                role="listbox"
+                aria-label="Résultats de la recherche"
+                sx={{
+                    position: "absolute",
+                    top: "calc(100% + 5px)",
+                    width: "100%",
+                    zIndex: 10,
+                    display: resultats.length ? "flex" : "none",
+                    flexDirection: "column",
+                    gap: "5px",
+                }}
+            >
+                {resultats.map((spr, index) => (
+                    <Box
+                        key={spr.id}
+                        id={`${idListe}-${spr.id}`}
+                        role="option"
+                        aria-selected={index === actif}
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => choisir(spr)}
+                        onMouseEnter={() => setActif(index)}
+                        sx={{
+                            padding: "5px 15px",
+                            height: "40px",
+                            display: "flex",
+                            alignItems: "center",
+                            backgroundColor: index === actif ? "#f9f9f9" : "#fff",
+                            borderRadius: "50px",
+                            boxShadow: isHeader ? "0px 4px 12px rgba(0, 0, 0, 0.3)" : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                            transform: index === actif ? "scale(1.05) translateX(10px)" : "none",
+                            transition: "transform 0.2s ease, background-color 0.2s ease",
+                            animation: "apparition 0.3s ease",
+                            width: "fit-content",
+                            maxWidth: "100%",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            cursor: "pointer",
+                            "@keyframes apparition": {
+                                from: { opacity: 0, transform: "translateY(-10px)" },
+                                to: { opacity: 1 },
+                            },
+                        }}
+                    >
+                        <Typography variant="body1" sx={{ fontWeight: 500, fontSize: "1.15em" }}>
+                            {nomCommune(spr.nom_commune)}&nbsp;&middot;&nbsp;
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "dimgray", fontSize: "1em", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {formaterMotsCles(spr.mot_cle)}
+                        </Typography>
+                    </Box>
+                ))}
+            </Box>
         </Box>
     );
-};
+}
 
 export default SearchBarCustom;

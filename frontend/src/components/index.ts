@@ -3,25 +3,8 @@ import Footer from "./Footer";
 import ConnexionDialog from "./ConnexionDialog";
 import CardSPR from "./CardSPR";
 import AccordionFAQ from "./AccordionFAQ";
-import CardGuide from "./CardGuide";
-import GuideSection from "./GuideSection.tsx";
-import CardAvis from "./CardAvis.tsx";
-import AvisBox from "./AvisBox.tsx";
-import Rating from "./Rating.tsx";
-import AvisSection from "./AvisSection.tsx";
-import SliderReservation from "./SliderReservation.tsx";
+import CardAvis from "./CardAvis";
+import Rating from "./Rating";
+import AvisSection from "./AvisSection";
 
-export {
-  Header,
-  Footer,
-  ConnexionDialog,
-  CardSPR,
-  AccordionFAQ,
-  CardGuide,
-    GuideSection,
-  CardAvis,
-  AvisBox,
-  Rating,
-  AvisSection,
-    SliderReservation,
-};
+export { Header, Footer, ConnexionDialog, CardSPR, AccordionFAQ, CardAvis, Rating, AvisSection };

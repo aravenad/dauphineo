@@ -1,87 +1,74 @@
-import { useState, useEffect } from "react";
-import { fetchSPR, fetchTopSPR } from "../api/endpoints/spr";
-import { Box, Typography} from "@mui/material";
+import { Link as RouterLink } from "react-router";
+import { Alert, Box, Skeleton, Typography } from "@mui/material";
+import api, { type Spr } from "../api";
+import { useApi } from "../hooks";
 import SearchSection from "../components/SearchSection";
-import MostBookedSPR from "../components/MostBookedSPR";
-import MostRatedSPR from "../components/MostRatedSPR.tsx";
-import ExploreSection from "../components/ExploreSection.tsx";
+import ExploreSection from "../components/ExploreSection";
+import CardSPR from "../components/CardSPR";
+import { ButtonCustom } from "../components/mui_custom";
+
+const PAR_SECTION = 4;
+
+function Squelettes() {
+    return Array.from({ length: PAR_SECTION }, (_, i) => <Skeleton key={i} variant="rounded" sx={{ aspectRatio: "1", height: "auto", borderRadius: "1em" }} />);
+}
 
 function Home() {
-  const [sprList, setSprList] = useState<any[]>([]);
-  const [topSPR, setTopSPR] = useState<any>(null); // Stocke le résultat de fetchTopSPR
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<null | Error>(null);
+    const liste = useApi(() => api.listSpr(), []);
+    const top = useApi(() => api.topSpr(), []);
+    const parId = new Map<number, Spr>((liste.donnees ?? []).map((spr) => [spr.id, spr]));
+    const pret = liste.donnees && top.donnees;
 
-  useEffect(() => {
-    const loadSPRData = async () => {
-      try {
-        // Récupération de tous les SPR
-        const allSPR = await fetchSPR();
-        setSprList(allSPR);
+    const mieuxNotes = (top.donnees?.mieux_notes ?? []).filter(({ id }) => parId.has(id)).slice(0, PAR_SECTION);
+    const plusReserves = (top.donnees?.plus_reserves ?? []).filter(({ id }) => parId.has(id)).slice(0, PAR_SECTION);
+    const decouvrir = [...(liste.donnees ?? [])].sort((a, b) => a.nom_commune.localeCompare(b.nom_commune, "fr")).slice(0, PAR_SECTION);
 
-        // Récupération des données les plus visitées et mieux notées
-        const topSPRData = await fetchTopSPR();
-        setTopSPR(topSPRData);
-      } catch (err) {
-        setError(err as Error);
-        console.error("Erreur lors de la récupération des données SPR :", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    return (
+        <>
+            <Box sx={{ textAlign: "center", mb: "2em" }}>
+                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
+                    Que souhaitez-vous visiter ?
+                </Typography>
+                <Typography color="text.secondary" fontSize="1.3em">
+                    Accédez aux sites patrimoniaux remarquables de l'Isère et réservez votre guide
+                </Typography>
+            </Box>
 
-    loadSPRData();
-  }, []);
+            <SearchSection sprList={liste.donnees ?? []} />
 
-  return (
-      <>
-        <Box
-            sx={{
-              textAlign: "center",
-              marginBottom: "2em",
-              animation: "fadeIn 0.4s ease-in-out",
-              "@keyframes fadeIn": {
-                from: { opacity: 0, transform: "translateY(-20px)" },
-                to: { opacity: 1, transform: "translateY(0)" },
-              },
-            }}
-        >
-          <Typography variant="h2" component="h1" fontWeight={800} margin="0.1em 0 0">
-            Que souhaitez-vous visiter ?
-          </Typography>
-          <Typography
-              variant="subtitle1"
-              fontWeight={400}
-              color="text.secondary"
-              marginBottom="2em"
-              fontSize="1.4em"
-          >
-            Accédez à tous les sites patrimoniaux de l'Isère et réservez votre guide
-          </Typography>
-        </Box>
+            {(liste.erreur || top.erreur) && (
+                <Alert severity="error" sx={{ mt: 4 }}>
+                    {liste.erreur ?? top.erreur}
+                </Alert>
+            )}
 
-        {/* Section Recherche */}
-        <SearchSection sprList={sprList} />
+            {(pret ? mieuxNotes.length > 0 : !top.erreur) && (
+                <ExploreSection titre="Les mieux notés" sousTitre="Les sites préférés des visiteurs">
+                    {pret ? mieuxNotes.map(({ id, note_moyenne }) => <CardSPR key={id} spr={parId.get(id)!} variante="rated" noteMoyenne={note_moyenne} />) : <Squelettes />}
+                </ExploreSection>
+            )}
 
-        {/* Section des mieux notés */}
-        {topSPR && <MostRatedSPR />}
+            {(pret ? plusReserves.length > 0 : !top.erreur) && (
+                <ExploreSection titre="Différentes façons de visiter l'Isère" sousTitre="Les sites les plus réservés">
+                    {pret ? plusReserves.map(({ id, reservations }) => <CardSPR key={id} spr={parId.get(id)!} variante="booked" reservations={reservations} />) : <Squelettes />}
+                </ExploreSection>
+            )}
 
-          {/* Section des plus visités */}
-          {topSPR && <MostBookedSPR />}
-
-        {/* Affichage du chargement ou des erreurs */}
-        {loading && <Typography>Chargement des SPR...</Typography>}
-        {error && (
-            <Typography color="error">
-              Erreur : {error.message || "Une erreur est survenue."}
-            </Typography>
-        )}
-
-        {/* Affichage des SPR */}
-        <ExploreSection sprList={sprList} />
-
-      </>
-  );
+            {!liste.erreur && (
+                <ExploreSection
+                    titre="Explorez"
+                    sousTitre="Découvrez tous les sites patrimoniaux"
+                    action={
+                        <ButtonCustom variant="outlined" size="large" component={RouterLink} to="/explorer">
+                            Voir les {liste.donnees?.length ?? ""} sites
+                        </ButtonCustom>
+                    }
+                >
+                    {liste.donnees ? decouvrir.map((spr) => <CardSPR key={spr.id} spr={spr} />) : <Squelettes />}
+                </ExploreSection>
+            )}
+        </>
+    );
 }
 
 export default Home;

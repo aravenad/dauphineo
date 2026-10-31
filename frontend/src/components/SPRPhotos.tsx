@@ -1,178 +1,73 @@
-import React, { useState } from "react";
-import { Box, Card, CardMedia, Skeleton, Backdrop } from "@mui/material";
+import { useState } from "react";
+import { Box, ButtonBase } from "@mui/material";
+import type { Image } from "../api";
 import { ButtonCustom } from "./mui_custom";
 import SPRPhotosDetailed from "./SPRPhotosDetailed";
 
 interface SPRPhotosProps {
-    images: { id: number; image_url: string }[];
+    images: Image[];
+    commune: string;
 }
 
-const SPRPhotos: React.FC<SPRPhotosProps> = ({ images }) => {
-    if (!images || images.length < 3) {
+/** Une grande photo et jusqu'à deux petites ; toutes s'ouvrent dans la galerie. */
+function SPRPhotos({ images, commune }: SPRPhotosProps) {
+    const [selection, setSelection] = useState<number | null>(null);
+
+    if (images.length === 0) {
         return null;
     }
 
-    // Gestion du chargement des images
-    const [loaded, setLoaded] = useState(images.map(() => false));
-
-    // Gestion de l'ouverture du composant SPRPhotosDetailed
-    const [isDetailedOpen, setDetailedOpen] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<number | null>(null);
-
-    const handleImageLoad = (index: number) => {
-        setLoaded((prev) => {
-            const updated = [...prev];
-            updated[index] = true;
-            return updated;
-        });
-    };
-
-    const handleImageClick = (index: number) => {
-        setSelectedImage(index);
-        setDetailedOpen(true);
-    };
-
-    const handleCloseDetailed = () => {
-        setDetailedOpen(false);
-        setSelectedImage(null);
-    };
+    const apercu = images.slice(0, 3);
 
     return (
         <>
-            {/* Backdrop pour griser le reste de la page */}
-            <Backdrop
-                open={isDetailedOpen}
+            <Box
                 sx={{
-                    zIndex: 1200,
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    display: "grid",
+                    gap: "1em",
+                    height: { xs: "auto", md: 520 },
+                    gridTemplateColumns: { xs: "1fr", md: apercu.length > 1 ? "1fr 1fr" : "1fr" },
+                    gridTemplateRows: { md: apercu.length > 2 ? "1fr 1fr" : "1fr" },
+                    position: "relative",
                 }}
-            />
-
-            {/* Composant SPRPhotosDetailed */}
-            {isDetailedOpen && selectedImage !== null && (
-                <SPRPhotosDetailed
-                    images={images}
-                    selectedImage={selectedImage}
-                    onClose={handleCloseDetailed}
-                />
-            )}
-
-            <Box sx={{ display: "flex", gap: "1em", height: "650px" }}>
-                {/* Première colonne : photo au format portrait */}
-                <Box sx={{ flex: 1, display: "flex", flexDirection: "column", height: "100%" }}>
-                    <Card
+            >
+                {apercu.map((image, index) => (
+                    <ButtonBase
+                        key={image.id}
+                        onClick={() => setSelection(index)}
+                        aria-label={`Agrandir la photo ${index + 1} de ${commune}`}
                         sx={{
-                            width: "100%",
-                            height: "100%",
                             borderRadius: "1em",
                             overflow: "hidden",
-                            transition: "transform 0.3s ease",
-                            "&:hover": {
-                                transform: "scale(1.01)",
-                            },
-                            cursor: "pointer",
+                            gridRow: { md: index === 0 && apercu.length > 2 ? "span 2" : "auto" },
+                            display: index > 0 ? { xs: "none", md: "block" } : "block",
+                            aspectRatio: { xs: "4 / 3", md: "auto" },
+                            "&:hover img": { transform: "scale(1.02)" },
                         }}
-                        onClick={() => handleImageClick(0)}
                     >
-                        {!loaded[0] && (
-                            <Skeleton
-                                variant="rectangular"
-                                width="100%"
-                                height="100%"
-                                animation="wave"
-                            />
-                        )}
-                        <CardMedia
+                        <Box
                             component="img"
-                            image={images[0].image_url}
-                            alt={`Image portrait`}
-                            onLoad={() => handleImageLoad(0)}
-                            sx={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                display: loaded[0] ? "block" : "none",
-                            }}
+                            src={image.image_url}
+                            alt=""
+                            sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.3s ease" }}
                         />
-                    </Card>
-                </Box>
+                    </ButtonBase>
+                ))}
 
-                {/* Deuxième colonne : deux photos horizontales */}
-                <Box
-                    sx={{
-                        flex: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "1em",
-                        height: "100%",
-                        position: "relative",
-                    }}
-                >
-                    {[1, 2].map((index) => (
-                        <Card
-                            key={index}
-                            sx={{
-                                width: "100%",
-                                height: "50%",
-                                borderRadius: "1em",
-                                overflow: "hidden",
-                                transition: "transform 0.3s ease",
-                                "&:hover": {
-                                    transform: "scale(1.01)",
-                                },
-                                cursor: "pointer",
-                            }}
-                            onClick={() => handleImageClick(index)}
-                        >
-                            {!loaded[index] && (
-                                <Skeleton
-                                    variant="rectangular"
-                                    width="100%"
-                                    height="100%"
-                                    animation="wave"
-                                />
-                            )}
-                            <CardMedia
-                                component="img"
-                                image={images[index].image_url}
-                                alt={`Image horizontale ${index}`}
-                                onLoad={() => handleImageLoad(index)}
-                                sx={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                    display: loaded[index] ? "block" : "none",
-                                }}
-                            />
-                        </Card>
-                    ))}
-
-                    {/* Bouton pour afficher toutes les photos */}
-                    {images.length > 3 && (
-                        <ButtonCustom
-                            variant="outlined"
-                            sx={{
-                                position: "absolute",
-                                bottom: "1em",
-                                right: "1em",
-                                textTransform: "none",
-                                background: "#fff",
-                                borderRadius: "1em",
-                                zIndex: 1,
-                                "&:hover": {
-                                    background: "rgba(80, 125, 118)",
-                                    color: "white",
-                                },
-                            }}
-                            onClick={() => handleImageClick(0)}
-                        >
-                            Afficher toutes les photos
-                        </ButtonCustom>
-                    )}
-                </Box>
+                {images.length > 1 && (
+                    <ButtonCustom
+                        variant="contained"
+                        onClick={() => setSelection(0)}
+                        sx={{ position: "absolute", bottom: "1em", right: "1em" }}
+                    >
+                        Afficher les {images.length} photos
+                    </ButtonCustom>
+                )}
             </Box>
+
+            <SPRPhotosDetailed images={images} selection={selection} commune={commune} onClose={() => setSelection(null)} />
         </>
     );
-};
+}
 
 export default SPRPhotos;

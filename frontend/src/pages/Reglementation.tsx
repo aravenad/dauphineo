@@ -66,7 +66,7 @@ function Reglementation() {
       </ul>
 
       <Typography sx={{ marginTop: "1em" }}>
-        Pour toute demande concernant vos droits, veuillez nous contacter à <a href="mailto:contact@dauphineo.com">contact.dauphineo@gmail.com</a>.
+        Pour toute demande concernant vos droits, veuillez nous contacter à <a href="mailto:contact.dauphineo@gmail.com">contact.dauphineo@gmail.com</a>.
       </Typography>
     </Box>
   );

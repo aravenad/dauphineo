@@ -1,161 +1,103 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Box, Card, CardMedia, Typography } from "@mui/material";
-import { ButtonCustom } from "./mui_custom";
+import { useEffect, useState } from "react";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import type { Image } from "../api";
 
 interface SPRPhotosDetailedProps {
-    images: { id: number; image_url: string }[];
-    selectedImage?: number;
+    images: Image[];
+    /** Index de la photo affichée à l'ouverture, ou null quand la galerie est fermée. */
+    selection: number | null;
+    commune: string;
     onClose: () => void;
 }
 
-const SPRPhotosDetailed: React.FC<SPRPhotosDetailedProps> = ({ images, selectedImage = 0, onClose }) => {
-    const [currentImageIndex, setCurrentImageIndex] = useState(selectedImage);
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    const handleThumbnailClick = (index: number) => {
-        setCurrentImageIndex(index);
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-            onClose();
-        }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
-            onClose();
-        }
-    };
+function SPRPhotosDetailed({ images, selection, commune, onClose }: SPRPhotosDetailedProps) {
+    const [courante, setCourante] = useState(selection ?? 0);
 
     useEffect(() => {
-        document.addEventListener("mousedown", handleClickOutside);
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, []);
+        if (selection !== null) setCourante(selection);
+    }, [selection]);
+
+    const suivante = (pas: number) => setCourante((index) => (index + pas + images.length) % images.length);
 
     return (
-        <Box
-            ref={containerRef}
-            sx={{
-                position: "fixed",
-                top: "10%",
-                left: "10%",
-                width: "80%",
-                height: "80%",
-                backgroundColor: "white",
-                borderRadius: "1em",
-                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
-                display: "flex",
-                overflow: "hidden",
-                zIndex: 1300,
+        <Dialog
+            open={selection !== null}
+            onClose={onClose}
+            fullWidth
+            maxWidth="lg"
+            onKeyDown={(e) => {
+                if (e.key === "ArrowRight") suivante(1);
+                if (e.key === "ArrowLeft") suivante(-1);
             }}
         >
-            {/* Colonne des miniatures */}
-            <Box
-                sx={{
-                    width: "20%",
-                    height: "100%",
-                    overflowY: "auto",
-                    backgroundColor: "#f5f5f5",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "1.5em",
-                    padding: "1em",
-                    alignItems: "center",
-                }}
-            >
-                <Typography
-                    variant="h6"
-                    sx={{
-                        textAlign: "center",
-                        marginBottom: "0px",
-                        fontWeight: "bold",
-                    }}
-                >
-                    Photos
-                </Typography>
-                {images.map((image, index) => (
-                    <Card
-                        key={image.id}
-                        sx={{
-                            cursor: "pointer",
-                            border: index === currentImageIndex ? "2px solid #1976d2" : "none",
-                            borderRadius: "0.5em",
-                            overflow: "hidden",
-                            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-                            transition: "transform 0.3s ease",
-                            "&:hover": {
-                                transform: "scale(1.05)",
-                            },
-                        }}
-                        onClick={() => handleThumbnailClick(index)}
-                    >
-                        <CardMedia
+            <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                Photos de {commune}
+                <IconButton onClick={onClose} aria-label="Fermer la galerie">
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box sx={{ position: "relative", display: "grid", placeItems: "center", height: { xs: "45vh", md: "60vh" } }}>
+                    {images[courante] && (
+                        <Box
                             component="img"
-                            image={image.image_url}
-                            alt={`Image miniature ${index}`}
-                            sx={{
-                                width: "100%",
-                                objectFit: "contain",
-                                display: "block",
-                                margin: "0 auto",
-                            }}
+                            src={images[courante].image_url}
+                            alt={`Photo ${courante + 1} sur ${images.length}`}
+                            sx={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: "0.5em" }}
                         />
-                    </Card>
-                ))}
-            </Box>
-
-            {/* Colonne de visualisation */}
-            <Box
-                sx={{
-                    width: "80%",
-                    height: "100%",
-                    position: "relative",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                }}
-            >
-                {images[currentImageIndex] && (
-                    <CardMedia
-                        component="img"
-                        image={images[currentImageIndex].image_url}
-                        alt={`Image ${currentImageIndex}`}
-                        sx={{
-                            maxWidth: "90%",
-                            width: "auto",
-                            height:"auto",
-                            maxHeight: "80%",
-                            objectFit: "contain",
-                            borderRadius: "0.5em",
-                            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
-                        }}
-                    />
-                )}
-
-                {/* Bouton Fermer */}
-                <ButtonCustom
-                    variant="outlined"
-                    color="error"
-                    onClick={onClose}
-                    sx={{
-                        position: "absolute",
-                        bottom: "1em",
-                        right: "1em",
-                        textTransform: "none",
-                        fontWeight: "bold",
-                    }}
-                >
-                    Fermer
-                </ButtonCustom>
-            </Box>
-        </Box>
+                    )}
+                    {images.length > 1 && (
+                        <>
+                            <IconButton
+                                onClick={() => suivante(-1)}
+                                aria-label="Photo précédente"
+                                sx={{ position: "absolute", left: 0, backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.50" } }}
+                            >
+                                <ChevronLeftIcon />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => suivante(1)}
+                                aria-label="Photo suivante"
+                                sx={{ position: "absolute", right: 0, backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.50" } }}
+                            >
+                                <ChevronRightIcon />
+                            </IconButton>
+                        </>
+                    )}
+                </Box>
+                <Typography variant="body2" color="text.secondary" textAlign="center" aria-live="polite">
+                    {courante + 1} / {images.length}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1, overflowX: "auto", justifyContent: { md: "center" } }}>
+                    {images.map((image, index) => (
+                        <Box
+                            key={image.id}
+                            component="button"
+                            type="button"
+                            onClick={() => setCourante(index)}
+                            aria-label={`Afficher la photo ${index + 1}`}
+                            aria-current={index === courante}
+                            sx={{
+                                flex: "0 0 auto",
+                                p: 0,
+                                border: 2,
+                                borderColor: index === courante ? "primary.main" : "transparent",
+                                borderRadius: "0.5em",
+                                overflow: "hidden",
+                                cursor: "pointer",
+                                background: "none",
+                            }}
+                        >
+                            <Box component="img" src={image.image_url} alt="" sx={{ display: "block", width: 96, height: 64, objectFit: "cover" }} />
+                        </Box>
+                    ))}
+                </Box>
+            </DialogContent>
+        </Dialog>
     );
-};
+}
 
 export default SPRPhotosDetailed;

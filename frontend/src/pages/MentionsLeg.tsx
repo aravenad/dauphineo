@@ -1,4 +1,5 @@
 import { Box, Typography, Divider, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router";
 
 function MentionsLeg() {
   return (
@@ -74,7 +75,7 @@ function MentionsLeg() {
       </Typography>
       <Typography>
         Pour des informations détaillées sur la collecte, l’utilisation et la gestion de vos données personnelles, veuillez consulter notre{" "}
-        <Link href="/Reglementation" underline="hover">
+        <Link component={RouterLink} to="/reglementation" underline="hover">
           Politique de confidentialité.
         </Link>
         <br />

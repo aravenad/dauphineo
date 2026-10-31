@@ -1,34 +1,46 @@
-import { Header, Footer } from "./components/index";
-import { Routes, Route } from "react-router";
-import { Home, Reglementation, FAQ, MentionsLeg, CGU } from "./pages";
-import { Container } from "@mui/material";
-import SPR from "./pages/SPR.tsx";
-import Explorer from "./pages/Explorer.tsx";
-import MonCompte from "./pages/MonCompte.tsx";
-import {useEffect, useState} from "react";
+import { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router";
+import { Alert, Container, Typography } from "@mui/material";
+import { Header, Footer } from "./components";
+import { Home, Reglementation, FAQ, MentionsLeg, CGU, SPR, Explorer, MonCompte } from "./pages";
+import { modeDemo } from "./api";
+
+function PageIntrouvable() {
+    return (
+        <Typography variant="h4" component="h1" sx={{ textAlign: "center", padding: "3em 0" }}>
+            Cette page n'existe pas.
+        </Typography>
+    );
+}
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Gère l'état de connexion
+    const { pathname } = useLocation();
 
-    // Vérifier si un utilisateur est déjà connecté (si un token existe dans localStorage)
+    // Chaque nouvelle page s'ouvre en haut
     useEffect(() => {
-        const token = localStorage.getItem("accessToken");
-        setIsLoggedIn(!!token); // Si le token existe, l'utilisateur est connecté
-    }, []);
+        window.scrollTo(0, 0);
+    }, [pathname]);
 
     return (
         <>
-            <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
-            <Container sx={{ padding: "2em 2em" }} disableGutters={true}>
+            {modeDemo && (
+                <Alert severity="info" sx={{ borderRadius: 0, justifyContent: "center" }}>
+                    Version de démonstration : les données sont simulées dans votre navigateur et les recommandations
+                    viennent du moteur local.
+                </Alert>
+            )}
+            <Header />
+            <Container component="main" sx={{ padding: "2em" }} disableGutters>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/reglementation" element={<Reglementation />} />
                     <Route path="/faq" element={<FAQ />} />
-                    <Route path="/spr" element={<SPR />} />
+                    <Route path="/spr/:id" element={<SPR />} />
                     <Route path="/explorer" element={<Explorer />} />
                     <Route path="/mentions-legales" element={<MentionsLeg />} />
                     <Route path="/cgu" element={<CGU />} />
                     <Route path="/mon-compte" element={<MonCompte />} />
+                    <Route path="*" element={<PageIntrouvable />} />
                 </Routes>
             </Container>
             <Footer />

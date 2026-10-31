@@ -1,113 +1,66 @@
-import {
-  Box,
-  Typography,
-  Avatar,
-  Rating,
-  Link,
-  Collapse,
-} from "@mui/material";
+import { Box, Typography, Avatar, Rating, Link, IconButton, Tooltip } from "@mui/material";
+import { DeleteOutline } from "@mui/icons-material";
 import { useState } from "react";
+import { formaterDate } from "../utils/format";
 
 interface CardAvisProps {
   titre: string;
   commentaire: string;
   note: number;
   date: string;
+  pseudo: string;
+  /** Présent seulement sur les avis de l'utilisateur connecté. */
+  onSupprimer?: () => void;
 }
 
-const CardAvis: React.FC<CardAvisProps> = ({ titre, commentaire, note, date }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(3);
+const LONGUEUR_APERCU = 150;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
+const CardAvis: React.FC<CardAvisProps> = ({ titre, commentaire, note, date, pseudo, onSupprimer }) => {
+  const [deplie, setDeplie] = useState(false);
+  const long = commentaire.length > LONGUEUR_APERCU;
 
-  const isCommentLong = commentaire.length > 150;
-  const commentPreview = commentaire.substring(0, 150) + "...";
-  
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        p: 3,
-        maxWidth: "400px",
-        backgroundColor: "#fff",
-      }}
-    >
-      {/* Header avec Avatar et Nom */}
+    <Box component="article" sx={{ display: "flex", flexDirection: "column", gap: 2, p: 3, backgroundColor: "common.white" }}>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Avatar alt="Utilisateur" src="/path/to/avatar.jpg" />
-        <Box>
+        <Avatar sx={{ bgcolor: "primary.main" }}>{pseudo.charAt(0).toUpperCase()}</Avatar>
+        <Box sx={{ flex: 1 }}>
           <Typography variant="subtitle1" fontWeight="bold">
-            Utilisateur
+            {pseudo}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Posté le {formatDate(date)}
+            Posté le {formaterDate(date, { day: "numeric", month: "long", year: "numeric" })}
           </Typography>
         </Box>
+        {onSupprimer && (
+          <Tooltip title="Supprimer mon avis">
+            <IconButton onClick={onSupprimer} aria-label="Supprimer mon avis">
+              <DeleteOutline />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
 
-      {/* Note avec Titre */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Rating value={note} readOnly size="small" />
-        <Typography variant="subtitle1" fontWeight="bold">
-          <Typography variant="body1" component="span" sx={{ paddingRight: 1 }}>
-            •
-          </Typography>
-           {titre}
+        <Rating value={note} readOnly size="small" aria-label={`${note} sur 5`} />
+        <Typography variant="subtitle1" component="h4" fontWeight="bold">
+          {titre}
         </Typography>
       </Box>
 
-      {/* Contenu du commentaire */}
       <Box>
-        {isCommentLong ? (
-          <>
-            <Typography variant="body2" color="text.primary">
-              {!isExpanded && commentPreview}
-            </Typography>
-            <Collapse in={isExpanded} timeout={300}>
-              <Typography 
-                variant="body2" 
-                color="text.primary"
-                sx={{
-                  transition: 'all 0.3s ease-in-out',
-                }}
-              >
-                {commentaire}
-              </Typography>
-            </Collapse>
-            <Link 
-              href="#" 
-              underline="hover" 
-              onClick={(e) => {
-                e.preventDefault();
-                setIsExpanded(!isExpanded);
-              }}
-              sx={{
-                mt: 1,
-                display: 'inline-block',
-                color: '#407E76',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  color: '#2F5E58',
-                }
-              }}
-            >
-              {isExpanded ? "Voir moins" : "Lire plus"}
-            </Link>
-          </>
-        ) : (
-          <Typography variant="body2" color="text.primary">
-            {commentaire}
-          </Typography>
+        <Typography variant="body2" color="text.primary" sx={{ whiteSpace: "pre-line" }}>
+          {long && !deplie ? `${commentaire.slice(0, LONGUEUR_APERCU).trimEnd()}…` : commentaire}
+        </Typography>
+        {long && (
+          <Link
+            component="button"
+            underline="hover"
+            onClick={() => setDeplie(!deplie)}
+            aria-expanded={deplie}
+            sx={{ mt: 1, color: "primary.main" }}
+          >
+            {deplie ? "Voir moins" : "Lire plus"}
+          </Link>
         )}
       </Box>
     </Box>
