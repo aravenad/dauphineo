@@ -6,6 +6,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import type { Spr } from "../api";
 import { nomCommune } from "../utils/format";
+import { attributsImage } from "../utils/images";
 import MotsCles from "./MotsCles";
 
 interface CardSPRProps {
@@ -74,7 +75,7 @@ function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardS
                     {image ? (
                         <CardMedia
                             component="img"
-                            image={image}
+                            {...attributsImage(image, "(max-width: 899px) 50vw, 25vw", [330, 500, 960])}
                             alt=""
                             loading="lazy"
                             onError={() => setEssai((i) => i + 1)}

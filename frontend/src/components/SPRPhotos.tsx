@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, ButtonBase } from "@mui/material";
 import type { Image } from "../api";
+import { attributsImage } from "../utils/images";
 import { ButtonCustom } from "./mui_custom";
 import SPRPhotosDetailed from "./SPRPhotosDetailed";
 
@@ -51,7 +52,7 @@ function SPRPhotos({ images: toutes, commune }: SPRPhotosProps) {
                     >
                         <Box
                             component="img"
-                            src={image.image_url}
+                            {...attributsImage(image.image_url, "(max-width: 899px) 100vw, 50vw", [500, 960, 1280])}
                             alt=""
                             onError={() => retirer(image.id)}
                             sx={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 0.3s ease" }}

@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router";
 import { Box, IconButton, Link, Tooltip, Typography } from "@mui/material";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import type { Spr } from "../api";
+import { attributsImage } from "../utils/images";
 import { nomCommune } from "../utils/format";
 import SearchBarCustom from "./mui_custom/SearchBarCustom";
-import Questionnaire from "./Questionnaire";
+
+// Le questionnaire n'est téléchargé qu'au survol ou au focus du bouton qui l'ouvre
+const chargerQuestionnaire = () => import("./Questionnaire");
+const Questionnaire = lazy(chargerQuestionnaire);
 
 const DUREE_DIAPO = 6000;
 
@@ -17,6 +21,8 @@ function mouvementReduit(): boolean {
 
 function SearchSection({ sprList }: { sprList: Spr[] }) {
     const [questionnaire, setQuestionnaire] = useState(false);
+    // Reste monté après la fermeture pour garder l'animation de sortie et les réponses
+    const [questionnaireOuvert, setQuestionnaireOuvert] = useState(false);
     const [courante, setCourante] = useState(0);
     // Sans animation souhaitée, le défilé démarre en pause ; le bouton permet toujours de l'arrêter
     const [enPause, setEnPause] = useState(mouvementReduit);
@@ -65,7 +71,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                         <Box
                             key={image.id}
                             component="img"
-                            src={image.image_url}
+                            {...attributsImage(image.image_url, "100vw", [500, 960, 1280])}
                             alt=""
                             sx={{
                                 position: "absolute",
@@ -96,7 +102,12 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                 <SearchBarCustom placeholder="Des endroits à visiter en Isère" sprList={sprList} />
                 <Tooltip title="Trouver un site avec le questionnaire">
                     <IconButton
-                        onClick={() => setQuestionnaire(true)}
+                        onClick={() => {
+                            setQuestionnaireOuvert(true);
+                            setQuestionnaire(true);
+                        }}
+                        onPointerEnter={() => void chargerQuestionnaire()}
+                        onFocus={() => void chargerQuestionnaire()}
                         aria-label="Ouvrir le questionnaire de recommandation"
                         sx={{
                             flex: "0 0 auto",
@@ -151,7 +162,11 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                 </Box>
             )}
 
-            <Questionnaire open={questionnaire} onClose={() => setQuestionnaire(false)} />
+            {questionnaireOuvert && (
+                <Suspense>
+                    <Questionnaire open={questionnaire} onClose={() => setQuestionnaire(false)} />
+                </Suspense>
+            )}
         </Box>
     );
 }

@@ -1,9 +1,8 @@
 import { createTheme } from "@mui/material/styles";
-import SatoshiLight from './assets/fonts/Satoshi-Light.ttf'
-import SatoshiRegular from './assets/fonts/Satoshi-Regular.ttf'
-import SatoshiMedium from './assets/fonts/Satoshi-Medium.ttf'
-import SatoshiBold from './assets/fonts/Satoshi-Bold.ttf'
-import SatoshiBlack from './assets/fonts/Satoshi-Black.ttf'
+import SatoshiRegular from "./assets/fonts/Satoshi-Regular.woff2";
+import SatoshiMedium from "./assets/fonts/Satoshi-Medium.woff2";
+import SatoshiBold from "./assets/fonts/Satoshi-Bold.woff2";
+import SatoshiBlack from "./assets/fonts/Satoshi-Black.woff2";
 
 const theme = createTheme({
   palette: {
@@ -32,48 +31,24 @@ const theme = createTheme({
   },
   components: {
     MuiCssBaseline: {
-      styleOverrides: `
+      // Une règle par graisse utilisée : 400, 500, 700 (bold) et 800 pour les grands titres
+      styleOverrides: [
+        [400, SatoshiRegular],
+        [500, SatoshiMedium],
+        [700, SatoshiBold],
+        [800, SatoshiBlack],
+      ]
+        .map(
+          ([poids, fichier]) => `
         @font-face {
           font-family: 'Satoshi';
           font-style: normal;
           font-display: swap;
-          font-weight: 400;
-          src: local('Satoshi'), local('Satoshi-Regular'), url(${SatoshiRegular}) format('woff2');
-          unicodeRange: U+0000-00FF;
-        },
-         @font-face {
-          font-family: 'Satoshi';
-          font-style: normal;
-          font-display: swap;
-          font-weight: 300;
-          src: local('Satoshi'), local('Satoshi-Light'), url(${SatoshiLight}) format('woff2');
-          unicodeRange: U+0000-00FF;
-        },
-        @font-face {
-          font-family: 'Satoshi';
-          font-style: normal;
-          font-display: swap;
-          font-weight: 500;
-          src: local('Satoshi'), local('Satoshi-Medium'), url(${SatoshiMedium}) format('woff2');
-          unicodeRange: U+0000-00FF;
-        },
-        @font-face {
-          font-family: 'Satoshi';
-          font-style: normal;
-          font-display: swap;
-          font-weight: 700;
-          src: local('Satoshi'), local('Satoshi-Bold'), url(${SatoshiBold}) format('woff2');
-          unicodeRange: U+0000-00FF;
-        }
-          @font-face {
-          font-family: 'Satoshi';
-          font-style: normal;
-          font-display: swap;
-          font-weight:800;
-          src: local('Satoshi'), local('Satoshi-Black'), url(${SatoshiBlack}) format('woff2');
-          unicodeRange: U+0000-00FF;
-        }
-      `,
+          font-weight: ${poids};
+          src: url(${fichier}) format('woff2');
+        }`,
+        )
+        .join(""),
       
     },
     MuiTypography: {

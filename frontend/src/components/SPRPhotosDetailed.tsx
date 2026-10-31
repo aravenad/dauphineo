@@ -4,6 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import type { Image } from "../api";
+import { attributsImage } from "../utils/images";
 
 interface SPRPhotosDetailedProps {
     images: Image[];
@@ -49,7 +50,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                     {images[courante] && (
                         <Box
                             component="img"
-                            src={images[courante].image_url}
+                            {...attributsImage(images[courante].image_url, "(max-width: 899px) 100vw, 900px", [500, 960, 1280])}
                             alt={`Photo ${courante + 1} sur ${images.length}`}
                             onError={() => onErreur(images[courante].id)}
                             sx={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain" }}
@@ -112,7 +113,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                                 background: "none",
                             }}
                         >
-                            <Box component="img" src={image.image_url} alt="" onError={() => onErreur(image.id)} sx={{ display: "block", width: 96, height: 64, objectFit: "cover" }} />
+                            <Box component="img" {...attributsImage(image.image_url, "96px", [120, 330])} alt="" loading="lazy" onError={() => onErreur(image.id)} sx={{ display: "block", width: 96, height: 64, objectFit: "cover" }} />
                         </Box>
                     ))}
                 </Box>
