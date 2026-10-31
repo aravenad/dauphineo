@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * Here is the structure of the images table:
  * - id (primary key) : bigserial
  * - image_url : varchar(500)
+ * - auteur, licence, source : crédit de la photo sur Wikimedia Commons
  * - id_spr : int8 (foreign key)
  * Here are the relationships with other models:
  * - A Spr has many images but an image belongs to only one Spr
@@ -36,6 +37,9 @@ class Images extends Model
     
     protected $fillable = [
         'image_url',
+        'auteur',
+        'licence',
+        'source',
         'id_spr'
     ];
     

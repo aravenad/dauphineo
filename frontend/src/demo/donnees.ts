@@ -28,6 +28,9 @@ const images = lireCsv(imagesCsv).map((ligne) => ({
     id: Number(ligne.id),
     image_url: ligne.image_url,
     id_spr: Number(ligne.id_spr),
+    auteur: ligne.auteur,
+    licence: ligne.licence,
+    source: ligne.source,
 }));
 
 export const SPR: Spr[] = lireCsv(sprCsv).map((ligne) => ({

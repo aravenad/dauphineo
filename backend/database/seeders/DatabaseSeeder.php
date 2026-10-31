@@ -66,6 +66,9 @@ class DatabaseSeeder extends Seeder
             Images::forceCreate([
                 'id' => (int) $ligne['id'],
                 'image_url' => $ligne['image_url'],
+                'auteur' => $ligne['auteur'],
+                'licence' => $ligne['licence'],
+                'source' => $ligne['source'],
                 'id_spr' => (int) $ligne['id_spr'],
             ]);
         }

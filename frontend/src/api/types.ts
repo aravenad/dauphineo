@@ -2,6 +2,10 @@ export interface Image {
     id: number;
     image_url: string;
     id_spr: number;
+    /** Crédit de la photo sur Wikimedia Commons. */
+    auteur: string | null;
+    licence: string | null;
+    source: string | null;
 }
 
 export interface Spr {

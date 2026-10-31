@@ -99,4 +99,6 @@ Les tests de l'API utilisent une base PostgreSQL `dauphineo_test`. Le workflow G
 
 ## Photos
 
-Les photos des sites sont chargées depuis leurs sources d'origine. Celles qui ne répondent plus sont masquées automatiquement.
+Les 60 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre (CC BY, CC BY-SA). Le fichier `backend/database/data/images.csv` garde pour chacune l'auteur, la licence et la page d'origine.
+
+Le site affiche le crédit sous chaque photo de la galerie et la liste complète dans les mentions légales. Une photo qui ne se charge plus est masquée automatiquement.

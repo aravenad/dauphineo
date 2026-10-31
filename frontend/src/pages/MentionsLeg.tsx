@@ -1,6 +1,41 @@
 import { Box, Typography, Divider, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router";
-import { useTitre } from "../hooks";
+import api from "../api";
+import { useApi, useTitre } from "../hooks";
+import { nomCommune } from "../utils/format";
+
+function CreditsPhotos() {
+  const { donnees, erreur } = useApi(() => api.listSpr(), []);
+
+  if (erreur) {
+    return <Typography color="text.secondary">Les crédits n'ont pas pu être chargés.</Typography>;
+  }
+
+  const sprs = [...(donnees ?? [])].sort((a, b) => a.nom_commune.localeCompare(b.nom_commune, "fr"));
+
+  return (
+    <ul>
+      {sprs.map((spr) => (
+        <li key={spr.id}>
+          <strong>{nomCommune(spr.nom_commune)} :</strong>{" "}
+          {spr.images.map((image, index) => (
+            <span key={image.id}>
+              {index > 0 && " ; "}
+              {image.source ? (
+                <Link href={image.source} target="_blank" rel="noopener">
+                  {image.auteur ?? "Auteur inconnu"}
+                </Link>
+              ) : (
+                image.auteur ?? "Auteur inconnu"
+              )}
+              {image.licence && ` (${image.licence})`}
+            </span>
+          ))}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 function MentionsLeg() {
   useTitre("Mentions légales");
@@ -43,15 +78,15 @@ function MentionsLeg() {
       </Typography>
       <ul>
         <li>
-          <strong>Nom de l'hébergeur :</strong> IUT2 Grenoble
+          <strong>Nom de l'hébergeur :</strong> GitHub, Inc. (service GitHub Pages)
         </li>
         <li>
-          <strong>Adresse :</strong> 2 Pl. Doyen Gosse, 38000 Grenoble
+          <strong>Adresse :</strong> 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis
         </li>
         <li>
           <strong>Site internet :</strong>{" "}
-          <Link href="https://iut2.univ-grenoble-alpes.fr/" target="_blank" rel="noopener">
-            https://iut2.univ-grenoble-alpes.fr/
+          <Link href="https://pages.github.com/" target="_blank" rel="noopener">
+            https://pages.github.com/
           </Link>
         </li>
       </ul>
@@ -69,6 +104,21 @@ function MentionsLeg() {
       <Typography>
         Tous les contenus présents sur le site Dauphinéo (textes, images, logos, etc.) sont protégés par les lois en vigueur sur la propriété intellectuelle. Toute reproduction, représentation, modification, publication ou adaptation, totale ou partielle, de ces éléments est strictement interdite sans autorisation écrite préalable de Dauphinéo.
       </Typography>
+      <Typography sx={{ marginTop: "1em" }}>
+        Les photographies des sites font exception : elles proviennent de Wikimedia Commons et restent la propriété de leurs auteurs, qui les
+        diffusent sous licence libre. Elles peuvent être réutilisées selon les conditions de leur licence, indiquées ci-dessous.
+      </Typography>
+
+      <Divider sx={{ marginY: "2em" }} />
+
+      <Typography variant="h6" sx={{ fontWeight: "bold", marginBottom: "0.5em" }}>
+        Crédits photographiques
+      </Typography>
+      <Typography>
+        Photos de Wikimedia Commons, citées par commune. Chaque nom mène à la page de la photo, où figurent sa licence complète et ses
+        éventuelles conditions de réutilisation. Elles sont affichées sans modification autre qu'un redimensionnement.
+      </Typography>
+      <CreditsPhotos />
 
       <Divider sx={{ marginY: "2em" }} />
 

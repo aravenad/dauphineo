@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Dialog, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton, Link, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -75,6 +75,21 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                 </Box>
                 <Typography variant="body2" color="text.secondary" textAlign="center" aria-live="polite">
                     {courante + 1} / {images.length}
+                    {images[courante]?.auteur && (
+                        <>
+                            {" · Photo : "}
+                            {images[courante].auteur}
+                            {images[courante].licence && `, ${images[courante].licence}`}
+                            {images[courante].source && (
+                                <>
+                                    {", "}
+                                    <Link href={images[courante].source ?? undefined} target="_blank" rel="noopener">
+                                        Wikimedia Commons
+                                    </Link>
+                                </>
+                            )}
+                        </>
+                    )}
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, overflowX: "auto", justifyContent: { md: "center" } }}>
                     {images.map((image, index) => (
