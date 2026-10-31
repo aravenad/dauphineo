@@ -7,9 +7,8 @@ import {
   ListItem,
   Link,
 } from "@mui/material";
-import { Language, Instagram, FacebookRounded, X } from "@mui/icons-material";
+import {Instagram, FacebookRounded, X } from "@mui/icons-material";
 import LogoVert from "../assets/dauphineo_logo_vert.png";
-import { ButtonCustom } from "./mui_custom";
 
 
 function Footer() {
@@ -75,13 +74,13 @@ function Footer() {
           Découvrez les dernières nouvelles sur nos réseaux :
         </Typography>
         <Stack direction="row" spacing={1} sx={{ alignItems: "center", paddingTop:'1em' }}>
-          <Link href="#">
+          <Link href="https://www.instagram.com">
             <Instagram sx={{ color: "common.white", fontSize: 25 }} />
           </Link>
-          <Link href="#">
+          <Link href="https://www.facebook.com">
             <FacebookRounded sx={{ color: "common.white", fontSize: 25 }} />
           </Link>
-          <Link href="#">
+          <Link href="https://www.x.com">
             <X sx={{ color: "common.white", fontSize: 20 }} />
           </Link>
         </Stack>
@@ -96,10 +95,7 @@ function Footer() {
           alignItems: "center",
         }}
       >
-       <ButtonCustom variant="outlined" startIcon={<Language />} sx={{ color:"common.white", borderColor: "common.white"}}>
-        FR
-       </ButtonCustom>
-        <Stack direction="row" spacing={2}>
+        <Stack display="flex" width="100%" direction="row" justifyContent="space-between">
           <Typography variant="body1" color="common.white">
             2024 Dauphinéo - Tous droits réservés.
           </Typography>

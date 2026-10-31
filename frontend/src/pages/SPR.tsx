@@ -36,7 +36,7 @@ const SPR: React.FC = () => {
     };
 
     const renderPills = (keywords: string) => {
-        const keywordArray = keywords.split(" "); // Sépare les mots-clés
+        const keywordArray = keywords.split(" ");
         return (
             <Box
                 sx={{

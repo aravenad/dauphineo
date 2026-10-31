@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import {Skeleton} from "@mui/material";
 
 interface SPRMapProps {
     commune: string; // Nom de la commune
@@ -14,8 +15,9 @@ const SPRMap: React.FC<SPRMapProps> = ({ commune }) => {
                 const response = await fetch(
                     `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
                         commune + ", France"
-                    )}&key=***REMOVED***`
+                    )}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
                 );
+                {/*faut rajouter &key=***REMOVED*** après le )}*/}
                 const data = await response.json();
                 if (data.results.length > 0) {
                     const location = data.results[0].geometry.location;
@@ -32,16 +34,22 @@ const SPRMap: React.FC<SPRMapProps> = ({ commune }) => {
     }, [commune]);
 
     const { isLoaded } = useLoadScript({
-        googleMapsApiKey: "***REMOVED***",
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     });
 
-    if (!isLoaded) {
-        return <div>Chargement de la carte...</div>;
+    if (!isLoaded || !coordinates) {
+        return (
+            <Skeleton
+                variant="rectangular"
+                sx={{
+                    width: "100%",
+                    height: "300px",
+                    borderRadius: "1em",
+                }}
+            />
+        );
     }
 
-    if (!coordinates) {
-        return <div>Impossible de trouver les coordonnées pour {commune}</div>;
-    }
 
     return (
         <GoogleMap

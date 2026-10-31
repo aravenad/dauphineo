@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -71,15 +71,15 @@ const findMatchingSPR = (input: string, sprList: any[]) => {
 };
 
 const emojiMap: Record<string, string> = {
-    archeologie: "🏺",
-    architecture: "🏛️",
-    nature: "🌳",
-    abbaye: "⛪",
-    chateau: "🏰",
-    medieval: "🛡️",
-    musee: "🖼️",
-    promenade: "🚶",
-    urbain: "🏙️",
+    archeologie: "\ud83c\udffa",
+    architecture: "\ud83c\udfdb\ufe0f",
+    nature: "\ud83c\udf33",
+    abbaye: "\u26ea",
+    chateau: "\ud83c\udff0",
+    medieval: "\ud83d\udee1\ufe0f",
+    musee: "\ud83c\udfae",
+    promenade: "\ud83d\udecf",
+    urbain: "\ud83c\udfe2",
 };
 
 export const formatKeywords = (keywords: string) => {
@@ -98,6 +98,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
     const [filteredResults, setFilteredResults] = useState<any[]>([]);
     const [highlightedResult, setHighlightedResult] = useState(0);
     const navigate = useNavigate();
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -107,7 +108,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
     };
 
     const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
-        const inputElement = event.currentTarget; // Sélectionne uniquement l'input actuel
+        const inputElement = event.currentTarget;
 
         const applyHighlight = (index: number) => {
             filteredResults.forEach((result, idx) => {
@@ -125,7 +126,6 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
 
         const applyWiggle = () => {
             if (inputElement) {
-                // Inject the wiggle keyframes into the document
                 const style = document.createElement("style");
                 style.innerHTML = `
                 @keyframes wiggle {
@@ -145,13 +145,12 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
             `;
                 document.head.appendChild(style);
 
-                // Apply the animation
                 (inputElement as HTMLElement).style.animation = "wiggle 0.3s ease";
                 inputElement.addEventListener(
                     "animationend",
                     () => {
                         (inputElement as HTMLElement).style.animation = "";
-                        document.head.removeChild(style); // Clean up the style tag
+                        document.head.removeChild(style);
                     },
                     { once: true }
                 );
@@ -174,7 +173,7 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
             });
         } else if (event.key === "Enter") {
             if (filteredResults.length === 0) {
-                applyWiggle(); // Applique l'animation uniquement sur l'input actuel
+                applyWiggle();
                 return;
             }
             const selectedResult = highlightedResult === 0 ? filteredResults[highlightedResult] : filteredResults[highlightedResult - 1];
@@ -194,7 +193,6 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
         }
     };
 
-
     const handleResultClick = async (id: number) => {
         try {
             const spr = await fetchSPRById(id);
@@ -204,26 +202,40 @@ const SearchBarCustom: React.FC<SearchBarCustomProps> = ({ placeholder = "Recher
         }
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+            setFilteredResults([]);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <Box
+            ref={containerRef}
             sx={{
                 position: "relative",
                 width: "500px",
                 maxWidth: "100%",
             }}
         >
-        <Search isHeader={isHeader}>
-            <SearchIconWrapper>
-                <SearchIcon sx={{ color: "common.black" }} />
-            </SearchIconWrapper>
-            <StyledInputBase
-                placeholder={placeholder}
-                value={query}
-                onChange={handleSearch}
-                onKeyDown={handleKeyDown}
-                inputProps={{ "aria-label": "search" }}
-            />
-        </Search>
+            <Search isHeader={isHeader}>
+                <SearchIconWrapper>
+                    <SearchIcon sx={{ color: "common.black" }} />
+                </SearchIconWrapper>
+                <StyledInputBase
+                    placeholder={placeholder}
+                    value={query}
+                    onChange={handleSearch}
+                    onKeyDown={handleKeyDown}
+                    inputProps={{ "aria-label": "search" }}
+                />
+            </Search>
 
             {filteredResults.length > 0 && (
                 <Box
