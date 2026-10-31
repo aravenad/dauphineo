@@ -1,39 +1,61 @@
-import { heures, formaterDuree } from "../demo/recommandation";
+import { locale, traduire } from "../i18n";
+import { ecartDuree, heures, formaterDuree } from "../demo/recommandation";
 
-export { heures, formaterDuree };
+export { ecartDuree, heures, formaterDuree };
 
 export const EMOJIS_MOTS_CLES: Record<string, string> = {
-    archeologie: "🏺",
-    architecture: "🏛️",
-    nature: "🌳",
-    abbaye: "⛪",
-    chateau: "🏰",
+    antiquite: "🏺",
     medieval: "🛡️",
+    chateau: "🏰",
+    religieux: "⛪",
+    architecture: "🏛️",
     musee: "🖼️",
-    promenade: "🚶",
-    urbain: "🏙️",
+    nature: "🌳",
+    ville: "🏙️",
+    village: "🏘️",
+    montagne: "⛰️",
 };
 
-const LIBELLES_MOTS_CLES: Record<string, string> = {
-    archeologie: "Archéologie",
-    architecture: "Architecture",
-    nature: "Nature",
-    abbaye: "Abbaye",
-    chateau: "Château",
-    medieval: "Médiéval",
-    musee: "Musée",
-    promenade: "Promenade",
-    urbain: "Urbain",
+const LIBELLES_MOTS_CLES: { fr: Record<string, string>; en: Record<string, string> } = {
+    fr: {
+        antiquite: "Antiquité",
+        medieval: "Moyen Âge",
+        chateau: "Château",
+        religieux: "Patrimoine religieux",
+        architecture: "Architecture",
+        musee: "Musée",
+        nature: "Nature",
+        ville: "Ville",
+        village: "Village",
+        montagne: "Montagne",
+    },
+    en: {
+        antiquite: "Antiquity",
+        medieval: "Middle Ages",
+        chateau: "Castle",
+        religieux: "Religious heritage",
+        architecture: "Architecture",
+        musee: "Museum",
+        nature: "Nature",
+        ville: "Town",
+        village: "Village",
+        montagne: "Mountains",
+    },
 };
 
-export const MOTS_CLES = Object.keys(LIBELLES_MOTS_CLES);
+export const MOTS_CLES = Object.keys(EMOJIS_MOTS_CLES);
 
 export function motsCles(motCle: string): string[] {
     return motCle.trim().split(/\s+/).filter(Boolean);
 }
 
+/** Libellé seul, sans emoji : « Moyen Âge ». */
+export function nomMotCle(motCle: string): string {
+    return traduire(LIBELLES_MOTS_CLES)[motCle] ?? motCle;
+}
+
 export function libelleMotCle(motCle: string): string {
-    return `${EMOJIS_MOTS_CLES[motCle] ?? "📍"} ${LIBELLES_MOTS_CLES[motCle] ?? motCle}`;
+    return `${EMOJIS_MOTS_CLES[motCle] ?? "📍"} ${nomMotCle(motCle)}`;
 }
 
 export function formaterMotsCles(motCle: string): string {
@@ -67,18 +89,19 @@ export function normaliser(texte: string): string {
     return texte.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/-/g, " ").toLowerCase();
 }
 
-/** « 2026-11-02 » devient « lundi 2 novembre ». La date est lue en heure locale. */
+/** « 2026-11-02 » devient « lundi 2 novembre » (« Monday 2 November » en anglais). La date est lue en heure locale. */
 export function formaterDate(date: string, options: Intl.DateTimeFormatOptions = { weekday: "long", day: "numeric", month: "long" }): string {
     const [annee, mois, jour] = date.slice(0, 10).split("-").map(Number);
-    return new Date(annee, mois - 1, jour).toLocaleDateString("fr-FR", options);
+    return new Date(annee, mois - 1, jour).toLocaleDateString(locale(), options);
 }
 
-/** « 08:00:00 » devient « 8 h », « 13:15:00 » devient « 13 h 15 ». */
+/** « 08:00:00 » devient « 8 h », « 13:15:00 » devient « 13 h 15 » ; en anglais « 8:00 » et « 13:15 ». */
 export function formaterHeure(heure: string): string {
     const [h, m] = heure.split(":").map(Number);
+    if (locale() !== "fr-FR") return `${h}:${String(m).padStart(2, "0")}`;
     return m ? `${h} h ${String(m).padStart(2, "0")}` : `${h} h`;
 }
 
 export function formaterPrix(prix: number): string {
-    return prix.toLocaleString("fr-FR", { style: "currency", currency: "EUR" });
+    return prix.toLocaleString(locale(), { style: "currency", currency: "EUR" });
 }

@@ -6,6 +6,36 @@ import ChampMotDePasse from "./ChampMotDePasse";
 import InscriptionDialog from "./InscriptionDialog";
 import api, { messageErreur, modeDemo, type Connexion } from "../api";
 import { MOT_DE_PASSE_DEMO } from "../demo/constantes";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        vide: "Veuillez remplir tous les champs.",
+        invalide: "Identifiants invalides. Veuillez réessayer.",
+        titre: "Connexion",
+        fermer: "Fermer",
+        demo: "Démo hors ligne : les données restent dans votre navigateur.",
+        compteDemo: "Utiliser le compte de démo",
+        email: "Adresse e-mail",
+        motDePasse: "Mot de passe",
+        connecter: "Connectez-vous",
+        pasMembre: "Pas encore membre ?",
+        inscrire: "Inscrivez-vous",
+    },
+    en: {
+        vide: "Please fill in all fields.",
+        invalide: "Invalid credentials. Please try again.",
+        titre: "Log in",
+        fermer: "Close",
+        demo: "Offline demo: your data stays in your browser.",
+        compteDemo: "Use the demo account",
+        email: "Email address",
+        motDePasse: "Password",
+        connecter: "Log in",
+        pasMembre: "Not a member yet?",
+        inscrire: "Sign up",
+    },
+};
 
 interface ConnexionDialogProps {
     open: boolean;
@@ -19,6 +49,7 @@ function ConnexionDialog({ open, onClose, onConnexion }: ConnexionDialogProps) {
     const [erreur, setErreur] = useState("");
     const [envoi, setEnvoi] = useState(false);
     const [inscription, setInscription] = useState(false);
+    const t = useTextes(TEXTES);
 
     const fermer = () => {
         setErreur("");
@@ -29,7 +60,7 @@ function ConnexionDialog({ open, onClose, onConnexion }: ConnexionDialogProps) {
     const seConnecter = async (event: FormEvent) => {
         event.preventDefault();
         if (!email.trim() || !motDePasse) {
-            setErreur("Veuillez remplir tous les champs.");
+            setErreur(t.vide);
             return;
         }
         setEnvoi(true);
@@ -39,7 +70,7 @@ function ConnexionDialog({ open, onClose, onConnexion }: ConnexionDialogProps) {
             setMotDePasse("");
             onConnexion(connexion);
         } catch (e) {
-            setErreur(messageErreur(e, "Identifiants invalides. Veuillez réessayer."));
+            setErreur(messageErreur(e, t.invalide));
         } finally {
             setEnvoi(false);
         }
@@ -53,23 +84,23 @@ function ConnexionDialog({ open, onClose, onConnexion }: ConnexionDialogProps) {
     return (
         <>
             <Dialog open={open && !inscription} onClose={fermer} fullWidth maxWidth="xs">
-                <DialogTitle sx={{ fontWeight: 500 }}>Connexion</DialogTitle>
-                <IconButton aria-label="Fermer" onClick={fermer} sx={{ position: "absolute", right: 8, top: 8, color: "grey.500" }}>
+                <DialogTitle sx={{ fontWeight: 500 }}>{t.titre}</DialogTitle>
+                <IconButton aria-label={t.fermer} onClick={fermer} sx={{ position: "absolute", right: 8, top: 8, color: "grey.500" }}>
                     <CloseRounded />
                 </IconButton>
                 <DialogContent>
                     <Stack component="form" spacing={2} onSubmit={seConnecter} noValidate sx={{ pt: 1 }}>
                         {modeDemo && (
                             <Alert severity="info">
-                                Démo hors ligne : les données restent dans votre navigateur.{" "}
+                                {t.demo}{" "}
                                 <Typography component="button" type="button" variant="body2" onClick={remplirDemo}
                                     sx={{ p: 0, border: 0, background: "none", fontWeight: 700, textDecoration: "underline", cursor: "pointer", color: "inherit" }}>
-                                    Utiliser le compte de démo
+                                    {t.compteDemo}
                                 </Typography>
                             </Alert>
                         )}
                         <TextField
-                            label="Adresse e-mail"
+                            label={t.email}
                             type="email"
                             autoComplete="email"
                             variant="standard"
@@ -78,7 +109,7 @@ function ConnexionDialog({ open, onClose, onConnexion }: ConnexionDialogProps) {
                             autoFocus
                         />
                         <ChampMotDePasse
-                            label="Mot de passe"
+                            label={t.motDePasse}
                             autoComplete="current-password"
                             variant="standard"
                             value={motDePasse}
@@ -86,12 +117,12 @@ function ConnexionDialog({ open, onClose, onConnexion }: ConnexionDialogProps) {
                         />
                         {erreur && <Alert severity="error">{erreur}</Alert>}
                         <ButtonCustom type="submit" variant="contained" fullWidth disabled={envoi}>
-                            Connectez-vous
+                            {t.connecter}
                         </ButtonCustom>
                         <Stack spacing={0.5} sx={{ alignItems: "center" }}>
-                            <Typography variant="body1">Pas encore membre ?</Typography>
+                            <Typography variant="body1">{t.pasMembre}</Typography>
                             <ButtonCustom variant="text" onClick={() => setInscription(true)} sx={{ color: "common.black", fontWeight: 700 }}>
-                                Inscrivez-vous
+                                {t.inscrire}
                             </ButtonCustom>
                         </Stack>
                     </Stack>

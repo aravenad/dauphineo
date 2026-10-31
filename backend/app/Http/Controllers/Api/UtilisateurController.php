@@ -29,7 +29,7 @@ class UtilisateurController extends Controller
         $motDePasse = $request->validate(['mot_de_passe_actuel' => 'required|string'])['mot_de_passe_actuel'];
 
         if (! Hash::check($motDePasse, $user->mot_de_passe)) {
-            throw ValidationException::withMessages(['mot_de_passe_actuel' => 'Le mot de passe actuel est incorrect.']);
+            throw ValidationException::withMessages(['mot_de_passe_actuel' => __('Le mot de passe actuel est incorrect.')]);
         }
     }
 
@@ -186,6 +186,6 @@ class UtilisateurController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Déconnexion réussie']);
+        return response()->json(['message' => __('Déconnexion réussie')]);
     }
 }

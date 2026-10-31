@@ -5,6 +5,34 @@ import { useSession } from "../session";
 import ChampMotDePasse from "./ChampMotDePasse";
 import { erreurEmail, erreurNom } from "./validation";
 import { ButtonCustom } from "./mui_custom";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        succes: "Vos informations ont été mises à jour.",
+        echec: "Vos informations n'ont pas pu être mises à jour.",
+        prenom: "Prénom",
+        nom: "Nom",
+        email: "Adresse e-mail",
+        actuel: "Mot de passe actuel",
+        necessaire: "Nécessaire pour changer d'adresse e-mail.",
+        annuler: "Annuler",
+        enregistrement: "Enregistrement…",
+        mettreAJour: "Mettre à jour",
+    },
+    en: {
+        succes: "Your details have been updated.",
+        echec: "Your details could not be updated.",
+        prenom: "First name",
+        nom: "Last name",
+        email: "Email address",
+        actuel: "Current password",
+        necessaire: "Required to change your email address.",
+        annuler: "Cancel",
+        enregistrement: "Saving…",
+        mettreAJour: "Update",
+    },
+};
 
 type Champs = Pick<Utilisateur, "prenom" | "nom" | "email">;
 
@@ -14,13 +42,14 @@ function initiales({ prenom, nom }: Champs): string {
 
 function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
     const { mettreAJour } = useSession();
+    const t = useTextes(TEXTES);
     const [champs, setChamps] = useState<Champs>({ prenom: utilisateur.prenom, nom: utilisateur.nom, email: utilisateur.email });
     const [motDePasse, setMotDePasse] = useState("");
     const [envoi, setEnvoi] = useState(false);
     const [message, setMessage] = useState<{ type: "success" | "error"; texte: string } | null>(null);
 
     const erreurs = {
-        prenom: erreurNom(champs.prenom, "prénom"),
+        prenom: erreurNom(champs.prenom, "prenom"),
         nom: erreurNom(champs.nom, "nom"),
         email: erreurEmail(champs.email),
     };
@@ -50,9 +79,9 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
             mettreAJour(misAJour);
             setMotDePasse("");
             setChamps({ prenom: misAJour.prenom, nom: misAJour.nom, email: misAJour.email });
-            setMessage({ type: "success", texte: "Vos informations ont été mises à jour." });
+            setMessage({ type: "success", texte: t.succes });
         } catch (erreur) {
-            setMessage({ type: "error", texte: messageErreur(erreur, "Vos informations n'ont pas pu être mises à jour.") });
+            setMessage({ type: "error", texte: messageErreur(erreur, t.echec) });
         } finally {
             setEnvoi(false);
         }
@@ -73,17 +102,17 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
             {message && <Alert severity={message.type} role="status">{message.texte}</Alert>}
 
             <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
-                <TextField label="Prénom" autoComplete="given-name" {...champ("prenom")} />
-                <TextField label="Nom" autoComplete="family-name" {...champ("nom")} />
+                <TextField label={t.prenom} autoComplete="given-name" {...champ("prenom")} />
+                <TextField label={t.nom} autoComplete="family-name" {...champ("nom")} />
             </Box>
-            <TextField label="Adresse e-mail" type="email" autoComplete="email" {...champ("email")} />
+            <TextField label={t.email} type="email" autoComplete="email" {...champ("email")} />
             {nouvelEmail && (
                 <ChampMotDePasse
-                    label="Mot de passe actuel"
+                    label={t.actuel}
                     autoComplete="current-password"
                     value={motDePasse}
                     onChange={(e) => setMotDePasse(e.target.value)}
-                    helperText="Nécessaire pour changer d'adresse e-mail."
+                    helperText={t.necessaire}
                     fullWidth
                 />
             )}
@@ -97,10 +126,10 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
                         setMotDePasse("");
                     }}
                 >
-                    Annuler
+                    {t.annuler}
                 </ButtonCustom>
                 <ButtonCustom type="submit" variant="contained" disabled={!modifie || !valide || envoi}>
-                    {envoi ? "Enregistrement…" : "Mettre à jour"}
+                    {envoi ? t.enregistrement : t.mettreAJour}
                 </ButtonCustom>
             </Box>
         </Box>

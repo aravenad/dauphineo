@@ -6,6 +6,7 @@ import {
     aujourdhui, visitesOuvertes,
 } from "./donnees";
 import { recommander } from "./recommandation";
+import { traduire } from "../i18n";
 
 /**
  * Rejoue l'API Laravel dans le navigateur pour la démo GitHub Pages.
@@ -45,7 +46,15 @@ interface Etat {
 }
 
 const DUREE_LIEN_MS = 24 * 60 * 60 * 1000;
-const MESSAGE_INSCRIPTION = "Si cette adresse peut être utilisée, un e-mail vient d'y être envoyé. Ouvrez le lien qu'il contient pour activer votre compte.";
+/** Message d'erreur dans la langue du site, comme l'API qui lit Accept-Language. */
+function t(fr: string, en: string): string {
+    return traduire({ fr, en });
+}
+
+const MESSAGE_INSCRIPTION = () => t(
+    "Si cette adresse peut être utilisée, un e-mail vient d'y être envoyé. Ouvrez le lien qu'il contient pour activer votre compte.",
+    "If this address can be used, an email has just been sent to it. Open the link it contains to activate your account.",
+);
 
 const CLE = "dauphineo.demo";
 
@@ -56,7 +65,7 @@ async function empreinte(motDePasse: string): Promise<string> {
 
 async function verifierMotDePasse(utilisateur: UtilisateurDemo, motDePasse: string | undefined): Promise<void> {
     if (!motDePasse || (await empreinte(motDePasse)) !== utilisateur.empreinte) {
-        throw new ApiError(422, "Le mot de passe actuel est incorrect.");
+        throw new ApiError(422, t("Le mot de passe actuel est incorrect.", "The current password is incorrect."));
     }
 }
 
@@ -121,7 +130,7 @@ async function connecte(): Promise<{ etat: Etat; utilisateur: UtilisateurDemo }>
     const token = lireToken();
     const utilisateur = token ? e.utilisateurs.find((u) => u.id === e.sessions[token]) : undefined;
     if (!utilisateur) {
-        throw new ApiError(401, "Votre session a expiré. Veuillez vous reconnecter.");
+        throw new ApiError(401, t("Votre session a expiré. Veuillez vous reconnecter.", "Your session has expired. Please sign in again."));
     }
     return { etat: e, utilisateur };
 }
@@ -157,7 +166,7 @@ function enReservation(reservation: ReservationDemo): Reservation {
 
 function sprOu404(id: number) {
     const spr = SPR.find((s) => s.id === id);
-    if (!spr) throw new ApiError(404, "Ce site est introuvable.");
+    if (!spr) throw new ApiError(404, t("Ce site est introuvable.", "This site could not be found."));
     return spr;
 }
 
@@ -210,7 +219,7 @@ const demo: Api = {
         const e = await charger();
         const utilisateur = e.utilisateurs.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
         if (!utilisateur || utilisateur.empreinte !== (await empreinte(motDePasse))) {
-            throw new ApiError(401, "Identifiants invalides.");
+            throw new ApiError(401, t("Identifiants invalides.", "Invalid email address or password."));
         }
         return ouvrirSession(e, utilisateur);
     },
@@ -226,19 +235,19 @@ const demo: Api = {
             expire: Date.now() + DUREE_LIEN_MS,
         } };
         sauvegarder(e);
-        return { message: MESSAGE_INSCRIPTION, jetonDemo: jeton };
+        return { message: MESSAGE_INSCRIPTION(), jetonDemo: jeton };
     },
     confirmerInscription: async (jeton) => {
         const e = await charger();
         const inscription = e.inscriptions?.[jeton];
         if (!inscription) {
-            throw new ApiError(422, "Ce lien d'activation n'est pas valide. Vérifiez qu'il a été copié en entier.");
+            throw new ApiError(422, t("Ce lien d'activation n'est pas valide. Vérifiez qu'il a été copié en entier.", "This activation link is not valid. Check that it was copied in full."));
         }
         if (inscription.expire < Date.now()) {
-            throw new ApiError(422, "Ce lien d'activation a expiré. Inscrivez-vous de nouveau pour en recevoir un autre.");
+            throw new ApiError(422, t("Ce lien d'activation a expiré. Inscrivez-vous de nouveau pour en recevoir un autre.", "This activation link has expired. Sign up again to receive a new one."));
         }
         if (e.utilisateurs.some((u) => u.email.toLowerCase() === inscription.email.toLowerCase())) {
-            throw new ApiError(409, "Ce compte est déjà activé. Connectez-vous avec votre adresse e-mail et votre mot de passe.");
+            throw new ApiError(409, t("Ce compte est déjà activé. Connectez-vous avec votre adresse e-mail et votre mot de passe.", "This account is already active. Sign in with your email address and password."));
         }
         const utilisateur: UtilisateurDemo = {
             id: e.prochainId++,
@@ -264,7 +273,7 @@ const demo: Api = {
         const nouvelEmail = Boolean(email) && email!.toLowerCase() !== utilisateur.email.toLowerCase();
         if (modification.mot_de_passe || nouvelEmail) await verifierMotDePasse(utilisateur, modification.mot_de_passe_actuel);
         if (email && e.utilisateurs.some((u) => u.id !== utilisateur.id && u.email.toLowerCase() === email.toLowerCase())) {
-            throw new ApiError(422, "Cette adresse e-mail est déjà utilisée.");
+            throw new ApiError(422, t("Cette adresse e-mail est déjà utilisée.", "This email address is already in use."));
         }
         if (modification.nom) utilisateur.nom = modification.nom;
         if (modification.prenom) utilisateur.prenom = modification.prenom;
@@ -299,17 +308,17 @@ const demo: Api = {
         const { etat: e, utilisateur } = await connecte();
         const visite = visitesOuvertes().find((v) => v.id === idVisite);
         if (!visite) {
-            throw new ApiError(422, "Cette visite n'est plus disponible.");
+            throw new ApiError(422, t("Cette visite n'est plus disponible.", "This tour is no longer available."));
         }
         if (!Number.isInteger(taille) || taille < 1 || taille > 50) {
-            throw new ApiError(422, "Le groupe doit compter entre 1 et 50 personnes.");
+            throw new ApiError(422, t("Le groupe doit compter entre 1 et 50 personnes.", "The group must have between 1 and 50 people."));
         }
         if (placesRestantes(e, visite.id, visite.date_visite, visite.capacite_max) < taille) {
-            throw new ApiError(409, "Il ne reste pas assez de places pour cette visite.");
+            throw new ApiError(409, t("Il ne reste pas assez de places pour cette visite.", "There are not enough places left on this tour."));
         }
         const aVenir = e.reservations.filter((r) => r.id_utilisateur === utilisateur.id && r.date_visite >= aujourdhui()).length;
         if (aVenir >= MAX_A_VENIR_PAR_COMPTE) {
-            throw new ApiError(422, `Vous avez déjà ${MAX_A_VENIR_PAR_COMPTE} visites à venir. Annulez-en une pour en réserver une autre.`);
+            throw new ApiError(422, t(`Vous avez déjà ${MAX_A_VENIR_PAR_COMPTE} visites à venir. Annulez-en une pour en réserver une autre.`, `You already have ${MAX_A_VENIR_PAR_COMPTE} upcoming tours. Cancel one to book another.`));
         }
         const reservation = {
             id: e.prochainId++,
@@ -326,12 +335,12 @@ const demo: Api = {
     annulerReservation: async (id) => {
         const { etat: e, utilisateur } = await connecte();
         const reservation = e.reservations.find((r) => r.id === id);
-        if (!reservation) throw new ApiError(404, "Réservation introuvable.");
+        if (!reservation) throw new ApiError(404, t("Réservation introuvable.", "Booking not found."));
         if (reservation.id_utilisateur !== utilisateur.id) {
-            throw new ApiError(403, "Vous n'êtes pas autorisé à annuler cette réservation.");
+            throw new ApiError(403, t("Vous n'êtes pas autorisé à annuler cette réservation.", "You are not allowed to cancel this booking."));
         }
         if (reservation.date_visite < aujourdhui()) {
-            throw new ApiError(422, "Une visite passée ne peut plus être annulée.");
+            throw new ApiError(422, t("Une visite passée ne peut plus être annulée.", "A past tour can no longer be cancelled."));
         }
         e.reservations = e.reservations.filter((r) => r.id !== id);
         sauvegarder(e);
@@ -340,7 +349,7 @@ const demo: Api = {
         const { etat: e, utilisateur } = await connecte();
         sprOu404(nouvelAvis.id_spr);
         if (e.avis.some((a) => a.id_utilisateur === utilisateur.id && a.id_spr === nouvelAvis.id_spr)) {
-            throw new ApiError(409, "Vous avez déjà laissé un avis pour ce SPR.");
+            throw new ApiError(409, t("Vous avez déjà laissé un avis pour ce SPR.", "You have already reviewed this site."));
         }
         const avis: Avis = {
             id: e.prochainId++,
@@ -356,9 +365,9 @@ const demo: Api = {
     supprimerAvis: async (id) => {
         const { etat: e, utilisateur } = await connecte();
         const avis = e.avis.find((a) => a.id === id);
-        if (!avis) throw new ApiError(404, "Avis introuvable.");
+        if (!avis) throw new ApiError(404, t("Avis introuvable.", "Review not found."));
         if (avis.id_utilisateur !== utilisateur.id) {
-            throw new ApiError(403, "Vous n'êtes pas autorisé à supprimer cet avis.");
+            throw new ApiError(403, t("Vous n'êtes pas autorisé à supprimer cet avis.", "You are not allowed to delete this review."));
         }
         e.avis = e.avis.filter((a) => a.id !== id);
         sauvegarder(e);

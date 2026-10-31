@@ -19,13 +19,26 @@ import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
 import UpdateIcon from "@mui/icons-material/Update";
 import { CarteInfo, GrilleCartes, PageLegale, SectionLegale } from "../components/PageLegale";
 import { useTitre } from "../hooks";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+  fr: {
+    titre: "Conditions générales d'utilisation",
+    intro: "Les règles qui encadrent l'utilisation de Dauphinéo, que vous soyez simple visiteur ou inscrit.",
+  },
+  en: {
+    titre: "Terms of use",
+    intro: "The rules for using Dauphinéo, whether you are browsing or have an account.",
+  },
+};
 
 function CGU() {
-  useTitre("Conditions générales d'utilisation");
+  const t = useTextes(TEXTES);
+  useTitre(t.titre);
   return (
     <PageLegale
-      titre="Conditions générales d'utilisation"
-      intro="Les règles qui encadrent l'utilisation de Dauphinéo, que vous soyez simple visiteur ou inscrit."
+      titre={t.titre}
+      intro={t.intro}
     >
       <SectionLegale icone={<DescriptionOutlinedIcon />} titre="Objet">
         <Typography>

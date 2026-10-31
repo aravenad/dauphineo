@@ -20,6 +20,9 @@ export interface Spr {
     temps_de_visite: string;
     courte_description: string;
     longue_description: string;
+    /** Traductions anglaises ; le français s'affiche quand elles manquent. */
+    courte_description_en: string | null;
+    longue_description_en: string | null;
     images: Image[];
 }
 
@@ -106,23 +109,31 @@ export interface Reservation {
     guide: { nom: string; prenom: string };
 }
 
-export type Interet = "archeologie" | "architecture" | "medieval" | "nature" | "religion" | "villages" | "jardins";
-export type Experience = "balade" | "decouverte" | "exploration" | "immersion";
+/** Thèmes du questionnaire : chacun est aussi un mot-clé des SPR. */
+export type Theme = "antiquite" | "medieval" | "chateau" | "religieux" | "architecture" | "musee" | "nature";
+/** Cadre de la visite : ville, village et montagne sont des mots-clés des SPR. */
+export type Cadre = "ville" | "village" | "montagne" | "indifferent";
 export type Duree = "court" | "moyen" | "long";
+export type Langue = "fr" | "en";
 
 export interface Preferences {
     taille_groupe: number;
-    interets: Interet[];
+    interets: Theme[];
+    cadre: Cadre;
     duree: Duree;
     pmr: boolean;
-    experiences: Experience[];
+    /** Langue des raisons rédigées par Claude. */
+    langue?: Langue;
 }
 
 export interface Recommandations {
-    /** « claude » quand Claude Haiku a répondu, « local » pour le moteur de repli. */
+    /** « claude » quand Claude Haiku a rédigé les raisons, « local » sinon. */
     source: "claude" | "local";
-    /** criteres : libellés des centres d'intérêt et expériences choisis que le site satisfait. */
-    recommandations: { spr: Spr; score: number; raison: string; criteres: string[] }[];
+    /**
+     * criteres : clés des thèmes et du cadre choisis que le site satisfait.
+     * raison : null quand Claude n'en a pas rédigé ; le site compose alors celle du moteur local.
+     */
+    recommandations: { spr: Spr; score: number; raison: string | null; criteres: string[] }[];
 }
 
 export interface Api {

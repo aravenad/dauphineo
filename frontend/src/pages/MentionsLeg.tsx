@@ -17,6 +17,18 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import api from "../api";
 import { CarteInfo, GrilleCartes, PageLegale, SectionLegale } from "../components/PageLegale";
 import { useApi, useTitre } from "../hooks";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+  fr: {
+    titre: "Mentions légales",
+    intro: "Qui édite Dauphinéo, où le site est hébergé et d'où viennent les photographies des sites patrimoniaux.",
+  },
+  en: {
+    titre: "Legal notice",
+    intro: "Who publishes Dauphinéo, where the site is hosted and where the photographs of the heritage sites come from.",
+  },
+};
 import { nomCommune } from "../utils/format";
 
 function CreditsPhotos() {
@@ -59,11 +71,12 @@ function CreditsPhotos() {
 }
 
 function MentionsLeg() {
-  useTitre("Mentions légales");
+  const t = useTextes(TEXTES);
+  useTitre(t.titre);
   return (
     <PageLegale
-      titre="Mentions légales"
-      intro="Qui édite Dauphinéo, où le site est hébergé et d'où viennent les photographies des sites patrimoniaux."
+      titre={t.titre}
+      intro={t.intro}
     >
       <SectionLegale icone={<StorefrontOutlinedIcon />} titre="Éditeur du site">
         <GrilleCartes colonnes={4}>

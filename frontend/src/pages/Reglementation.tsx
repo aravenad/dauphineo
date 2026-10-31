@@ -13,17 +13,30 @@ import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { CarteInfo, GrilleCartes, PageLegale, SectionLegale } from "../components/PageLegale";
 import { useTitre } from "../hooks";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+  fr: {
+    titre: "Politique de confidentialité",
+    intro: "Les données que nous collectons, ce que nous en faisons et les droits dont vous disposez pour les contrôler.",
+  },
+  en: {
+    titre: "Privacy policy",
+    intro: "The data we collect, what we do with it and the rights you have to control it.",
+  },
+};
 
 function Reglementation() {
-  useTitre("Politique de confidentialité");
+  const t = useTextes(TEXTES);
+  useTitre(t.titre);
   return (
     <PageLegale
-      titre="Politique de confidentialité"
-      intro="Les données que nous collectons, ce que nous en faisons et les droits dont vous disposez pour les contrôler."
+      titre={t.titre}
+      intro={t.intro}
     >
       <SectionLegale icone={<GroupsOutlinedIcon />} titre="Qui sommes-nous ?">
         <Typography>
-          Nous sommes Dauphinéo, des développeurs spécialisés dans la valorisation des sites patrimoniaux remarquables situés en Isère. Notre
+          Nous sommes Dauphinéo, des développeurs spécialisés dans la valorisation des sites patrimoniaux remarquables du Dauphiné, en Isère, dans la Drôme et dans les Hautes-Alpes. Notre
           mission est de mettre en avant le patrimoine culturel en fournissant les ressources nécessaires à sa préservation et en l’intégrant
           dans le développement économique et social d'un territoire.
         </Typography>

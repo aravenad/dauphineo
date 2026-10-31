@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
-import { ApiError } from "./erreurs";
+import { ApiError, messageErreur } from "./erreurs";
 import { lireToken } from "./token";
+import { langueActuelle, traduire } from "../i18n";
 import type { Api, Reservation, Spr, Top, Visite, Avis, Connexion, DemandeInscription, Utilisateur, Recommandations } from "./types";
 
 const client = axios.create({
@@ -13,17 +14,19 @@ client.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+    // L'API répond dans la langue du site
+    config.headers["Accept-Language"] = langueActuelle();
     return config;
 });
 
 client.interceptors.response.use(undefined, (erreur: AxiosError<{ message?: string; errors?: Record<string, string[]> }>) => {
     const reponse = erreur.response;
     if (!reponse) {
-        throw new ApiError(0, "Le serveur ne répond pas. Vérifiez que l'API est lancée.");
+        throw new ApiError(0, traduire({ fr: "Le serveur ne répond pas. Vérifiez que l'API est lancée.", en: "The server is not responding. Check that the API is running." }));
     }
     // Pour une erreur de validation, le premier message de champ est plus précis que le message global
     const validation = reponse.data?.errors && Object.values(reponse.data.errors)[0]?.[0];
-    throw new ApiError(reponse.status, validation ?? reponse.data?.message ?? "Une erreur est survenue. Veuillez réessayer.");
+    throw new ApiError(reponse.status, validation ?? reponse.data?.message ?? messageErreur(null));
 });
 
 interface ReservationApi {

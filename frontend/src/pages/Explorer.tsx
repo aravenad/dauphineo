@@ -9,6 +9,32 @@ import FilterPanel from "../components/FilterPanel";
 import { DUREE_MAX, FILTRES_VIDES, type Filtres } from "../components/filtres";
 import { ButtonCustom } from "../components/mui_custom";
 import { entreeEnCascade } from "../animations";
+import { locale, useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        titre: "Explorer les sites",
+        entete: "Explorez le patrimoine",
+        sousTitre: "Choisissez un lieu pour en savoir plus et réserver votre guide",
+        compte: (n: number, total: number) => `${n} site${n > 1 ? "s" : ""} sur ${total}`,
+        maximum: (h: string) => `${h} h maximum`,
+        pmr: "♿ Accessible PMR",
+        filtrer: "Filtrer",
+        aucun: "Aucun site patrimonial remarquable ne correspond à ces critères.",
+        reinitialiser: "Réinitialiser les filtres",
+    },
+    en: {
+        titre: "Explore the sites",
+        entete: "Explore the heritage",
+        sousTitre: "Choose a place to learn more and book your guide",
+        compte: (n: number, total: number) => `${n} of ${total} site${total > 1 ? "s" : ""}`,
+        maximum: (h: string) => `${h} h maximum`,
+        pmr: "♿ Step-free access",
+        filtrer: "Filter",
+        aucun: "No remarkable heritage site matches these criteria.",
+        reinitialiser: "Reset the filters",
+    },
+};
 
 function filtrer(sprs: Spr[], filtres: Filtres): Spr[] {
     const recherche = normaliser(filtres.recherche.trim());
@@ -24,7 +50,8 @@ function filtrer(sprs: Spr[], filtres: Filtres): Spr[] {
 }
 
 function Explorer() {
-    useTitre("Explorer les sites");
+    const t = useTextes(TEXTES);
+    useTitre(t.titre);
     const { donnees, erreur, chargement } = useApi(() => api.listSpr(), []);
     const [filtres, setFiltres] = useState<Filtres>(FILTRES_VIDES);
     const [panneau, setPanneau] = useState(false);
@@ -37,30 +64,30 @@ function Explorer() {
         <Box>
             <Box sx={{ textAlign: "center", mb: 3 }}>
                 <Typography variant="h2" component="h1" sx={{ fontWeight: 800, fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
-                    Explorez le patrimoine
+                    {t.entete}
                 </Typography>
                 <Typography sx={{ color: "text.secondary", fontSize: "1.3em" }}>
-                    Choisissez un lieu pour en savoir plus et réserver votre guide
+                    {t.sousTitre}
                 </Typography>
             </Box>
 
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 3 }}>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center" }} aria-live="polite">
                     <Typography sx={{ color: "text.secondary" }}>
-                        {donnees ? `${resultats.length} site${resultats.length > 1 ? "s" : ""} sur ${sprs.length}` : " "}
+                        {donnees ? t.compte(resultats.length, sprs.length) : " "}
                     </Typography>
                     {filtres.recherche.trim() && <Chip label={`« ${filtres.recherche.trim()} »`} onDelete={() => setFiltres({ ...filtres, recherche: "" })} />}
                     {filtres.motsCles.map((mot) => (
                         <Chip key={mot} label={libelleMotCle(mot)} onDelete={() => setFiltres({ ...filtres, motsCles: filtres.motsCles.filter((m) => m !== mot) })} />
                     ))}
                     {filtres.dureeMax < DUREE_MAX && (
-                        <Chip label={`${String(filtres.dureeMax).replace(".", ",")} h maximum`} onDelete={() => setFiltres({ ...filtres, dureeMax: DUREE_MAX })} />
+                        <Chip label={t.maximum(filtres.dureeMax.toLocaleString(locale()))} onDelete={() => setFiltres({ ...filtres, dureeMax: DUREE_MAX })} />
                     )}
-                    {filtres.pmr && <Chip label="♿ Accessible PMR" onDelete={() => setFiltres({ ...filtres, pmr: false })} />}
+                    {filtres.pmr && <Chip label={t.pmr} onDelete={() => setFiltres({ ...filtres, pmr: false })} />}
                 </Box>
                 <Badge badgeContent={actifs} color="primary">
                     <ButtonCustom variant="outlined" startIcon={<TuneIcon />} onClick={() => setPanneau(true)}>
-                        Filtrer
+                        {t.filtrer}
                     </ButtonCustom>
                 </Badge>
             </Box>
@@ -84,10 +111,10 @@ function Explorer() {
                 donnees && (
                     <Box sx={{ textAlign: "center", mt: 4 }}>
                         <Typography variant="h6" gutterBottom sx={{ color: "text.secondary" }}>
-                            Aucun site patrimonial remarquable ne correspond à ces critères.
+                            {t.aucun}
                         </Typography>
                         <ButtonCustom variant="outlined" onClick={() => setFiltres(FILTRES_VIDES)}>
-                            Réinitialiser les filtres
+                            {t.reinitialiser}
                         </ButtonCustom>
                     </Box>
                 )

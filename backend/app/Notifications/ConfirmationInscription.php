@@ -20,12 +20,12 @@ class ConfirmationInscription extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Activez votre compte Dauphinéo')
-            ->greeting('Bonjour,')
-            ->line('Vous avez demandé la création d\'un compte Dauphinéo avec cette adresse e-mail.')
-            ->action('Activer mon compte', $this->lien)
-            ->line('Ce lien reste valable 24 heures.')
-            ->line('Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce message : aucun compte ne sera créé.')
-            ->salutation('L\'équipe Dauphinéo');
+            ->subject(__('Activez votre compte Dauphinéo'))
+            ->greeting(__('Bonjour,'))
+            ->line(__('Vous avez demandé la création d\'un compte Dauphinéo avec cette adresse e-mail.'))
+            ->action(__('Activer mon compte'), $this->lien)
+            ->line(__('Ce lien reste valable 24 heures.'))
+            ->line(__('Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce message : aucun compte ne sera créé.'))
+            ->salutation(__('L\'équipe Dauphinéo'));
     }
 }

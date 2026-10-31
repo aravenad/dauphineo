@@ -6,6 +6,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import type { Image } from "../api";
 import { attributsImage } from "../utils/images";
 import { useImageChargee } from "../animations";
+import { useTextes } from "../i18n";
 
 interface SPRPhotosDetailedProps {
     images: Image[];
@@ -34,6 +35,26 @@ function PhotoAgrandie({ image, alt, onErreur }: { image: Image; alt: string; on
 
 function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SPRPhotosDetailedProps) {
     const [choisie, setCourante] = useState(selection ?? 0);
+    const t = useTextes({
+        fr: {
+            titre: (c: string) => `Photos de ${c}`,
+            fermer: "Fermer la galerie",
+            photo: (n: number, total: number) => `Photo ${n} sur ${total}`,
+            precedente: "Photo précédente",
+            suivante: "Photo suivante",
+            credit: " · Photo : ",
+            afficher: (n: number) => `Afficher la photo ${n}`,
+        },
+        en: {
+            titre: (c: string) => `Photos of ${c}`,
+            fermer: "Close the gallery",
+            photo: (n: number, total: number) => `Photo ${n} of ${total}`,
+            precedente: "Previous photo",
+            suivante: "Next photo",
+            credit: " · Photo: ",
+            afficher: (n: number) => `Show photo ${n}`,
+        },
+    });
     // Une photo retirée en cours de route peut laisser l'index hors de la liste
     const courante = Math.min(choisie, Math.max(images.length - 1, 0));
 
@@ -58,8 +79,8 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
             }}
         >
             <DialogTitle sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                Photos de {commune}
-                <IconButton onClick={onClose} aria-label="Fermer la galerie">
+                {t.titre(commune)}
+                <IconButton onClick={onClose} aria-label={t.fermer}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
@@ -70,7 +91,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                         <PhotoAgrandie
                             key={images[courante].id}
                             image={images[courante]}
-                            alt={`Photo ${courante + 1} sur ${images.length}`}
+                            alt={t.photo(courante + 1, images.length)}
                             onErreur={() => onErreur(images[courante].id)}
                         />
                     )}
@@ -78,14 +99,14 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                         <>
                             <IconButton
                                 onClick={() => suivante(-1)}
-                                aria-label="Photo précédente"
+                                aria-label={t.precedente}
                                 sx={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.100" } }}
                             >
                                 <ChevronLeftIcon />
                             </IconButton>
                             <IconButton
                                 onClick={() => suivante(1)}
-                                aria-label="Photo suivante"
+                                aria-label={t.suivante}
                                 sx={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", backgroundColor: "common.white", "&:hover": { backgroundColor: "grey.100" } }}
                             >
                                 <ChevronRightIcon />
@@ -97,7 +118,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                     {courante + 1} / {images.length}
                     {images[courante]?.auteur && (
                         <>
-                            {" · Photo : "}
+                            {t.credit}
                             {images[courante].auteur}
                             {images[courante].licence && `, ${images[courante].licence}`}
                             {images[courante].source && (
@@ -118,7 +139,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                             component="button"
                             type="button"
                             onClick={() => setCourante(index)}
-                            aria-label={`Afficher la photo ${index + 1}`}
+                            aria-label={t.afficher(index + 1)}
                             aria-current={index === courante}
                             sx={{
                                 flex: "0 0 auto",

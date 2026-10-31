@@ -5,6 +5,46 @@ import { ButtonCustom } from "./mui_custom";
 import ChampMotDePasse from "./ChampMotDePasse";
 import { erreurEmail, erreurMotDePasse, erreurNom } from "./validation";
 import api, { messageErreur, type Connexion, type DemandeInscription } from "../api";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        echec: "L'inscription a échoué. Veuillez réessayer.",
+        echecActivation: "L'activation a échoué. Veuillez réessayer.",
+        verifiez: "Vérifiez vos e-mails",
+        titre: "Inscription",
+        fermer: "Fermer",
+        demo: "Version de démonstration : aucun e-mail n'est envoyé, ce bouton remplace le lien d'activation.",
+        activer: "Activer le compte (démo)",
+        nom: "Nom",
+        prenom: "Prénom",
+        email: "Adresse e-mail",
+        motDePasse: "Mot de passe",
+        regles: "8 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial.",
+        age: "Je certifie avoir 15 ans ou plus",
+        inscrire: "Inscrivez-vous",
+        dejaMembre: "Déjà membre ?",
+        connecter: "Connectez-vous",
+    },
+    en: {
+        echec: "Sign-up failed. Please try again.",
+        echecActivation: "Activation failed. Please try again.",
+        verifiez: "Check your email",
+        titre: "Sign up",
+        fermer: "Close",
+        demo: "Demo version: no email is sent, this button stands in for the activation link.",
+        activer: "Activate the account (demo)",
+        nom: "Last name",
+        prenom: "First name",
+        email: "Email address",
+        motDePasse: "Password",
+        regles: "At least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.",
+        age: "I confirm I am 15 or older",
+        inscrire: "Sign up",
+        dejaMembre: "Already a member?",
+        connecter: "Log in",
+    },
+};
 
 interface InscriptionDialogProps {
     open: boolean;
@@ -22,10 +62,11 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin, onConnexion }: Insc
     const [erreur, setErreur] = useState("");
     const [envoi, setEnvoi] = useState(false);
     const [demande, setDemande] = useState<DemandeInscription | null>(null);
+    const t = useTextes(TEXTES);
 
     const erreurs = {
         nom: erreurNom(formulaire.nom, "nom"),
-        prenom: erreurNom(formulaire.prenom, "prénom"),
+        prenom: erreurNom(formulaire.prenom, "prenom"),
         email: erreurEmail(formulaire.email),
         mot_de_passe: erreurMotDePasse(formulaire.mot_de_passe),
     };
@@ -58,7 +99,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin, onConnexion }: Insc
             setErreur("");
             setDemande(reponse);
         } catch (e) {
-            setErreur(messageErreur(e, "L'inscription a échoué. Veuillez réessayer."));
+            setErreur(messageErreur(e, t.echec));
         } finally {
             setEnvoi(false);
         }
@@ -72,7 +113,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin, onConnexion }: Insc
             setDemande(null);
             onConnexion(connexion);
         } catch (e) {
-            setErreur(messageErreur(e, "L'activation a échoué. Veuillez réessayer."));
+            setErreur(messageErreur(e, t.echecActivation));
         } finally {
             setEnvoi(false);
         }
@@ -86,8 +127,8 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin, onConnexion }: Insc
 
     return (
         <Dialog open={open} onClose={fermer} fullWidth maxWidth="xs">
-            <DialogTitle sx={{ fontWeight: 500 }}>{demande ? "Vérifiez vos e-mails" : "Inscription"}</DialogTitle>
-            <IconButton aria-label="Fermer" onClick={fermer} sx={{ position: "absolute", right: 8, top: 8, color: "grey.500" }}>
+            <DialogTitle sx={{ fontWeight: 500 }}>{demande ? t.verifiez : t.titre}</DialogTitle>
+            <IconButton aria-label={t.fermer} onClick={fermer} sx={{ position: "absolute", right: 8, top: 8, color: "grey.500" }}>
                 <CloseRounded />
             </IconButton>
             <DialogContent>
@@ -97,37 +138,37 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin, onConnexion }: Insc
                         {demande.jetonDemo && (
                             <>
                                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                                    Version de démonstration : aucun e-mail n'est envoyé, ce bouton remplace le lien d'activation.
+                                    {t.demo}
                                 </Typography>
                                 {erreur && <Alert severity="error">{erreur}</Alert>}
                                 <ButtonCustom variant="contained" fullWidth disabled={envoi} onClick={() => void activerDemo(demande.jetonDemo!)}>
-                                    Activer le compte (démo)
+                                    {t.activer}
                                 </ButtonCustom>
                             </>
                         )}
                         <ButtonCustom variant={demande.jetonDemo ? "text" : "contained"} fullWidth onClick={fermer}>
-                            Fermer
+                            {t.fermer}
                         </ButtonCustom>
                     </Stack>
                 ) : (
                     <Stack component="form" spacing={2} onSubmit={sInscrire} noValidate sx={{ pt: 1 }}>
-                        <TextField label="Nom" autoComplete="family-name" {...champ("nom")} />
-                        <TextField label="Prénom" autoComplete="given-name" {...champ("prenom")} />
-                        <TextField label="Adresse e-mail" type="email" autoComplete="email" {...champ("email")} />
-                        <ChampMotDePasse label="Mot de passe" autoComplete="new-password" {...champ("mot_de_passe")}
-                            helperText={touches.mot_de_passe ? erreurs.mot_de_passe : "8 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial."} />
+                        <TextField label={t.nom} autoComplete="family-name" {...champ("nom")} />
+                        <TextField label={t.prenom} autoComplete="given-name" {...champ("prenom")} />
+                        <TextField label={t.email} type="email" autoComplete="email" {...champ("email")} />
+                        <ChampMotDePasse label={t.motDePasse} autoComplete="new-password" {...champ("mot_de_passe")}
+                            helperText={touches.mot_de_passe ? erreurs.mot_de_passe : t.regles} />
                         <FormControlLabel
                             control={<Checkbox checked={majeur} onChange={(e) => setMajeur(e.target.checked)} />}
-                            label="Je certifie avoir 15 ans ou plus"
+                            label={t.age}
                         />
                         {erreur && <Alert severity="error">{erreur}</Alert>}
                         <ButtonCustom type="submit" variant="contained" fullWidth disabled={envoi || !majeur}>
-                            Inscrivez-vous
+                            {t.inscrire}
                         </ButtonCustom>
                         <Stack spacing={0.5} sx={{ alignItems: "center" }}>
-                            <Typography variant="body1">Déjà membre ?</Typography>
+                            <Typography variant="body1">{t.dejaMembre}</Typography>
                             <ButtonCustom variant="text" onClick={onSwitchToLogin} sx={{ color: "common.black", fontWeight: 700 }}>
-                                Connectez-vous
+                                {t.connecter}
                             </ButtonCustom>
                         </Stack>
                     </Stack>

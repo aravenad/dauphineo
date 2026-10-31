@@ -8,6 +8,36 @@ import CardAvis from "./CardAvis";
 import Confirmation from "./Confirmation";
 import FormulaireAvis from "./FormulaireAvis";
 import { ButtonCustom } from "./mui_custom";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+  fr: {
+    echecSuppression: "L'avis n'a pas pu être supprimé.",
+    titre: "Avis",
+    ecrire: "Écrire un avis",
+    aucun: "Aucun avis pour le moment. Soyez le premier à partager votre visite.",
+    visiteur: "Visiteur",
+    plus: "Voir plus d'avis",
+    moins: "Voir moins d'avis",
+    laisser: "Laisser un avis",
+    confirmerTitre: "Supprimer votre avis ?",
+    confirmer: "Supprimer l'avis",
+    confirmerTexte: "Votre note et votre commentaire seront retirés de la fiche. Vous pourrez ensuite publier un nouvel avis.",
+  },
+  en: {
+    echecSuppression: "The review could not be deleted.",
+    titre: "Reviews",
+    ecrire: "Write a review",
+    aucun: "No reviews yet. Be the first to share your visit.",
+    visiteur: "Visitor",
+    plus: "Show more reviews",
+    moins: "Show fewer reviews",
+    laisser: "Leave a review",
+    confirmerTitre: "Delete your review?",
+    confirmer: "Delete the review",
+    confirmerTexte: "Your rating and comment will be removed from the page. You can then post a new review.",
+  },
+};
 
 interface AvisSectionProps {
   sprId: number;
@@ -29,6 +59,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
   const [aSupprimer, setASupprimer] = useState<number | null>(null);
   const [enCours, setEnCours] = useState(false);
   const [erreurAction, setErreurAction] = useState("");
+  const t = useTextes(TEXTES);
 
   const avis = trier(local?.sprId === sprId ? local.avis : (donnees ?? []));
   const dejaPublie = utilisateur !== null && avis.some((a) => a.id_utilisateur === utilisateur.id);
@@ -49,7 +80,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
       setLocal({ sprId, avis: avis.filter((a) => a.id !== aSupprimer) });
       setASupprimer(null);
     } catch (e) {
-      setErreurAction(messageErreur(e, "L'avis n'a pas pu être supprimé."));
+      setErreurAction(messageErreur(e, t.echecSuppression));
     } finally {
       setEnCours(false);
     }
@@ -59,11 +90,11 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
     <Box component="section" aria-labelledby="titre-avis">
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 2 }}>
         <Typography id="titre-avis" variant="h4" component="h2" sx={{ fontWeight: "bold" }}>
-          Avis
+          {t.titre}
         </Typography>
         {!dejaPublie && (
           <ButtonCustom variant="outlined" onClick={ecrire}>
-            Écrire un avis
+            {t.ecrire}
           </ButtonCustom>
         )}
       </Box>
@@ -78,9 +109,9 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
             <Rating avis={avis} />
           </Box>
 
-          <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <Box sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 2 }}>
             {avis.length === 0 ? (
-              <Typography sx={{ color: "text.secondary" }}>Aucun avis pour le moment. Soyez le premier à partager votre visite.</Typography>
+              <Typography sx={{ color: "text.secondary" }}>{t.aucun}</Typography>
             ) : (
               avis.slice(0, visibles).map((a) => (
                 <CardAvis
@@ -89,7 +120,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
                   commentaire={a.commentaire}
                   note={a.note}
                   date={a.created_at}
-                  pseudo={a.utilisateur?.pseudo ?? "Visiteur"}
+                  pseudo={a.utilisateur?.pseudo ?? t.visiteur}
                   onSupprimer={utilisateur?.id === a.id_utilisateur ? () => demander(a.id) : undefined}
                 />
               ))
@@ -98,12 +129,12 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
             <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
               {avis.length > visibles && (
                 <ButtonCustom variant="outlined" onClick={() => setVisibles((v) => v + PAR_PAGE)}>
-                  Voir plus d'avis
+                  {t.plus}
                 </ButtonCustom>
               )}
               {visibles > PAR_PAGE && (
                 <ButtonCustom variant="outlined" onClick={() => setVisibles(PAR_PAGE)}>
-                  Voir moins d'avis
+                  {t.moins}
                 </ButtonCustom>
               )}
             </Box>
@@ -112,7 +143,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
       )}
 
       <Dialog open={formulaire} onClose={() => setFormulaire(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Laisser un avis</DialogTitle>
+        <DialogTitle>{t.laisser}</DialogTitle>
         <DialogContent>
           <FormulaireAvis
             sprId={sprId}
@@ -127,14 +158,14 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
 
       <Confirmation
         open={aSupprimer !== null}
-        titre="Supprimer votre avis ?"
-        confirmer="Supprimer l'avis"
+        titre={t.confirmerTitre}
+        confirmer={t.confirmer}
         enCours={enCours}
         erreur={erreurAction}
         onConfirmer={() => void supprimer()}
         onFermer={() => setASupprimer(null)}
       >
-        Votre note et votre commentaire seront retirés de la fiche. Vous pourrez ensuite publier un nouvel avis.
+        {t.confirmerTexte}
       </Confirmation>
     </Box>
   );

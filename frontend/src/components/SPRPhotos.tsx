@@ -5,6 +5,7 @@ import { attributsImage } from "../utils/images";
 import { useImageChargee } from "../animations";
 import { ButtonCustom } from "./mui_custom";
 import SPRPhotosDetailed from "./SPRPhotosDetailed";
+import { useTextes } from "../i18n";
 
 interface SPRPhotosProps {
     images: Image[];
@@ -28,6 +29,10 @@ function Photo({ image, onErreur }: { image: Image; onErreur: () => void }) {
 /** Une grande photo et jusqu'à deux petites ; toutes s'ouvrent dans la galerie. */
 function SPRPhotos({ images: toutes, commune }: SPRPhotosProps) {
     const [selection, setSelection] = useState<number | null>(null);
+    const t = useTextes({
+        fr: { agrandir: (n: number, c: string) => `Agrandir la photo ${n} de ${c}`, toutes: (n: number) => `Afficher les ${n} photos` },
+        en: { agrandir: (n: number, c: string) => `Enlarge photo ${n} of ${c}`, toutes: (n: number) => `Show all ${n} photos` },
+    });
     // Les photos sont hébergées par des sites tiers : celles qui ne répondent plus sont retirées
     const [cassees, setCassees] = useState<ReadonlySet<number>>(new Set());
     const images = toutes.filter((image) => !cassees.has(image.id));
@@ -55,7 +60,7 @@ function SPRPhotos({ images: toutes, commune }: SPRPhotosProps) {
                     <ButtonBase
                         key={image.id}
                         onClick={() => setSelection(index)}
-                        aria-label={`Agrandir la photo ${index + 1} de ${commune}`}
+                        aria-label={t.agrandir(index + 1, commune)}
                         sx={{
                             borderRadius: "1em",
                             overflow: "hidden",
@@ -75,7 +80,7 @@ function SPRPhotos({ images: toutes, commune }: SPRPhotosProps) {
                         onClick={() => setSelection(0)}
                         sx={{ position: "absolute", bottom: "1em", right: "1em" }}
                     >
-                        Afficher les {images.length} photos
+                        {t.toutes(images.length)}
                     </ButtonCustom>
                 )}
             </Box>

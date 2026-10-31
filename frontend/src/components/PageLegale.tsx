@@ -1,12 +1,22 @@
 import type { ReactNode } from "react";
 import { Link as RouterLink, useLocation } from "react-router";
-import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
+import { Alert, Box, Chip, Paper, Stack, Typography } from "@mui/material";
+import { useLangue, useTextes } from "../i18n";
 
-const PAGES_LEGALES = [
-    { chemin: "/mentions-legales", libelle: "Mentions légales" },
-    { chemin: "/reglementation", libelle: "Confidentialité" },
-    { chemin: "/cgu", libelle: "CGU" },
-];
+const TEXTES = {
+    fr: {
+        surtitre: "Informations légales",
+        nav: "Pages légales",
+        pages: { "/mentions-legales": "Mentions légales", "/reglementation": "Confidentialité", "/cgu": "CGU" },
+    },
+    en: {
+        surtitre: "Legal information",
+        nav: "Legal pages",
+        pages: { "/mentions-legales": "Legal notice", "/reglementation": "Privacy", "/cgu": "Terms of use" },
+    },
+};
+
+const PAGES_LEGALES = ["/mentions-legales", "/reglementation", "/cgu"] as const;
 
 type Ton = "primary" | "error";
 
@@ -38,25 +48,27 @@ function Pastille({ icone, ton = "primary", taille = 40 }: { icone: ReactNode; t
 /** Mise en page commune aux mentions légales, à la politique de confidentialité et aux CGU */
 export function PageLegale({ titre, intro, children }: { titre: string; intro: ReactNode; children: ReactNode }) {
     const { pathname } = useLocation();
+    const { langue } = useLangue();
+    const t = useTextes(TEXTES);
     return (
         <Box sx={{ maxWidth: 1000, mx: "auto", px: { xs: 0, sm: 2 }, py: { xs: 2, md: 4 } }}>
             <Box component="header" sx={{ mb: { xs: 4, md: 6 } }}>
                 <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
-                    Informations légales
+                    {t.surtitre}
                 </Typography>
                 <Typography variant="h3" component="h1" sx={{ fontWeight: 800, fontSize: { xs: "2rem", md: "2.75rem" }, mb: 1.5 }}>
                     {titre}
                 </Typography>
                 <Typography sx={{ maxWidth: 720, fontSize: "1.05rem", lineHeight: 1.7 }}>{intro}</Typography>
-                <Stack component="nav" aria-label="Pages légales" direction="row" sx={{ mt: 3, flexWrap: "wrap", gap: 1 }}>
-                    {PAGES_LEGALES.map(({ chemin, libelle }) => {
+                <Stack component="nav" aria-label={t.nav} direction="row" sx={{ mt: 3, flexWrap: "wrap", gap: 1 }}>
+                    {PAGES_LEGALES.map((chemin) => {
                         const courante = pathname.endsWith(chemin);
                         return (
                             <Chip
                                 key={chemin}
                                 component={RouterLink}
                                 to={chemin}
-                                label={libelle}
+                                label={t.pages[chemin]}
                                 clickable
                                 color="primary"
                                 variant={courante ? "filled" : "outlined"}
@@ -66,7 +78,13 @@ export function PageLegale({ titre, intro, children }: { titre: string; intro: R
                     })}
                 </Stack>
             </Box>
-            <Stack spacing={{ xs: 5, md: 6 }}>{children}</Stack>
+            {langue === "en" && (
+                <Alert severity="info" sx={{ mb: 4, borderRadius: "1em" }}>
+                    This page is only available in French, which is the authoritative version.
+                </Alert>
+            )}
+            {/* Le texte juridique n'existe qu'en français : les lecteurs d'écran le prononcent en français */}
+            <Stack spacing={{ xs: 5, md: 6 }} lang="fr">{children}</Stack>
         </Box>
     );
 }

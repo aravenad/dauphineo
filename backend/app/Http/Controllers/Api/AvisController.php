@@ -63,7 +63,7 @@ class AvisController extends Controller
 
         $data['id_utilisateur'] = Auth::id();
 
-        $dejaPublie = response()->json(['message' => 'Vous avez déjà laissé un avis pour ce SPR.'], 409);
+        $dejaPublie = response()->json(['message' => __('Vous avez déjà laissé un avis pour ce SPR.')], 409);
 
         if (Avis::where('id_utilisateur', $data['id_utilisateur'])->where('id_spr', $data['id_spr'])->exists()) {
             return $dejaPublie;
@@ -110,7 +110,7 @@ class AvisController extends Controller
         $avis = Avis::findOrFail($id);
 
         if ($avis->id_utilisateur !== Auth::id()) {
-            return response()->json(['message' => 'Vous n\'êtes pas autorisé à supprimer cet avis.'], 403);
+            return response()->json(['message' => __('Vous n\'êtes pas autorisé à supprimer cet avis.')], 403);
         }
 
         $avis->delete();

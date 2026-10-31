@@ -21,11 +21,11 @@ class CompteExistant extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Vous avez déjà un compte Dauphinéo')
-            ->greeting('Bonjour,')
-            ->line('Quelqu\'un vient de demander la création d\'un compte Dauphinéo avec cette adresse e-mail, mais vous en avez déjà un.')
-            ->action('Me connecter', $this->lien)
-            ->line('Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce message : votre compte n\'a pas changé.')
-            ->salutation('L\'équipe Dauphinéo');
+            ->subject(__('Vous avez déjà un compte Dauphinéo'))
+            ->greeting(__('Bonjour,'))
+            ->line(__('Quelqu\'un vient de demander la création d\'un compte Dauphinéo avec cette adresse e-mail, mais vous en avez déjà un.'))
+            ->action(__('Me connecter'), $this->lien)
+            ->line(__('Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce message : votre compte n\'a pas changé.'))
+            ->salutation(__('L\'équipe Dauphinéo'));
     }
 }

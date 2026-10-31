@@ -6,6 +6,7 @@ import { Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import type { Spr } from "../../api";
 import { formaterMotsCles, nomCommune, normaliser } from "../../utils/format";
+import { useTextes } from "../../i18n";
 
 interface SearchBarCustomProps {
     placeholder?: string;
@@ -54,7 +55,12 @@ function chercher(saisie: string, sprList: Spr[]): Spr[] {
 }
 
 /** Recherche de SPR par commune, au clavier comme à la souris (motif combobox). */
-function SearchBarCustom({ placeholder = "Rechercher...", sprList, isHeader = false }: SearchBarCustomProps) {
+function SearchBarCustom({ placeholder, sprList, isHeader = false }: SearchBarCustomProps) {
+    const t = useTextes({
+        fr: { rechercher: "Rechercher…", resultats: "Résultats de la recherche" },
+        en: { rechercher: "Search…", resultats: "Search results" },
+    });
+    const libelle = placeholder ?? t.rechercher;
     const [saisie, setSaisie] = useState("");
     const [ouvert, setOuvert] = useState(false);
     const [actif, setActif] = useState(-1);
@@ -124,7 +130,7 @@ function SearchBarCustom({ placeholder = "Rechercher...", sprList, isHeader = fa
                     <SearchIcon sx={{ color: "common.black" }} />
                 </SearchIconWrapper>
                 <StyledInputBase
-                    placeholder={placeholder}
+                    placeholder={libelle}
                     value={saisie}
                     onChange={(e) => {
                         setSaisie(e.target.value);
@@ -134,7 +140,7 @@ function SearchBarCustom({ placeholder = "Rechercher...", sprList, isHeader = fa
                     onKeyDown={auClavier}
                     inputProps={{
                         role: "combobox",
-                        "aria-label": placeholder,
+                        "aria-label": libelle,
                         "aria-expanded": resultats.length > 0,
                         "aria-controls": idListe,
                         "aria-autocomplete": "list",
@@ -146,7 +152,7 @@ function SearchBarCustom({ placeholder = "Rechercher...", sprList, isHeader = fa
             <Box
                 id={idListe}
                 role="listbox"
-                aria-label="Résultats de la recherche"
+                aria-label={t.resultats}
                 sx={{
                     position: "absolute",
                     top: "calc(100% + 5px)",

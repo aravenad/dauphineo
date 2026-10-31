@@ -7,9 +7,56 @@ import ChampMotDePasse from "./ChampMotDePasse";
 import Confirmation from "./Confirmation";
 import { erreurMotDePasse } from "./validation";
 import { ButtonCustom } from "./mui_custom";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        modifie: "Votre mot de passe a été modifié. Vos autres sessions ont été déconnectées.",
+        echecModif: "Le mot de passe n'a pas pu être modifié.",
+        echecSuppr: "Le compte n'a pas pu être supprimé.",
+        changer: "Changer de mot de passe",
+        actuel: "Mot de passe actuel",
+        saisirActuel: "Saisissez votre mot de passe actuel.",
+        nouveau: "Nouveau mot de passe",
+        regles: "8 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial.",
+        confirmer: "Confirmer le mot de passe",
+        differents: "Les deux mots de passe ne correspondent pas.",
+        modification: "Modification…",
+        modifier: "Modifier le mot de passe",
+        supprimer: "Supprimer mon compte",
+        avertissement: "Vos réservations et vos avis seront supprimés avec votre compte. Cette action est définitive.",
+        titreSuppr: "Supprimer votre compte ?",
+        definitif: "Supprimer définitivement",
+        garder: "Garder mon compte",
+        motDePasse: "Mot de passe",
+        confirmation: "Vos réservations et vos avis seront supprimés. Cette action est définitive. Saisissez votre mot de passe pour confirmer.",
+    },
+    en: {
+        modifie: "Your password has been changed. Your other sessions have been logged out.",
+        echecModif: "The password could not be changed.",
+        echecSuppr: "The account could not be deleted.",
+        changer: "Change password",
+        actuel: "Current password",
+        saisirActuel: "Enter your current password.",
+        nouveau: "New password",
+        regles: "At least 8 characters, with an uppercase letter, a lowercase letter, a digit and a special character.",
+        confirmer: "Confirm the password",
+        differents: "The two passwords do not match.",
+        modification: "Changing…",
+        modifier: "Change password",
+        supprimer: "Delete my account",
+        avertissement: "Your bookings and reviews will be deleted along with your account. This cannot be undone.",
+        titreSuppr: "Delete your account?",
+        definitif: "Delete permanently",
+        garder: "Keep my account",
+        motDePasse: "Password",
+        confirmation: "Your bookings and reviews will be deleted. This cannot be undone. Enter your password to confirm.",
+    },
+};
 
 function Confidentialite() {
     const { oublier } = useSession();
+    const t = useTextes(TEXTES);
     const navigate = useNavigate();
     const [actuel, setActuel] = useState("");
     const [motDePasse, setMotDePasse] = useState("");
@@ -37,9 +84,9 @@ function Confidentialite() {
             setMotDePasse("");
             setConfirmation("");
             setTouche(false);
-            setMessage({ type: "success", texte: "Votre mot de passe a été modifié. Vos autres sessions ont été déconnectées." });
+            setMessage({ type: "success", texte: t.modifie });
         } catch (erreurApi) {
-            setMessage({ type: "error", texte: messageErreur(erreurApi, "Le mot de passe n'a pas pu être modifié.") });
+            setMessage({ type: "error", texte: messageErreur(erreurApi, t.echecModif) });
         } finally {
             setEnvoi(false);
         }
@@ -60,7 +107,7 @@ function Confidentialite() {
             oublier();
             navigate("/");
         } catch (erreurApi) {
-            setErreurSuppression(messageErreur(erreurApi, "Le compte n'a pas pu être supprimé."));
+            setErreurSuppression(messageErreur(erreurApi, t.echecSuppr));
             setEnSuppression(false);
         }
     };
@@ -69,39 +116,39 @@ function Confidentialite() {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Box component="form" onSubmit={changer} noValidate sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
-                    Changer de mot de passe
+                    {t.changer}
                 </Typography>
                 {message && <Alert severity={message.type} role="status">{message.texte}</Alert>}
                 <ChampMotDePasse
-                    label="Mot de passe actuel"
+                    label={t.actuel}
                     autoComplete="current-password"
                     value={actuel}
                     onChange={(e) => setActuel(e.target.value)}
                     error={touche && !actuel}
-                    helperText={touche && !actuel ? "Saisissez votre mot de passe actuel." : " "}
+                    helperText={touche && !actuel ? t.saisirActuel : " "}
                     fullWidth
                 />
                 <ChampMotDePasse
-                    label="Nouveau mot de passe"
+                    label={t.nouveau}
                     autoComplete="new-password"
                     value={motDePasse}
                     onChange={(e) => setMotDePasse(e.target.value)}
                     error={touche && Boolean(erreur)}
-                    helperText={touche && erreur ? erreur : "8 caractères minimum, avec une majuscule, une minuscule, un chiffre et un caractère spécial."}
+                    helperText={touche && erreur ? erreur : t.regles}
                     fullWidth
                 />
                 <ChampMotDePasse
-                    label="Confirmer le mot de passe"
+                    label={t.confirmer}
                     autoComplete="new-password"
                     value={confirmation}
                     onChange={(e) => setConfirmation(e.target.value)}
                     error={touche && differents}
-                    helperText={touche && differents ? "Les deux mots de passe ne correspondent pas." : " "}
+                    helperText={touche && differents ? t.differents : " "}
                     fullWidth
                 />
                 <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                     <ButtonCustom type="submit" variant="contained" disabled={envoi || !motDePasse}>
-                        {envoi ? "Modification…" : "Modifier le mot de passe"}
+                        {envoi ? t.modification : t.modifier}
                     </ButtonCustom>
                 </Box>
             </Box>
@@ -109,28 +156,28 @@ function Confidentialite() {
             <Divider sx={{ my: 2 }} />
 
             <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
-                Supprimer mon compte
+                {t.supprimer}
             </Typography>
             <Typography sx={{ color: "text.secondary" }}>
-                Vos réservations et vos avis seront supprimés avec votre compte. Cette action est définitive.
+                {t.avertissement}
             </Typography>
             <Box>
                 <ButtonCustom variant="outlined" color="error" onClick={ouvrirSuppression}>
-                    Supprimer mon compte
+                    {t.supprimer}
                 </ButtonCustom>
             </Box>
 
             <Confirmation
                 open={suppression}
-                titre="Supprimer votre compte ?"
-                confirmer="Supprimer définitivement"
-                retour="Garder mon compte"
+                titre={t.titreSuppr}
+                confirmer={t.definitif}
+                retour={t.garder}
                 enCours={enSuppression}
                 erreur={erreurSuppression}
                 desactive={!motDePasseSuppression}
                 champ={
                     <ChampMotDePasse
-                        label="Mot de passe"
+                        label={t.motDePasse}
                         autoComplete="current-password"
                         value={motDePasseSuppression}
                         onChange={(e) => setMotDePasseSuppression(e.target.value)}
@@ -144,7 +191,7 @@ function Confidentialite() {
                 onConfirmer={() => void supprimer()}
                 onFermer={() => setSuppression(false)}
             >
-                Vos réservations et vos avis seront supprimés. Cette action est définitive. Saisissez votre mot de passe pour confirmer.
+                {t.confirmation}
             </Confirmation>
         </Box>
     );

@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router";
 import { Alert, Snackbar } from "@mui/material";
 import api, { ApiError, messageErreur, type Connexion, type Utilisateur } from "./api";
 import { enregistrerToken, lireToken } from "./api/token";
+import { traduire } from "./i18n";
 import ConnexionDialog from "./components/ConnexionDialog";
 
 interface Session {
@@ -58,9 +59,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         api.confirmerInscription(jetonActivation)
             .then((connexion) => {
                 connecter(connexion);
-                setActivation({ ouverte: true, succes: true, message: "Votre compte est activé. Bienvenue sur Dauphinéo !" });
+                setActivation({ ouverte: true, succes: true, message: traduire({ fr: "Votre compte est activé. Bienvenue sur Dauphinéo !", en: "Your account is activated. Welcome to Dauphinéo!" }) });
             })
-            .catch((erreur) => setActivation({ ouverte: true, succes: false, message: messageErreur(erreur, "Votre compte n'a pas pu être activé.") }));
+            .catch((erreur) => setActivation({ ouverte: true, succes: false, message: messageErreur(erreur, traduire({ fr: "Votre compte n'a pas pu être activé.", en: "Your account could not be activated." })) }));
     }, [jetonActivation, setParametres, connecter]);
 
     const fermerActivation = () => setActivation((a) => ({ ...a, ouverte: false }));

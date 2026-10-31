@@ -11,6 +11,28 @@ import SPRMap from "../components/SPRMap";
 import AvisSection from "../components/AvisSection";
 import MotsCles from "../components/MotsCles";
 import ReservationSection from "../components/ReservationSection";
+import { useLangue, useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        retour: "← Retour à la liste des SPR",
+        introuvable: "Ce site patrimonial est introuvable.",
+        description: "Description",
+        visite: (d: string) => `Visite de ${d}`,
+        capacite: (n: number) => `Jusqu'à ${n} visiteurs par créneau`,
+        pmr: "Adapté aux personnes à mobilité réduite",
+        nonPmr: "Non adapté aux personnes à mobilité réduite",
+    },
+    en: {
+        retour: "← Back to the list of sites",
+        introuvable: "This heritage site cannot be found.",
+        description: "Description",
+        visite: (d: string) => `${d} tour`,
+        capacite: (n: number) => `Up to ${n} visitors per time slot`,
+        pmr: "Suitable for people with reduced mobility",
+        nonPmr: "Not suitable for people with reduced mobility",
+    },
+};
 
 function SPR() {
     const id = Number(useParams().id);
@@ -19,12 +41,16 @@ function SPR() {
         [id],
     );
     const nom = spr ? nomCommune(spr.nom_commune) : "";
+    const { langue } = useLangue();
+    const t = useTextes(TEXTES);
+    // Les descriptions restent en français quand la traduction manque : l'attribut lang suit le texte affiché
+    const anglais = langue === "en" && Boolean(spr?.longue_description_en);
 
     useTitre(nom);
 
     const retour = (
         <Button component={RouterLink} to="/explorer" sx={{ color: "text.secondary", textTransform: "none", fontSize: "1rem", mb: 1 }}>
-            ← Retour à la liste des SPR
+            {t.retour}
         </Button>
     );
 
@@ -42,7 +68,7 @@ function SPR() {
         return (
             <Box>
                 {retour}
-                <Alert severity="error">{erreur ?? "Ce site patrimonial est introuvable."}</Alert>
+                <Alert severity="error">{erreur ?? t.introuvable}</Alert>
             </Box>
         );
     }
@@ -54,8 +80,8 @@ function SPR() {
             <Typography variant="h3" component="h1" sx={{ fontWeight: "bold" }}>
                 {nom}
             </Typography>
-            <Typography sx={{ fontSize: "1.2em", color: "text.secondary", mb: 3 }}>
-                {spr.courte_description}
+            <Typography lang={anglais ? "en" : "fr"} sx={{ fontSize: "1.2em", color: "text.secondary", mb: 3 }}>
+                {anglais ? spr.courte_description_en : spr.courte_description}
             </Typography>
 
             <SPRPhotos images={spr.images} commune={nom} />
@@ -63,25 +89,25 @@ function SPR() {
             <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, mt: 6 }}>
                 <Box sx={{ flex: 3, display: "flex", flexDirection: "column", gap: 2 }}>
                     <Typography variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
-                        Description
+                        {t.description}
                     </Typography>
-                    <Typography lang="fr" sx={{ fontSize: "1.1rem", hyphens: "auto" }}>
-                        {spr.longue_description}
+                    <Typography lang={anglais ? "en" : "fr"} sx={{ fontSize: "1.1rem", hyphens: "auto" }}>
+                        {anglais ? spr.longue_description_en : spr.longue_description}
                     </Typography>
                     <MotsCles motCle={spr.mot_cle} taille="medium" />
                     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                        <Chip icon={<ScheduleIcon />} label={`Visite de ${formaterDuree(heures(spr.temps_de_visite))}`} />
-                        <Chip icon={<GroupsIcon />} label={`Jusqu'à ${spr.capacite_de_visite} visiteurs par créneau`} />
+                        <Chip icon={<ScheduleIcon />} label={t.visite(formaterDuree(heures(spr.temps_de_visite)))} />
+                        <Chip icon={<GroupsIcon />} label={t.capacite(spr.capacite_de_visite)} />
                         <Chip
                             icon={<AccessibleIcon />}
-                            label={spr.is_pmr ? "Adapté aux personnes à mobilité réduite" : "Non adapté aux personnes à mobilité réduite"}
+                            label={spr.is_pmr ? t.pmr : t.nonPmr}
                             color={spr.is_pmr ? "primary" : "default"}
                             variant={spr.is_pmr ? "filled" : "outlined"}
                         />
                     </Box>
                 </Box>
                 <Box sx={{ flex: 2 }}>
-                    <SPRMap commune={nom} />
+                    <SPRMap commune={nom} departement={spr.nom_du_departement} />
                 </Box>
             </Box>
 

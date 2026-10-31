@@ -9,6 +9,32 @@ import { attributsImage } from "../utils/images";
 import { mouvementReduit } from "../animations";
 import { nomCommune } from "../utils/format";
 import SearchBarCustom from "./mui_custom/SearchBarCustom";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        section: "Rechercher un site",
+        titre: "Que souhaitez-vous visiter ?",
+        sousTitre: "Accédez aux sites patrimoniaux remarquables du Dauphiné et réservez votre guide",
+        recherche: "Des endroits à visiter dans le Dauphiné",
+        infobulle: "Trouver un site avec le questionnaire",
+        ouvrir: "Ouvrir le questionnaire de recommandation",
+        photo: "Photo : ",
+        reprendre: "Reprendre le défilement des photos",
+        pause: "Mettre en pause le défilement des photos",
+    },
+    en: {
+        section: "Search for a site",
+        titre: "What would you like to visit?",
+        sousTitre: "Discover the remarkable heritage sites of the Dauphiné and book your guide",
+        recherche: "Places to visit in the Dauphiné",
+        infobulle: "Find a site with the questionnaire",
+        ouvrir: "Open the recommendation questionnaire",
+        photo: "Photo: ",
+        reprendre: "Resume the photo slideshow",
+        pause: "Pause the photo slideshow",
+    },
+};
 
 // Le questionnaire n'est téléchargé qu'au survol ou au focus du bouton qui l'ouvre
 const chargerQuestionnaire = () => import("./Questionnaire");
@@ -17,6 +43,7 @@ const Questionnaire = lazy(chargerQuestionnaire);
 const DUREE_DIAPO = 6000;
 
 function SearchSection({ sprList }: { sprList: Spr[] }) {
+    const t = useTextes(TEXTES);
     const [questionnaire, setQuestionnaire] = useState(false);
     // Reste monté après la fermeture pour garder l'animation de sortie et les réponses
     const [questionnaireOuvert, setQuestionnaireOuvert] = useState(false);
@@ -43,7 +70,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
     return (
         <Box
             component="section"
-            aria-label="Rechercher un site"
+            aria-label={t.section}
             sx={{
                 position: "relative",
                 width: "100%",
@@ -88,14 +115,14 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
 
             <Box sx={{ position: "relative", textAlign: "center", color: "common.white", textShadow: "0 2px 12px rgba(0, 0, 0, 0.35)" }}>
                 <Typography variant="h2" component="h1" sx={{ fontWeight: 800, fontSize: { xs: "2rem", sm: "2.6rem", md: "3.75rem" }, hyphens: "manual" }}>
-                    Que souhaitez-vous visiter ?
+                    {t.titre}
                 </Typography>
-                <Typography sx={{ fontSize: { xs: "1.05em", md: "1.3em" } }}>Accédez aux sites patrimoniaux remarquables de l'Isère et réservez votre guide</Typography>
+                <Typography sx={{ fontSize: { xs: "1.05em", md: "1.3em" } }}>{t.sousTitre}</Typography>
             </Box>
 
             <Box sx={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: 1.5, width: "100%", maxWidth: 720 }}>
-                <SearchBarCustom placeholder="Des endroits à visiter en Isère" sprList={sprList} />
-                <Tooltip title="Trouver un site avec le questionnaire">
+                <SearchBarCustom placeholder={t.recherche} sprList={sprList} />
+                <Tooltip title={t.infobulle}>
                     <IconButton
                         onClick={() => {
                             setQuestionnaireOuvert(true);
@@ -103,7 +130,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                         }}
                         onPointerEnter={() => void chargerQuestionnaire()}
                         onFocus={() => void chargerQuestionnaire()}
-                        aria-label="Ouvrir le questionnaire de recommandation"
+                        aria-label={t.ouvrir}
                         sx={{
                             flex: "0 0 auto",
                             width: 64,
@@ -139,7 +166,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                         </Link>
                         {active.image.auteur && (
                             <Typography variant="caption" component="p" sx={{ opacity: 0.9 }}>
-                                Photo : {active.image.auteur}
+                                {t.photo}{active.image.auteur}
                                 {active.image.licence && `, ${active.image.licence}`}
                             </Typography>
                         )}
@@ -147,7 +174,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                     {total > 1 && (
                         <IconButton
                             onClick={() => setEnPause((pause) => !pause)}
-                            aria-label={enPause ? "Reprendre le défilement des photos" : "Mettre en pause le défilement des photos"}
+                            aria-label={enPause ? t.reprendre : t.pause}
                             size="small"
                             sx={{ color: "common.white", backgroundColor: "rgba(22, 37, 33, 0.5)", "&:hover": { backgroundColor: "rgba(22, 37, 33, 0.75)" } }}
                         >

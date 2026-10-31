@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Alert, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import { ButtonCustom } from "./mui_custom";
+import { useTextes } from "../i18n";
 
 interface ConfirmationProps {
     open: boolean;
@@ -20,7 +21,8 @@ interface ConfirmationProps {
 }
 
 /** Remplace window.confirm pour les actions destructrices : même apparence que le reste du site */
-function Confirmation({ open, titre, children, confirmer, retour = "Retour", enCours = false, erreur, champ, desactive = false, onConfirmer, onFermer }: ConfirmationProps) {
+function Confirmation({ open, titre, children, confirmer, retour, enCours = false, erreur, champ, desactive = false, onConfirmer, onFermer }: ConfirmationProps) {
+    const t = useTextes({ fr: { retour: "Retour" }, en: { retour: "Back" } });
     const fermer = () => {
         if (!enCours) onFermer();
     };
@@ -58,7 +60,7 @@ function Confirmation({ open, titre, children, confirmer, retour = "Retour", enC
             <DialogActions sx={{ px: 3, pb: 2, gap: 1, flexWrap: "wrap" }}>
                 {/* Le focus va sur le bouton sans risque : Entrée par réflexe ne détruit rien */}
                 <ButtonCustom onClick={fermer} disabled={enCours} autoFocus={!champ}>
-                    {retour}
+                    {retour ?? t.retour}
                 </ButtonCustom>
                 <ButtonCustom variant="contained" color="error" onClick={onConfirmer} disabled={enCours || desactive}>
                     {confirmer}

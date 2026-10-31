@@ -49,7 +49,7 @@ class ReservationController extends Controller
         $visite = Visite::with('disponibilite')->findOrFail($data['id_visite']);
 
         if ($visite->date_visite->lt(Carbon::today())) {
-            return response()->json(['message' => 'Cette visite est déjà passée.'], 422);
+            return response()->json(['message' => __('Cette visite est déjà passée.')], 422);
         }
 
         try {
@@ -76,14 +76,16 @@ class ReservationController extends Controller
             });
         } catch (QueryException $e) {
             if (str_contains($e->getMessage(), 'Capacité dépassée')) {
-                return response()->json(['message' => 'Il ne reste pas assez de places pour cette visite.'], 409);
+                return response()->json(['message' => __('Il ne reste pas assez de places pour cette visite.')], 409);
             }
             throw $e;
         }
 
         if ($reservation === null) {
             return response()->json([
-                'message' => 'Vous avez déjà '.Reservation::MAX_A_VENIR_PAR_COMPTE.' visites à venir. Annulez-en une pour en réserver une autre.',
+                'message' => __('Vous avez déjà :max visites à venir. Annulez-en une pour en réserver une autre.', [
+                    'max' => Reservation::MAX_A_VENIR_PAR_COMPTE,
+                ]),
             ], 422);
         }
 
@@ -110,11 +112,11 @@ class ReservationController extends Controller
         $reservation = Reservation::with('visite')->findOrFail($id);
 
         if ($reservation->id_utilisateur !== Auth::id()) {
-            return response()->json(['message' => 'Vous n\'êtes pas autorisé à annuler cette réservation.'], 403);
+            return response()->json(['message' => __('Vous n\'êtes pas autorisé à annuler cette réservation.')], 403);
         }
 
         if ($reservation->visite->date_visite->lt(Carbon::today())) {
-            return response()->json(['message' => 'Une visite passée ne peut plus être annulée.'], 422);
+            return response()->json(['message' => __('Une visite passée ne peut plus être annulée.')], 422);
         }
 
         // Le trigger trg_delete_reservation_on_status supprime la ligne et libère les places

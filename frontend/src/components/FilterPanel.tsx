@@ -4,8 +4,33 @@ import { MOTS_CLES, libelleMotCle } from "../utils/format";
 import { ButtonCustom } from "./mui_custom";
 import ToggleButtonCustom from "./mui_custom/ToggleButtonCustom";
 import { DUREE_MAX, FILTRES_VIDES, type Filtres } from "./filtres";
+import { useTextes } from "../i18n";
 
-const REPERES = [1, 2, 3, 4, 5].map((h) => ({ value: h, label: h === DUREE_MAX ? "5 h et +" : `${h} h` }));
+const TEXTES = {
+    fr: {
+        filtres: "Filtres",
+        fermer: "Fermer les filtres",
+        commune: "Commune",
+        themes: "Thèmes",
+        duree: "Durée de visite maximale",
+        plus: "5 h et +",
+        pmr: "Accessible aux personnes à mobilité réduite",
+        reinitialiser: "Réinitialiser",
+        voir: (n: number) => `Voir ${n} site${n > 1 ? "s" : ""}`,
+    },
+    en: {
+        filtres: "Filters",
+        fermer: "Close the filters",
+        commune: "Town",
+        themes: "Themes",
+        duree: "Maximum tour length",
+        plus: "5 h +",
+        pmr: "Accessible to people with reduced mobility",
+        reinitialiser: "Reset",
+        voir: (n: number) => `See ${n} site${n === 1 ? "" : "s"}`,
+    },
+};
+
 
 interface FilterPanelProps {
     open: boolean;
@@ -16,21 +41,23 @@ interface FilterPanelProps {
 }
 
 function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPanelProps) {
+    const t = useTextes(TEXTES);
+    const reperes = [1, 2, 3, 4, 5].map((h) => ({ value: h, label: h === DUREE_MAX ? t.plus : `${h} h` }));
     const modifier = (modification: Partial<Filtres>) => onChange({ ...filtres, ...modification });
 
     return (
-        <Drawer anchor="right" open={open} onClose={onClose} slotProps={{ paper: { sx: { width: { xs: "100%", sm: 380 }, p: 3 } } }}>
+        <Drawer anchor="right" open={open} onClose={onClose} slotProps={{ paper: { sx: { width: { xs: "100%", sm: 380 }, p: 3, borderRadius: { sm: "1.5em 0 0 1.5em" } } } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Typography variant="h5" component="h2" sx={{ fontWeight: 700 }}>
-                    Filtres
+                    {t.filtres}
                 </Typography>
-                <IconButton onClick={onClose} aria-label="Fermer les filtres">
+                <IconButton onClick={onClose} aria-label={t.fermer}>
                     <CloseIcon />
                 </IconButton>
             </Box>
 
             <TextField
-                label="Commune"
+                label={t.commune}
                 value={filtres.recherche}
                 onChange={(e) => modifier({ recherche: e.target.value })}
                 fullWidth
@@ -39,7 +66,7 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
             <Divider sx={{ my: 3 }} />
 
             <Typography component="h3" variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
-                Thèmes
+                {t.themes}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {MOTS_CLES.map((mot) => {
@@ -60,7 +87,7 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
             <Divider sx={{ my: 3 }} />
 
             <Typography id="titre-duree" component="h3" variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
-                Durée de visite maximale
+                {t.duree}
             </Typography>
             <Box sx={{ px: 2 }}>
                 <Slider
@@ -69,7 +96,7 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
                     step={0.5}
                     min={1}
                     max={DUREE_MAX}
-                    marks={REPERES}
+                    marks={reperes}
                     aria-labelledby="titre-duree"
                 />
             </Box>
@@ -78,15 +105,15 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
 
             <FormControlLabel
                 control={<Switch checked={filtres.pmr} onChange={(e) => modifier({ pmr: e.target.checked })} />}
-                label="Accessible aux personnes à mobilité réduite"
+                label={t.pmr}
             />
 
             <Box sx={{ mt: "auto", pt: 3, display: "flex", gap: 1 }}>
                 <ButtonCustom variant="outlined" fullWidth onClick={() => onChange(FILTRES_VIDES)}>
-                    Réinitialiser
+                    {t.reinitialiser}
                 </ButtonCustom>
                 <ButtonCustom variant="contained" fullWidth onClick={onClose}>
-                    Voir {resultats} site{resultats > 1 ? "s" : ""}
+                    {t.voir(resultats)}
                 </ButtonCustom>
             </Box>
         </Drawer>

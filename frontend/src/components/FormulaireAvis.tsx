@@ -1,6 +1,36 @@
 import React, { useState } from "react";
 import { Alert, Box, TextField, Typography, Button, Rating, Stack } from "@mui/material";
 import api, { messageErreur, type Avis } from "../api";
+import { useTextes } from "../i18n";
+
+const TEXTES = {
+  fr: {
+    incomplet: "Donnez une note, un titre et un commentaire.",
+    echec: "L'avis n'a pas pu être publié.",
+    unSeul: "Vous pouvez laisser un seul avis par site.",
+    note: "Note",
+    etoiles: (n: number) => `${n} étoile${n > 1 ? "s" : ""}`,
+    aucune: "Aucune note",
+    titre: "Titre de l'avis",
+    commentaire: "Commentaire",
+    caracteres: (n: number, max: number) => `${n}/${max} caractères`,
+    annuler: "Annuler",
+    publier: "Publier",
+  },
+  en: {
+    incomplet: "Give a rating, a title and a comment.",
+    echec: "The review could not be posted.",
+    unSeul: "You can leave only one review per site.",
+    note: "Rating",
+    etoiles: (n: number) => `${n} star${n > 1 ? "s" : ""}`,
+    aucune: "No rating",
+    titre: "Review title",
+    commentaire: "Comment",
+    caracteres: (n: number, max: number) => `${n}/${max} characters`,
+    annuler: "Cancel",
+    publier: "Post",
+  },
+};
 
 interface FormulaireAvisProps {
   sprId: number;
@@ -17,11 +47,12 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ sprId, onPublie, onAnnu
   const [commentaire, setCommentaire] = useState("");
   const [erreur, setErreur] = useState("");
   const [envoi, setEnvoi] = useState(false);
+  const t = useTextes(TEXTES);
 
   const envoyer = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!note || !titre.trim() || !commentaire.trim()) {
-      setErreur("Donnez une note, un titre et un commentaire.");
+      setErreur(t.incomplet);
       return;
     }
 
@@ -30,7 +61,7 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ sprId, onPublie, onAnnu
     try {
       onPublie(await api.publierAvis({ titre: titre.trim(), commentaire: commentaire.trim(), note, id_spr: sprId }));
     } catch (e) {
-      setErreur(messageErreur(e, "L'avis n'a pas pu être publié."));
+      setErreur(messageErreur(e, t.echec));
     } finally {
       setEnvoi(false);
     }
@@ -40,51 +71,51 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ sprId, onPublie, onAnnu
     <Box component="form" onSubmit={envoyer} noValidate>
       <Stack spacing={2}>
         <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          Vous pouvez laisser un seul avis par site.
+          {t.unSeul}
         </Typography>
 
         <Box component="fieldset" sx={{ border: 0, m: 0, p: 0 }}>
           <Typography component="legend" sx={{ mb: 1 }}>
-            Note
+            {t.note}
           </Typography>
           <Rating
             name="note"
             value={note}
             onChange={(_, valeur) => setNote(valeur)}
-            getLabelText={(valeur) => `${valeur} étoile${valeur > 1 ? "s" : ""}`}
-            emptyLabelText="Aucune note"
+            getLabelText={t.etoiles}
+            emptyLabelText={t.aucune}
             size="large"
           />
         </Box>
 
         <TextField
-          label="Titre de l'avis"
+          label={t.titre}
           value={titre}
           onChange={(e) => setTitre(e.target.value.slice(0, MAX_TITRE))}
           required
           fullWidth
-          helperText={`${titre.length}/${MAX_TITRE} caractères`}
+          helperText={t.caracteres(titre.length, MAX_TITRE)}
         />
 
         <TextField
-          label="Commentaire"
+          label={t.commentaire}
           multiline
           minRows={4}
           value={commentaire}
           onChange={(e) => setCommentaire(e.target.value.slice(0, MAX_COMMENTAIRE))}
           required
           fullWidth
-          helperText={`${commentaire.length}/${MAX_COMMENTAIRE} caractères`}
+          helperText={t.caracteres(commentaire.length, MAX_COMMENTAIRE)}
         />
 
         {erreur && <Alert severity="error">{erreur}</Alert>}
 
         <Stack direction="row" spacing={2} sx={{ justifyContent: "flex-end" }}>
           <Button onClick={onAnnuler} sx={{ textTransform: "none" }}>
-            Annuler
+            {t.annuler}
           </Button>
           <Button type="submit" variant="contained" disabled={envoi} sx={{ textTransform: "none", borderRadius: "2em" }}>
-            Publier
+            {t.publier}
           </Button>
         </Stack>
       </Stack>

@@ -1,18 +1,46 @@
 import { useState } from "react";
-import { Avatar, Box, IconButton, Link, ListItemIcon, Menu, MenuItem, Stack, Tooltip, useScrollTrigger } from "@mui/material";
+import { Avatar, Box, ButtonBase, IconButton, Link, ListItemIcon, Menu, MenuItem, Stack, Tooltip, useScrollTrigger } from "@mui/material";
 import { AccountCircleOutlined, Logout } from "@mui/icons-material";
-import { Link as RouterLink, useNavigate } from "react-router";
+import { Link as RouterLink, NavLink, useNavigate } from "react-router";
 import LogoVert from "../assets/dauphineo_logo.svg";
 import { ButtonCustom, SearchBarCustom } from "./mui_custom";
 import api from "../api";
 import { useApi } from "../hooks";
 import { useSession } from "../session";
+import { useLangue, useTextes } from "../i18n";
+
+const TEXTES = {
+    fr: {
+        accueil: "Dauphinéo, accueil",
+        recherche: "Recherche rapide",
+        explorer: "Explorer",
+        compte: "Mon compte",
+        ouvrirMenu: "Ouvrir le menu du compte",
+        deconnexion: "Se déconnecter",
+        connexion: "Se connecter",
+        autreLangue: "EN",
+        changerLangue: "Switch to English",
+    },
+    en: {
+        accueil: "Dauphinéo, home",
+        recherche: "Quick search",
+        explorer: "Explore",
+        compte: "My account",
+        ouvrirMenu: "Open the account menu",
+        deconnexion: "Log out",
+        connexion: "Log in",
+        autreLangue: "FR",
+        changerLangue: "Passer en français",
+    },
+};
 
 function Header() {
     const { utilisateur, verification, ouvrirConnexion, deconnecter } = useSession();
     const { donnees: sprList } = useApi(() => api.listSpr(), []);
     const [menu, setMenu] = useState<HTMLElement | null>(null);
     const navigate = useNavigate();
+    const { langue, changerLangue } = useLangue();
+    const t = useTextes(TEXTES);
     // Une ombre détache l'en-tête fixé du contenu qui défile dessous
     const defile = useScrollTrigger({ disableHysteresis: true, threshold: 8 });
 
@@ -40,22 +68,57 @@ function Header() {
                 minHeight: { md: "100px" },
             }}
         >
-            <Link component={RouterLink} to="/" aria-label="Dauphinéo, accueil">
-                <Box component="img" src={LogoVert} alt="" sx={{ display: "block", height: { xs: "48px", md: "60px" } }} />
+            <Link component={RouterLink} to="/" aria-label={t.accueil}>
+                <Box component="img" src={LogoVert} alt="" sx={{ display: "block", height: { xs: "51px", md: "64px" } }} />
             </Link>
 
             <Box sx={{ order: { xs: 3, md: 0 }, width: { xs: "100%", md: "auto" }, display: "flex", justifyContent: "center" }}>
-                <SearchBarCustom placeholder="Recherche rapide" sprList={sprList ?? []} isHeader />
+                <SearchBarCustom placeholder={t.recherche} sprList={sprList ?? []} isHeader />
             </Box>
 
-            <Stack component="nav" direction="row" spacing={3} sx={{ alignItems: "center" }}>
-                <Link component={RouterLink} to="/explorer" variant="body1" sx={{ fontWeight: 500, color: "common.black", textDecoration: "none" }}>
-                    Explorer
+            <Stack component="nav" direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
+                <Link
+                    component={NavLink}
+                    to="/explorer"
+                    variant="body1"
+                    sx={{
+                        fontWeight: 500,
+                        color: "common.black",
+                        textDecoration: "none",
+                        px: 2,
+                        py: 1,
+                        borderRadius: "2em",
+                        transition: "background-color 0.2s ease, color 0.2s ease",
+                        "&:hover, &[aria-current='page']": { backgroundColor: "primary.light", color: "primary.dark" },
+                    }}
+                >
+                    {t.explorer}
                 </Link>
+                <ButtonBase
+                    onClick={() => changerLangue(langue === "fr" ? "en" : "fr")}
+                    aria-label={t.changerLangue}
+                    lang={langue === "fr" ? "en" : "fr"}
+                    sx={{
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                        letterSpacing: "0.05em",
+                        color: "primary.dark",
+                        minWidth: 44,
+                        height: 36,
+                        px: 1.5,
+                        borderRadius: "2em",
+                        border: "1px solid",
+                        borderColor: "primary.main",
+                        transition: "background-color 0.2s ease",
+                        "&:hover, &.Mui-focusVisible": { backgroundColor: "primary.light" },
+                    }}
+                >
+                    {t.autreLangue}
+                </ButtonBase>
                 {utilisateur ? (
                     <>
-                        <Tooltip title="Mon compte">
-                            <IconButton onClick={(e) => setMenu(e.currentTarget)} aria-label="Ouvrir le menu du compte" aria-haspopup="menu">
+                        <Tooltip title={t.compte}>
+                            <IconButton onClick={(e) => setMenu(e.currentTarget)} aria-label={t.ouvrirMenu} aria-haspopup="menu">
                                 <Avatar sx={{ bgcolor: "info.main", width: 35, height: 35, fontSize: "1rem" }}>
                                     {utilisateur.prenom.charAt(0).toUpperCase()}
                                 </Avatar>
@@ -64,17 +127,17 @@ function Header() {
                         <Menu anchorEl={menu} open={Boolean(menu)} onClose={() => setMenu(null)}>
                             <MenuItem onClick={() => { setMenu(null); navigate("/mon-compte"); }}>
                                 <ListItemIcon><AccountCircleOutlined fontSize="small" /></ListItemIcon>
-                                Mon compte
+                                {t.compte}
                             </MenuItem>
                             <MenuItem onClick={() => { setMenu(null); void deconnecter().then(() => navigate("/")); }}>
                                 <ListItemIcon><Logout fontSize="small" /></ListItemIcon>
-                                Se déconnecter
+                                {t.deconnexion}
                             </MenuItem>
                         </Menu>
                     </>
                 ) : (
-                    <ButtonCustom variant="contained" onClick={ouvrirConnexion} disabled={verification}>
-                        Se connecter
+                    <ButtonCustom variant="contained" onClick={ouvrirConnexion} disabled={verification} sx={{ whiteSpace: "nowrap" }}>
+                        {t.connexion}
                     </ButtonCustom>
                 )}
             </Stack>

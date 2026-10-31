@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import { modeDemo } from "./api";
 import { useTitre } from "./hooks";
 import { entree } from "./animations";
+import { useTextes } from "./i18n";
 
 // L'accueil part avec le premier fichier ; les autres pages ne sont téléchargées qu'à la première visite
 const Explorer = lazy(() => import("./pages/Explorer"));
@@ -17,16 +18,30 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const MentionsLeg = lazy(() => import("./pages/MentionsLeg"));
 const CGU = lazy(() => import("./pages/CGU"));
 function PageIntrouvable() {
-    useTitre("Page introuvable");
+    const t = useTextes({
+        fr: { titre: "Page introuvable", texte: "Cette page n'existe pas." },
+        en: { titre: "Page not found", texte: "This page does not exist." },
+    });
+    useTitre(t.titre);
     return (
         <Typography variant="h4" component="h1" sx={{ textAlign: "center", padding: "3em 0" }}>
-            Cette page n'existe pas.
+            {t.texte}
         </Typography>
     );
 }
 
 function App() {
     const { pathname } = useLocation();
+    const t = useTextes({
+        fr: {
+            demo: "Version de démonstration : les données sont simulées dans votre navigateur et les recommandations viennent du moteur local.",
+            chargement: "Chargement de la page",
+        },
+        en: {
+            demo: "Demo version: the data is simulated in your browser and the recommendations come from the local engine.",
+            chargement: "Loading the page",
+        },
+    });
 
     // Chaque nouvelle page s'ouvre en haut
     useEffect(() => {
@@ -38,13 +53,12 @@ function App() {
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
             {modeDemo && (
                 <Alert severity="info" sx={{ borderRadius: 0, justifyContent: "center" }}>
-                    Version de démonstration : les données sont simulées dans votre navigateur et les recommandations
-                    viennent du moteur local.
+                    {t.demo}
                 </Alert>
             )}
             <Header />
             <Container component="main" sx={{ flex: "1 0 auto", padding: { xs: "1em", sm: "1.5em", md: "2em" } }} disableGutters>
-                <Suspense fallback={<Skeleton variant="rounded" height={400} aria-label="Chargement de la page" />}>
+                <Suspense fallback={<Skeleton variant="rounded" height={400} aria-label={t.chargement} />}>
                     {/* La clé recrée le bloc à chaque page, ce qui rejoue son animation d'arrivée */}
                     <Box key={pathname} sx={entree}>
                         <Routes>

@@ -87,7 +87,7 @@ class AuthController extends Controller
         ]);
 
         if (! Auth::attempt($data)) {
-            return response()->json(['message' => 'Adresse e-mail ou mot de passe incorrect.'], 401);
+            return response()->json(['message' => __('Adresse e-mail ou mot de passe incorrect.')], 401);
         }
 
         /** @var Utilisateur $user */
@@ -150,7 +150,7 @@ class AuthController extends Controller
                 ->notify(new ConfirmationInscription($frontend.'/?inscription='.rawurlencode($jeton)));
         }, 3600);
 
-        return response()->json(['message' => self::MESSAGE_INSCRIPTION], 202);
+        return response()->json(['message' => __(self::MESSAGE_INSCRIPTION)], 202);
     }
 
     /**
@@ -174,14 +174,14 @@ class AuthController extends Controller
         try {
             $inscription = json_decode(Crypt::decryptString((string) $request->input('jeton')), true, flags: JSON_THROW_ON_ERROR);
         } catch (DecryptException|\JsonException) {
-            return response()->json(['message' => 'Ce lien d\'activation n\'est pas valide. Vérifiez qu\'il a été copié en entier.'], 422);
+            return response()->json(['message' => __('Ce lien d\'activation n\'est pas valide. Vérifiez qu\'il a été copié en entier.')], 422);
         }
 
         if ($inscription['expire'] < Carbon::now()->getTimestamp()) {
-            return response()->json(['message' => 'Ce lien d\'activation a expiré. Inscrivez-vous de nouveau pour en recevoir un autre.'], 422);
+            return response()->json(['message' => __('Ce lien d\'activation a expiré. Inscrivez-vous de nouveau pour en recevoir un autre.')], 422);
         }
 
-        $dejaActif = response()->json(['message' => 'Ce compte est déjà activé. Connectez-vous avec votre adresse e-mail et votre mot de passe.'], 409);
+        $dejaActif = response()->json(['message' => __('Ce compte est déjà activé. Connectez-vous avec votre adresse e-mail et votre mot de passe.')], 409);
         if (Utilisateur::where('email', $inscription['email'])->exists()) {
             return $dejaActif;
         }

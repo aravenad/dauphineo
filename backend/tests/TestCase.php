@@ -11,4 +11,12 @@ abstract class TestCase extends BaseTestCase
 
     /** Chaque test part des données de démonstration (CSV de database/data). */
     protected bool $seed = true;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Symfony simule un navigateur anglais (« en-us ») ; le site, lui, envoie toujours sa langue
+        $this->withHeader('Accept-Language', 'fr');
+    }
 }

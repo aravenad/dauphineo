@@ -6,7 +6,8 @@ const AccordionCustom = styled((props: AccordionProps) => (
 ))(({ theme }) => ({
   boxShadow: "none",
   backgroundColor: theme.palette.grey[50],
-  borderRadius: "8px",
+  borderRadius: "1em",
+  overflow: "hidden",
   "&:not(:last-child)": {
     borderBottom: 0,
   },

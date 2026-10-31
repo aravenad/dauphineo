@@ -68,3 +68,39 @@ it('envoie un e-mail entièrement en français', function () {
         ->not->toContain('having trouble')
         ->not->toContain('All rights reserved');
 });
+
+it('répond en anglais quand le site le demande', function () {
+    $this->getJson('/api/utilisateur', ['Accept-Language' => 'en'])
+        ->assertUnauthorized()
+        ->assertHeader('Vary')
+        ->assertExactJson(['message' => 'Log in to continue.']);
+
+    $this->getJson('/api/inconnue', ['Accept-Language' => 'en-GB,en;q=0.9'])
+        ->assertNotFound()
+        ->assertExactJson(['message' => 'This resource does not exist.']);
+});
+
+it('reste en français pour une langue non prise en charge', function () {
+    $this->getJson('/api/utilisateur', ['Accept-Language' => 'de'])
+        ->assertExactJson(['message' => 'Connectez-vous pour continuer.']);
+});
+
+it('traduit la validation en anglais avec le nom des champs', function () {
+    $reponse = $this->postJson('/api/auth/register', ['nom' => 'R2D2', 'email' => 'pas-une-adresse'], ['Accept-Language' => 'en'])
+        ->assertUnprocessable();
+
+    expect($reponse->json('errors.mot_de_passe.0'))->toBe('The password field is required.')
+        ->and($reponse->json('errors.prenom.0'))->toBe('The first name field is required.')
+        ->and($reponse->json('errors.nom.0'))->toBe('The last name may only contain letters, spaces, apostrophes and hyphens.');
+});
+
+it('envoie l\'e-mail d\'activation dans la langue du site', function () {
+    app()->setLocale('en');
+    $html = (string) (new ConfirmationInscription('http://localhost:5173/?inscription=abc'))
+        ->toMail(new AnonymousNotifiable)
+        ->render();
+
+    expect($html)->toContain('Activate my account')
+        ->toContain('The Dauphinéo team')
+        ->not->toContain('Bonjour');
+});

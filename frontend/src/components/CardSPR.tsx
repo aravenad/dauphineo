@@ -9,6 +9,7 @@ import { nomCommune } from "../utils/format";
 import { attributsImage } from "../utils/images";
 import { useImageChargee } from "../animations";
 import MotsCles from "./MotsCles";
+import { locale, useTextes } from "../i18n";
 
 interface CardSPRProps {
     spr: Spr;
@@ -19,12 +20,26 @@ interface CardSPRProps {
 }
 
 function SousTitre({ variante, reservations, noteMoyenne }: Omit<CardSPRProps, "spr">) {
+    const t = useTextes({
+        fr: {
+            reservations: (n: number) => `${n} réservation${n > 1 ? "s" : ""}`,
+            pasReserve: "Pas encore réservé",
+            note: (n: string) => `Note moyenne : ${n} / 5`,
+            pasNote: "Pas encore noté",
+        },
+        en: {
+            reservations: (n: number) => `${n} booking${n > 1 ? "s" : ""}`,
+            pasReserve: "Not booked yet",
+            note: (n: string) => `Average rating: ${n} / 5`,
+            pasNote: "Not rated yet",
+        },
+    });
     if (variante === "booked") {
         return (
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 <PersonIcon fontSize="small" aria-hidden />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {reservations ? `${reservations} réservation${reservations > 1 ? "s" : ""}` : "Pas encore réservé"}
+                    {reservations ? t.reservations(reservations) : t.pasReserve}
                 </Typography>
             </Box>
         );
@@ -33,7 +48,7 @@ function SousTitre({ variante, reservations, noteMoyenne }: Omit<CardSPRProps, "
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <StarIcon fontSize="small" sx={{ color: "info.main" }} aria-hidden />
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                {noteMoyenne ? `Note moyenne : ${noteMoyenne.toFixed(1).replace(".", ",")} / 5` : "Pas encore noté"}
+                {noteMoyenne ? t.note(noteMoyenne.toLocaleString(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 })) : t.pasNote}
             </Typography>
         </Box>
     );

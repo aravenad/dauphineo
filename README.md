@@ -1,9 +1,9 @@
 # SAÉ 3.01 – Dauphinéo (équipe 8)
 
 Projet de deuxième année de BUT Informatique (IUT2 Grenoble, novembre 2024 à janvier 2025) : un site de réservation de
-visites guidées dans les sites patrimoniaux remarquables (SPR) de l'Isère. On y explore une vingtaine de communes, on
-réserve un créneau avec un guide, on laisse un avis, et un questionnaire recommande les sites qui correspondent à ses
-envies. On l'a appelé **Dauphinéo**, avec React pour le site et Laravel pour l'API.
+visites guidées dans les sites patrimoniaux remarquables (SPR) du Dauphiné. On y explore 46 communes de l'Isère, de la
+Drôme et des Hautes-Alpes, on réserve un créneau avec un guide, on laisse un avis, et un questionnaire recommande les
+sites qui correspondent à ses envies. On l'a appelé **Dauphinéo**, avec React pour le site et Laravel pour l'API.
 
 La version rendue en janvier 2025 est marquée par le tag [`rendu-code`](https://github.com/aravenad/dauphineo/tree/rendu-code).
 J'ai repris le projet seul en octobre 2026, après la fermeture des serveurs de l'IUT, pour brancher toutes les pages sur
@@ -22,13 +22,15 @@ Chaque partie reprend un cas d'utilisation du dossier de conception (phase 2) :
   et les places restantes sont vérifiées
 - **Avis** (UC4, UC5) : note de 1 à 5 et commentaire, un avis par site et par visiteur
 - **Explorer** (UC6) : filtres par commune, thème, durée de visite et accessibilité PMR
-- **Questionnaire** (UC7) : cinq questions (taille du groupe, thèmes, durée, PMR, type d'expérience), puis des sites
-  classés avec les réponses qu'ils satisfont ; Claude Haiku 5.5 choisit trois sites quand une clé d'API est configurée,
-  le moteur local en classe jusqu'à six sinon
+- **Questionnaire** (UC7) : cinq questions (taille du groupe, thèmes, cadre, durée, PMR), puis jusqu'à six sites
+  classés avec les réponses qu'ils satisfont ; Claude Haiku 5.5 rédige la raison de chaque site quand une clé d'API
+  est configurée
 - **Mon compte** : réservations à venir et passées, annulation, profil, mot de passe et suppression du compte
 
 S'y ajoutent une recherche rapide dans l'en-tête, la FAQ, les mentions légales, la politique de confidentialité et les
-CGU. Le site s'adapte aux écrans de téléphone.
+CGU. Le site s'adapte aux écrans de téléphone et existe en français et en anglais : le bouton de l'en-tête change la
+langue des pages, des descriptions des sites, des messages de l'API et des e-mails. Les pages légales restent en
+français, seule version qui fait foi.
 
 ## Lancer le projet
 
@@ -78,8 +80,8 @@ trouve le lien d'activation envoyé après une inscription. Les liens pointent v
 
 ### La recommandation par Claude
 
-Elle est facultative : sans clé, le moteur local classe les sites selon les thèmes, la durée, l'accessibilité, la taille
-du groupe et le type d'expérience. Pour l'activer, créez une clé sur la [console Anthropic](https://console.anthropic.com/)
+Elle est facultative : le moteur local choisit et classe toujours les sites, Claude ne fait qu'en rédiger les raisons.
+Sans clé, chaque site affiche la durée de visite et les réponses qu'il satisfait. Pour l'activer, créez une clé sur la [console Anthropic](https://console.anthropic.com/)
 (l'abonnement Claude.ai ne couvre pas l'API ; pensez à fixer une limite de dépenses), puis ajoutez-la dans
 `backend/.env` :
 
@@ -88,8 +90,8 @@ ANTHROPIC_API_KEY=votre-clé
 ANTHROPIC_MODEL=claude-haiku-5-5
 ```
 
-La clé reste côté serveur et n'est jamais envoyée au navigateur. Si l'appel échoue ou dépasse 15 secondes, l'API se
-rabat sur le moteur local et l'indique dans sa réponse.
+La clé reste côté serveur et n'est jamais envoyée au navigateur. Si l'appel échoue ou dépasse 15 secondes, l'API renvoie
+les mêmes sites sans les raisons de Claude et l'indique dans sa réponse.
 
 ## Les autres commandes
 
@@ -148,9 +150,11 @@ Sanctum. La démonstration remplace l'API par une version simulée dans le navig
 le seeder, pour que les deux versions montrent les mêmes sites.
 
 Le moteur de recommandation local existe en deux exemplaires, en PHP pour l'API et en TypeScript pour la démonstration.
-Il note chaque site selon les thèmes choisis, la durée, l'accessibilité PMR, la capacité des guides et le type
-d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude est configuré, sa réponse est vérifiée
-(identifiants connus, sites distincts) avant d'être renvoyée, et le moteur local reste en repli.
+Il est déterministe : la taille du groupe et l'accessibilité PMR écartent les sites qui ne conviennent pas, puis chaque
+site gagne 3 points par thème choisi qu'il propose, 3 points si son cadre (ville, village, montagne) correspond et
+jusqu'à 2 points selon l'écart à la durée voulue. À score égal, le site dont les thèmes recoupent le plus ceux du
+visiteur passe devant, puis le plus petit identifiant. Quand Claude est configuré, il reçoit ces sites dans l'ordre et
+ne rédige que leurs raisons, dans la langue du site ; seules celles des sites demandés sont gardées.
 
 ### Sécurité
 
@@ -175,8 +179,8 @@ d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude es
 
 ### Performance et animations
 
-- Les photos viennent de Wikimedia Commons à la taille qui convient à l'écran (`srcset`) : les 20 vignettes de la page
-  Explorer pèsent 0,6 Mo au lieu de 7,2 Mo.
+- Les photos viennent de Wikimedia Commons à la taille qui convient à l'écran (`srcset`) : chaque vignette de la page
+  Explorer pèse environ 30 ko au lieu de 360 ko.
 - L'accueil ne télécharge que son propre code ; les autres pages et le questionnaire arrivent à la demande.
 - La police Satoshi est servie en WOFF2 (25 ko par graisse au lieu de 73 ko) et les deux graisses de l'accueil sont
   préchargées.
@@ -203,6 +207,6 @@ ARAVENA BRAVO Damien (chef de projet), JACOB Timothé, BENDRIS Nael, TIERRIE Axe
 - Sujet : SAÉ 3.01 du département Informatique de l'IUT2 Grenoble
 - Site : React 19, TypeScript, Material UI 9, React Router 8, Axios et Vite 8 ; police Satoshi
 - API : Laravel 12, Sanctum, Pest et PostgreSQL 17 ; SDK PHP d'Anthropic pour la recommandation
-- Photos : les 60 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre
+- Photos : les 217 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre
   (CC BY, CC BY-SA). Le fichier `backend/database/data/images.csv` garde pour chacune l'auteur, la licence et la page
   d'origine ; le site affiche le crédit sous chaque photo et la liste complète dans les mentions légales.
