@@ -36,7 +36,7 @@ CGU. Le site s'adapte aux écrans de téléphone.
 
 Elle tourne sans serveur : les données viennent des fichiers CSV du dépôt, et tout ce que vous faites (compte,
 réservations, avis) reste dans votre navigateur. Les recommandations viennent du moteur local. Le bouton « Utiliser le
-compte de démo » de la fenêtre de connexion remplit les identifiants. Pour la construire soi-même, il faut Node.js 22 :
+compte de démo » de la fenêtre de connexion remplit les identifiants. Pour la construire soi-même, il faut Node.js 24 :
 
 ```bash
 cd frontend
@@ -47,7 +47,7 @@ npx vite preview --mode pages
 
 ### La version complète
 
-Il faut PHP 8.2 ou plus récent avec l'extension `pdo_pgsql`, Composer, PostgreSQL 17 et Node.js 22. Pour l'API :
+Il faut PHP 8.2 ou plus récent avec l'extension `pdo_pgsql`, Composer, PostgreSQL 17 et Node.js 24. Pour l'API :
 
 ```bash
 cd backend
@@ -196,12 +196,12 @@ d'expérience, puis renvoie les réponses que le site satisfait. Quand Claude es
 
 ## Équipe
 
-ARAVENA BRAVO Damien, JACOB Timothé, BENDRIS Nael, TIERRIE Axel, BENKHEIRA Lilya, DESCHAUX-BEAUME Maëlys, SEKMA Sarah.
+ARAVENA BRAVO Damien (chef de projet), JACOB Timothé, BENDRIS Nael, TIERRIE Axel, BENKHEIRA Lilya, DESCHAUX-BEAUME Maëlys, SEKMA Sarah.
 
 ## Crédits
 
 - Sujet : SAÉ 3.01 du département Informatique de l'IUT2 Grenoble
-- Site : React 18, TypeScript, Material UI 6, React Router 7, Axios et Vite 6 ; police Satoshi
+- Site : React 19, TypeScript, Material UI 9, React Router 8, Axios et Vite 8 ; police Satoshi
 - API : Laravel 12, Sanctum, Pest et PostgreSQL 17 ; SDK PHP d'Anthropic pour la recommandation
 - Photos : les 60 photos des sites viennent de [Wikimedia Commons](https://commons.wikimedia.org/), sous licence libre
   (CC BY, CC BY-SA). Le fichier `backend/database/data/images.csv` garde pour chacune l'auteur, la licence et la page
