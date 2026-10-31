@@ -7,6 +7,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Chaque action est épinglée par empreinte de commit : un tag peut être déplacé, pas un commit.
+# Dependabot propose les nouvelles versions sous la même forme.
 permissions:
   contents: read
 
@@ -36,13 +38,16 @@ jobs:
     env:
       DB_PASSWORD: postgres
     steps:
-      - uses: actions/checkout@v6
-      - uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
         with:
           php-version: "8.4"
           extensions: pdo_pgsql
           coverage: none
       - run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Audit des dépendances PHP
+        # doctrine/annotations, abandonné mais sans faille connue, vient de la documentation Swagger
+        run: composer audit --locked --abandoned=report
       - run: cp .env.example .env && php artisan key:generate
       - run: php artisan test
 
@@ -53,16 +58,20 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      # Seules les dépendances livrées dans le site sont bloquantes : les outils de développement
+      # ne tournent qu'ici, sur le code du dépôt, et Dependabot les suit.
+      - name: Audit des dépendances npm
+        run: npm audit --omit=dev --audit-level=moderate
       - run: npm run lint
       - run: npm run build -- --mode pages
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         if: github.event_name != 'pull_request'
         with:
           path: frontend/dist
@@ -80,4 +89,4 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
