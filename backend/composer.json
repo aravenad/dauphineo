@@ -15,7 +15,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9",
+        "laravel/tinker": "^3.0",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest-plugin-laravel": "^3.1",
         "vlucas/phpdotenv": "^5.6"
