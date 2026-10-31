@@ -19,9 +19,9 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
     const modifier = (modification: Partial<Filtres>) => onChange({ ...filtres, ...modification });
 
     return (
-        <Drawer anchor="right" open={open} onClose={onClose} PaperProps={{ sx: { width: { xs: "100%", sm: 380 }, p: 3 } }}>
+        <Drawer anchor="right" open={open} onClose={onClose} slotProps={{ paper: { sx: { width: { xs: "100%", sm: 380 }, p: 3 } } }}>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography variant="h5" component="h2" fontWeight={700}>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 700 }}>
                     Filtres
                 </Typography>
                 <IconButton onClick={onClose} aria-label="Fermer les filtres">
@@ -38,7 +38,7 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
 
             <Divider sx={{ my: 3 }} />
 
-            <Typography component="h3" variant="h6" fontWeight={700} gutterBottom>
+            <Typography component="h3" variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
                 Thèmes
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -59,7 +59,7 @@ function FilterPanel({ open, filtres, resultats, onChange, onClose }: FilterPane
 
             <Divider sx={{ my: 3 }} />
 
-            <Typography id="titre-duree" component="h3" variant="h6" fontWeight={700} gutterBottom>
+            <Typography id="titre-duree" component="h3" variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
                 Durée de visite maximale
             </Typography>
             <Box sx={{ px: 2 }}>

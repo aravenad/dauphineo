@@ -66,10 +66,10 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
 
     return (
         <Paper component="section" aria-labelledby="titre-reservation" variant="outlined" sx={{ p: { xs: 2, md: 3 }, borderRadius: "1em" }}>
-            <Typography id="titre-reservation" variant="h5" component="h2" fontWeight="bold" gutterBottom>
+            <Typography id="titre-reservation" variant="h5" component="h2" gutterBottom sx={{ fontWeight: "bold" }}>
                 Réserver une visite guidée
             </Typography>
-            <Typography color="text.secondary" gutterBottom>
+            <Typography gutterBottom sx={{ color: "text.secondary" }}>
                 {formaterPrix(PRIX_PAR_PERSONNE)} par personne, avec un guide du site.
             </Typography>
 
@@ -93,7 +93,7 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
             ) : (
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
                     <Box>
-                        <Typography component="h3" fontWeight={500} gutterBottom>
+                        <Typography component="h3" gutterBottom sx={{ fontWeight: 500 }}>
                             Date
                         </Typography>
                         <Box sx={{ display: "flex", gap: 1, overflowX: "auto", pb: 1 }} role="group" aria-label="Choisir une date">
@@ -114,7 +114,7 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
                     </Box>
 
                     <Box>
-                        <Typography component="h3" fontWeight={500} gutterBottom>
+                        <Typography component="h3" gutterBottom sx={{ fontWeight: 500 }}>
                             Créneau{jour && ` du ${formaterDate(jour)}`}
                         </Typography>
                         <ToggleButtonGroup
@@ -129,7 +129,7 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
                                     <span>
                                         {formaterHeure(v.heure_debut)} à {formaterHeure(v.heure_fin)}
                                     </span>
-                                    <Typography variant="caption" color="text.secondary">
+                                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
                                         {v.capacite_actuelle} place{v.capacite_actuelle > 1 ? "s" : ""} · {v.guide_prenom} {v.guide_nom}
                                     </Typography>
                                 </ToggleButton>
@@ -139,10 +139,10 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
 
                     <Box>
                         <Box sx={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 2 }}>
-                            <Typography id="titre-personnes" component="h3" fontWeight={500}>
+                            <Typography id="titre-personnes" component="h3" sx={{ fontWeight: 500 }}>
                                 Nombre de personnes
                             </Typography>
-                            <Typography fontWeight={700} color="primary">
+                            <Typography color="primary" sx={{ fontWeight: 700 }}>
                                 {personnes} personne{personnes > 1 ? "s" : ""}
                             </Typography>
                         </Box>
@@ -162,7 +162,7 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
                             />
                         </Box>
                         {visite && (
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" sx={{ color: "text.secondary" }}>
                                 {visite.capacite_actuelle} place{visite.capacite_actuelle > 1 ? "s" : ""} restante{visite.capacite_actuelle > 1 ? "s" : ""} sur ce créneau
                             </Typography>
                         )}
@@ -180,7 +180,7 @@ function ReservationSection({ sprId }: ReservationSectionProps) {
                             borderColor: "grey.300",
                         }}
                     >
-                        <Typography fontWeight={700} fontSize="1.2em">
+                        <Typography sx={{ fontWeight: 700, fontSize: "1.2em" }}>
                             Total : {formaterPrix(personnes * PRIX_PAR_PERSONNE)}
                         </Typography>
                         <ButtonCustom

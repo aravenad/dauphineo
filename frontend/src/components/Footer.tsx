@@ -43,7 +43,7 @@ function Footer() {
       <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 2, md: 0 }} sx={{ justifyContent: "space-between", marginTop: "2em" }}>
         {footerSections.map((section) => (
           <Box component="nav" aria-label={section.title} key={section.title} sx={{ flex: 1 }}>
-            <Typography variant="body1" fontWeight={500} sx={{ color: "primary.light" }}>
+            <Typography variant="body1" sx={{ fontWeight: 500, color: "primary.light" }}>
               {section.title}
             </Typography>
             <List>
@@ -73,7 +73,7 @@ function Footer() {
         </Link>
       </Stack>
       <Divider sx={{ borderColor: "rgba(252, 250, 249, 0.2)" }} />
-      <Typography variant="body1" color="common.white" sx={{ paddingY: "2em" }}>
+      <Typography variant="body1" sx={{ color: "common.white", paddingY: "2em" }}>
         © 2024-2026 Dauphinéo
       </Typography>
     </Box>

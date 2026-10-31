@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Dialog, DialogContent, DialogTitle, IconButton, Link, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -37,9 +37,12 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
     // Une photo retirée en cours de route peut laisser l'index hors de la liste
     const courante = Math.min(choisie, Math.max(images.length - 1, 0));
 
-    useEffect(() => {
+    // Chaque ouverture repart de la photo cliquée
+    const [selectionVue, setSelectionVue] = useState(selection);
+    if (selection !== selectionVue) {
+        setSelectionVue(selection);
         if (selection !== null) setCourante(selection);
-    }, [selection]);
+    }
 
     const suivante = (pas: number) => setCourante((index) => (index + pas + images.length) % images.length);
 
@@ -90,7 +93,7 @@ function SPRPhotosDetailed({ images, selection, commune, onClose, onErreur }: SP
                         </>
                     )}
                 </Box>
-                <Typography variant="body2" color="text.secondary" textAlign="center" aria-live="polite">
+                <Typography variant="body2" aria-live="polite" sx={{ color: "text.secondary", textAlign: "center" }}>
                     {courante + 1} / {images.length}
                     {images[courante]?.auteur && (
                         <>

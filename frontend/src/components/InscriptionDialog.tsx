@@ -96,7 +96,7 @@ function InscriptionDialog({ open, onClose, onSwitchToLogin, onConnexion }: Insc
                         <Alert severity="success" role="status">{demande.message}</Alert>
                         {demande.jetonDemo && (
                             <>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                                     Version de démonstration : aucun e-mail n'est envoyé, ce bouton remplace le lien d'activation.
                                 </Typography>
                                 {erreur && <Alert severity="error">{erreur}</Alert>}

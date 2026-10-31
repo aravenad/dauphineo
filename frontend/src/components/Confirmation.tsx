@@ -33,7 +33,7 @@ function Confirmation({ open, titre, children, confirmer, retour = "Retour", enC
             maxWidth="xs"
             aria-labelledby="confirmation-titre"
             aria-describedby="confirmation-texte"
-            PaperProps={{ sx: { borderRadius: "1.5em", p: 1 } }}
+            slotProps={{ paper: { sx: { borderRadius: "1.5em", p: 1 } } }}
         >
             <DialogTitle id="confirmation-titre" sx={{ display: "flex", alignItems: "center", gap: 1.5, fontWeight: 700 }}>
                 <Box

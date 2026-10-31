@@ -51,10 +51,10 @@ function SPR() {
         <Box>
             {retour}
 
-            <Typography variant="h3" component="h1" fontWeight="bold">
+            <Typography variant="h3" component="h1" sx={{ fontWeight: "bold" }}>
                 {nom}
             </Typography>
-            <Typography fontSize="1.2em" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography sx={{ fontSize: "1.2em", color: "text.secondary", mb: 3 }}>
                 {spr.courte_description}
             </Typography>
 
@@ -62,10 +62,10 @@ function SPR() {
 
             <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, mt: 6 }}>
                 <Box sx={{ flex: 3, display: "flex", flexDirection: "column", gap: 2 }}>
-                    <Typography variant="h5" component="h2" fontWeight="bold">
+                    <Typography variant="h5" component="h2" sx={{ fontWeight: "bold" }}>
                         Description
                     </Typography>
-                    <Typography fontSize="1.1rem" sx={{ hyphens: "auto" }} lang="fr">
+                    <Typography lang="fr" sx={{ fontSize: "1.1rem", hyphens: "auto" }}>
                         {spr.longue_description}
                     </Typography>
                     <MotsCles motCle={spr.mot_cle} taille="medium" />

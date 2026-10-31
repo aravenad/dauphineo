@@ -66,7 +66,7 @@ function Profil({ utilisateur }: { utilisateur: Utilisateur }) {
                     <Typography variant="h6" component="p">
                         {utilisateur.prenom} {utilisateur.nom}
                     </Typography>
-                    <Typography color="text.secondary">@{utilisateur.pseudo}</Typography>
+                    <Typography sx={{ color: "text.secondary" }}>@{utilisateur.pseudo}</Typography>
                 </Box>
             </Box>
 

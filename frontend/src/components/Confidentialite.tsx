@@ -68,7 +68,7 @@ function Confidentialite() {
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Box component="form" onSubmit={changer} noValidate sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <Typography variant="h6" component="h2" fontWeight="bold">
+                <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
                     Changer de mot de passe
                 </Typography>
                 {message && <Alert severity={message.type} role="status">{message.texte}</Alert>}
@@ -108,10 +108,10 @@ function Confidentialite() {
 
             <Divider sx={{ my: 2 }} />
 
-            <Typography variant="h6" component="h2" fontWeight="bold">
+            <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
                 Supprimer mon compte
             </Typography>
-            <Typography color="text.secondary">
+            <Typography sx={{ color: "text.secondary" }}>
                 Vos réservations et vos avis seront supprimés avec votre compte. Cette action est définitive.
             </Typography>
             <Box>

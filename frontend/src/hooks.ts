@@ -10,26 +10,33 @@ interface Chargement<T> {
 
 /** Charge une donnée de l'API et ignore les réponses arrivées après un changement de dépendances. */
 export function useApi<T>(charger: () => Promise<T>, dependances: unknown[]): Chargement<T> {
-    const [etat, setEtat] = useState<{ donnees: T | null; erreur: string | null; chargement: boolean }>({
+    const [version, setVersion] = useState(0);
+    const cle = [...dependances, version];
+    // La réponse garde la clé de sa requête : tant qu'elle ne correspond pas aux dépendances actuelles, le chargement est en cours
+    const [etat, setEtat] = useState<{ cle: unknown[] | null; donnees: T | null; erreur: string | null }>({
+        cle: null,
         donnees: null,
         erreur: null,
-        chargement: true,
     });
-    const [version, setVersion] = useState(0);
 
     useEffect(() => {
         let actif = true;
-        setEtat((precedent) => ({ ...precedent, chargement: true, erreur: null }));
         charger()
-            .then((donnees) => actif && setEtat({ donnees, erreur: null, chargement: false }))
-            .catch((erreur) => actif && setEtat({ donnees: null, erreur: messageErreur(erreur), chargement: false }));
+            .then((donnees) => actif && setEtat({ cle, donnees, erreur: null }))
+            .catch((erreur) => actif && setEtat({ cle, donnees: null, erreur: messageErreur(erreur) }));
         return () => {
             actif = false;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [...dependances, version]);
+    }, cle);
 
-    return { ...etat, recharger: () => setVersion((v) => v + 1) };
+    const aJour = etat.cle !== null && etat.cle.length === cle.length && etat.cle.every((valeur, i) => Object.is(valeur, cle[i]));
+    return {
+        donnees: etat.donnees,
+        erreur: aJour ? etat.erreur : null,
+        chargement: !aJour,
+        recharger: () => setVersion((v) => v + 1),
+    };
 }
 
 /** Donne à l'onglet le titre de la page, ou celui du site quand il n'est pas encore connu. */

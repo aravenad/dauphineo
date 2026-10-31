@@ -287,7 +287,7 @@ function Questionnaire({ open, onClose }: QuestionnaireProps) {
             maxWidth="md"
             aria-labelledby="titre-questionnaire"
             // Même fenêtre à chaque étape : celle des résultats
-            PaperProps={{ sx: { height: { sm: "min(700px, calc(100dvh - 64px))" }, borderRadius: { sm: "1.5em" } } }}
+            slotProps={{ paper: { sx: { height: { sm: "min(700px, calc(100dvh - 64px))" }, borderRadius: { sm: "1.5em" } } } }}
         >
             <DialogTitle id="titre-questionnaire" sx={{ textAlign: "center", fontWeight: "bold", pb: 1 }}>
                 {resultat ? "Nos recommandations" : "Trouver le site qui vous correspond"}
@@ -297,7 +297,7 @@ function Questionnaire({ open, onClose }: QuestionnaireProps) {
                 <DialogContent sx={{ pt: "8px !important" }}>
                     {resultat.recommandations.length === 0 ? (
                         <Box sx={{ height: "100%", display: "grid", placeItems: "center" }}>
-                            <Typography textAlign="center">Aucun site ne correspond à ces critères. Essayez d'en assouplir quelques-uns.</Typography>
+                            <Typography sx={{ textAlign: "center" }}>Aucun site ne correspond à ces critères. Essayez d'en assouplir quelques-uns.</Typography>
                         </Box>
                     ) : (
                         <CarrouselResultats resultat={resultat} onOuvrir={fermer} />
@@ -305,7 +305,7 @@ function Questionnaire({ open, onClose }: QuestionnaireProps) {
                 </DialogContent>
             ) : (
                 <DialogContent sx={{ display: "flex", flexDirection: "column", pt: "8px !important" }}>
-                    <Typography variant="body2" textAlign="center" sx={{ mb: 1 }}>
+                    <Typography variant="body2" sx={{ textAlign: "center", mb: 1 }}>
                         Question {etape + 1} sur {QUESTIONS.length}
                     </Typography>
                     <LinearProgress
@@ -315,7 +315,7 @@ function Questionnaire({ open, onClose }: QuestionnaireProps) {
                         sx={{ borderRadius: 1, height: 6, maxWidth: 480, width: "100%", mx: "auto" }}
                     />
                     <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", py: 4, maxWidth: 640, width: "100%", mx: "auto" }}>
-                        <Typography variant="h6" component="p" textAlign="center" sx={{ mb: 4, fontSize: { xs: "1.15rem", sm: "1.35rem" } }} aria-live="polite">
+                        <Typography variant="h6" component="p" aria-live="polite" sx={{ textAlign: "center", mb: 4, fontSize: { xs: "1.15rem", sm: "1.35rem" } }}>
                             {QUESTIONS[etape]}
                         </Typography>
                         {contenu()}

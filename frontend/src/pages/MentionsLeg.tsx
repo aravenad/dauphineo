@@ -7,8 +7,8 @@ import CopyrightIcon from "@mui/icons-material/Copyright";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import GavelIcon from "@mui/icons-material/Gavel";
 import LanguageIcon from "@mui/icons-material/Language";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import MailOutlineIcon from "@mui/icons-material/MailOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutlined";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
@@ -23,7 +23,7 @@ function CreditsPhotos() {
   const { donnees, erreur } = useApi(() => api.listSpr(), []);
 
   if (erreur) {
-    return <Typography color="text.secondary">Les crédits n'ont pas pu être chargés.</Typography>;
+    return <Typography sx={{ color: "text.secondary" }}>Les crédits n'ont pas pu être chargés.</Typography>;
   }
 
   const sprs = [...(donnees ?? [])].sort((a, b) => a.nom_commune.localeCompare(b.nom_commune, "fr"));
@@ -32,7 +32,7 @@ function CreditsPhotos() {
     <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)" }, gap: 2 }}>
       {sprs.map((spr) => (
         <Paper key={spr.id} variant="outlined" sx={{ p: 2, borderRadius: "1em", borderColor: "grey.300", minWidth: 0 }}>
-          <Typography component="h3" fontWeight={700} color="primary" sx={{ mb: 1 }}>
+          <Typography component="h3" color="primary" sx={{ fontWeight: 700, mb: 1 }}>
             {nomCommune(spr.nom_commune)}
           </Typography>
           <Box component="ul" sx={{ listStyle: "none", m: 0, p: 0, display: "grid", gap: 0.75 }}>

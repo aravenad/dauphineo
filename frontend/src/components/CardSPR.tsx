@@ -23,7 +23,7 @@ function SousTitre({ variante, reservations, noteMoyenne }: Omit<CardSPRProps, "
         return (
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                 <PersonIcon fontSize="small" aria-hidden />
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                     {reservations ? `${reservations} réservation${reservations > 1 ? "s" : ""}` : "Pas encore réservé"}
                 </Typography>
             </Box>
@@ -32,7 +32,7 @@ function SousTitre({ variante, reservations, noteMoyenne }: Omit<CardSPRProps, "
     return (
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
             <StarIcon fontSize="small" sx={{ color: "info.main" }} aria-hidden />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 {noteMoyenne ? `Note moyenne : ${noteMoyenne.toFixed(1).replace(".", ",")} / 5` : "Pas encore noté"}
             </Typography>
         </Box>
@@ -91,7 +91,7 @@ function CardSPR({ spr, variante = "regular", reservations, noteMoyenne }: CardS
                     )}
                 </Box>
                 <CardContent sx={{ px: 0.5, pb: 1, display: "flex", flexDirection: "column", gap: 1 }}>
-                    <Typography variant="body1" component="h3" fontWeight={700}>
+                    <Typography variant="body1" component="h3" sx={{ fontWeight: 700 }}>
                         {nomCommune(spr.nom_commune)}
                     </Typography>
                     {variante === "regular" ? (

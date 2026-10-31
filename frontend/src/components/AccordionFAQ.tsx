@@ -41,7 +41,7 @@ function AccordionFAQ() {
           onChange={handleChange(panel.id)}
         >
           <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-            <Typography variant="body1" fontWeight={700}>
+            <Typography variant="body1" sx={{ fontWeight: 700 }}>
               {panel.title}
             </Typography>
           </AccordionSummary>

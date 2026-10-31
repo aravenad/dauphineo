@@ -19,19 +19,19 @@ const Rating: React.FC<RatingProps> = ({ avis }) => {
 
   return (
     <Box ref={ref} sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
-      <Typography variant="h5" component="h3" fontWeight="bold">
+      <Typography variant="h5" component="h3" sx={{ fontWeight: "bold" }}>
         Évaluation globale
       </Typography>
 
       {total === 0 ? (
-        <Typography color="text.secondary">Pas encore de note.</Typography>
+        <Typography sx={{ color: "text.secondary" }}>Pas encore de note.</Typography>
       ) : (
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography variant="h4" component="p" fontWeight={700}>
+          <Typography variant="h4" component="p" sx={{ fontWeight: 700 }}>
             {moyenne.toLocaleString("fr-FR", { maximumFractionDigits: 1 })}
           </Typography>
           <Etoiles value={moyenne} precision={0.1} readOnly aria-hidden />
-          <Typography color="text.secondary">({total} avis)</Typography>
+          <Typography sx={{ color: "text.secondary" }}>({total} avis)</Typography>
         </Box>
       )}
 

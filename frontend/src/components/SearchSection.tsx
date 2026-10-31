@@ -36,11 +36,9 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
         return () => window.clearInterval(minuteur);
     }, [enPause, total]);
 
-    useEffect(() => {
-        if (total === 0) return;
-        const suivante = (courante + 1) % total;
-        setChargees((avant) => (avant.has(suivante) ? avant : new Set([...avant, suivante])));
-    }, [courante, total]);
+    // Mis à jour pendant le rendu plutôt que dans un effet, pour éviter un rendu de plus à chaque diapo
+    const suivante = total > 0 ? (courante + 1) % total : 0;
+    if (!chargees.has(suivante)) setChargees(new Set([...chargees, suivante]));
 
     return (
         <Box
@@ -89,10 +87,10 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
             </Box>
 
             <Box sx={{ position: "relative", textAlign: "center", color: "common.white", textShadow: "0 2px 12px rgba(0, 0, 0, 0.35)" }}>
-                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2rem", sm: "2.6rem", md: "3.75rem" }, hyphens: "manual" }}>
+                <Typography variant="h2" component="h1" sx={{ fontWeight: 800, fontSize: { xs: "2rem", sm: "2.6rem", md: "3.75rem" }, hyphens: "manual" }}>
                     Que souhaitez-vous visiter ?
                 </Typography>
-                <Typography fontSize={{ xs: "1.05em", md: "1.3em" }}>Accédez aux sites patrimoniaux remarquables de l'Isère et réservez votre guide</Typography>
+                <Typography sx={{ fontSize: { xs: "1.05em", md: "1.3em" } }}>Accédez aux sites patrimoniaux remarquables de l'Isère et réservez votre guide</Typography>
             </Box>
 
             <Box sx={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", gap: 1.5, width: "100%", maxWidth: 720 }}>
@@ -136,7 +134,7 @@ function SearchSection({ sprList }: { sprList: Spr[] }) {
                     }}
                 >
                     <Box sx={{ minWidth: 0 }}>
-                        <Link component={RouterLink} to={`/spr/${active.spr.id}`} color="inherit" underline="hover" fontWeight={700} fontSize="1.05rem">
+                        <Link component={RouterLink} to={`/spr/${active.spr.id}`} color="inherit" underline="hover" sx={{ fontWeight: 700, fontSize: "1.05rem" }}>
                             {nomCommune(active.spr.nom_commune)}
                         </Link>
                         {active.image.auteur && (

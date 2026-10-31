@@ -67,13 +67,13 @@ function MesReservations() {
                 <Card key={reservation.id} variant="outlined" sx={{ borderRadius: "1em", opacity: aVenir(reservation) ? 1 : 0.6 }}>
                     <CardContent sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2 }}>
                         <Box>
-                            <Link component={RouterLink} to={`/spr/${reservation.spr.id}`} variant="h6" fontWeight={700} underline="hover">
+                            <Link component={RouterLink} to={`/spr/${reservation.spr.id}`} variant="h6" underline="hover" sx={{ fontWeight: 700 }}>
                                 {nomCommune(reservation.spr.nom_commune)}
                             </Link>
                             <Typography>
                                 {formaterDate(reservation.date_visite)}, de {formaterHeure(reservation.heure_debut)} à {formaterHeure(reservation.heure_fin)}
                             </Typography>
-                            <Typography color="text.secondary">
+                            <Typography sx={{ color: "text.secondary" }}>
                                 {reservation.taille} personne{reservation.taille > 1 ? "s" : ""} · {formaterPrix(reservation.prix)} · avec {reservation.guide.prenom} {reservation.guide.nom}
                             </Typography>
                         </Box>
@@ -82,7 +82,7 @@ function MesReservations() {
                                 Annuler
                             </ButtonCustom>
                         ) : (
-                            <Typography color="text.secondary">Visite passée</Typography>
+                            <Typography sx={{ color: "text.secondary" }}>Visite passée</Typography>
                         )}
                     </CardContent>
                 </Card>
@@ -130,7 +130,7 @@ function MonCompte() {
     if (!utilisateur) {
         return (
             <Box sx={{ textAlign: "center", py: 6 }}>
-                <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
+                <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: "bold" }}>
                     Mon compte
                 </Typography>
                 <Typography gutterBottom>Connectez-vous pour retrouver vos réservations et gérer votre compte.</Typography>
@@ -143,7 +143,7 @@ function MonCompte() {
 
     return (
         <Box sx={{ maxWidth: 900, mx: "auto" }}>
-            <Typography variant="h4" component="h1" fontWeight="bold" gutterBottom>
+            <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: "bold" }}>
                 Mon compte
             </Typography>
             <Paper variant="outlined" sx={{ borderRadius: "1em", overflow: "hidden" }}>

@@ -41,10 +41,10 @@ export function PageLegale({ titre, intro, children }: { titre: string; intro: R
     return (
         <Box sx={{ maxWidth: 1000, mx: "auto", px: { xs: 0, sm: 2 }, py: { xs: 2, md: 4 } }}>
             <Box component="header" sx={{ mb: { xs: 4, md: 6 } }}>
-                <Typography variant="overline" color="primary" fontWeight={700}>
+                <Typography variant="overline" color="primary" sx={{ fontWeight: 700 }}>
                     Informations légales
                 </Typography>
-                <Typography variant="h3" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2rem", md: "2.75rem" }, mb: 1.5 }}>
+                <Typography variant="h3" component="h1" sx={{ fontWeight: 800, fontSize: { xs: "2rem", md: "2.75rem" }, mb: 1.5 }}>
                     {titre}
                 </Typography>
                 <Typography sx={{ maxWidth: 720, fontSize: "1.05rem", lineHeight: 1.7 }}>{intro}</Typography>
@@ -76,7 +76,7 @@ export function SectionLegale({ icone, titre, children }: { icone: ReactNode; ti
         <Box component="section">
             <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", mb: 2 }}>
                 <Pastille icone={icone} />
-                <Typography variant="h5" component="h2" fontWeight={700}>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 700 }}>
                     {titre}
                 </Typography>
             </Stack>
@@ -106,7 +106,7 @@ export function CarteInfo({ icone, titre, ton, children }: { icone: ReactNode; t
         <Paper variant="outlined" sx={{ p: 2.5, borderRadius: "1em", borderColor: "grey.300", display: "flex", gap: 2, minWidth: 0 }}>
             <Pastille icone={icone} ton={ton} taille={36} />
             <Box sx={{ minWidth: 0, overflowWrap: "anywhere" }}>
-                <Typography component="h3" fontWeight={700} sx={{ mb: 0.5 }}>
+                <Typography component="h3" sx={{ fontWeight: 700, mb: 0.5 }}>
                     {titre}
                 </Typography>
                 <Typography component="div" variant="body2" sx={{ lineHeight: 1.6 }}>

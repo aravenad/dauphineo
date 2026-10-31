@@ -53,7 +53,7 @@ function SPRMap({ commune }: SPRMapProps) {
     if (!etat.position) {
         return (
             <Box sx={{ width: "100%", height: 300, borderRadius: "1em", backgroundColor: "primary.light", display: "grid", placeItems: "center", p: 2 }}>
-                <Typography textAlign="center">
+                <Typography sx={{ textAlign: "center" }}>
                     La carte n'a pas pu être chargée.{" "}
                     <Link href={recherche} target="_blank" rel="noopener">
                         Voir {commune} sur OpenStreetMap
@@ -76,7 +76,7 @@ function SPRMap({ commune }: SPRMapProps) {
                 loading="lazy"
                 sx={{ width: "100%", height: 300, border: 0, borderRadius: "1em" }}
             />
-            <Typography variant="body2" textAlign="right">
+            <Typography variant="body2" sx={{ textAlign: "right" }}>
                 <Link href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=13/${lat}/${lon}`} target="_blank" rel="noopener">
                     Agrandir la carte
                 </Link>

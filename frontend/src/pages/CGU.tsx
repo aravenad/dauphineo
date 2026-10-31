@@ -4,13 +4,13 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import BalanceIcon from "@mui/icons-material/Balance";
 import BlockIcon from "@mui/icons-material/Block";
 import CopyrightIcon from "@mui/icons-material/Copyright";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import DevicesIcon from "@mui/icons-material/Devices";
 import GavelIcon from "@mui/icons-material/Gavel";
 import LanguageIcon from "@mui/icons-material/Language";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import MailOutlineIcon from "@mui/icons-material/MailOutlined";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import RuleIcon from "@mui/icons-material/Rule";

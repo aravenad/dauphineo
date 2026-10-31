@@ -36,17 +36,17 @@ function Explorer() {
     return (
         <Box>
             <Box sx={{ textAlign: "center", mb: 3 }}>
-                <Typography variant="h2" component="h1" fontWeight={800} sx={{ fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
+                <Typography variant="h2" component="h1" sx={{ fontWeight: 800, fontSize: { xs: "2.2rem", md: "3.75rem" } }}>
                     Explorez le patrimoine
                 </Typography>
-                <Typography color="text.secondary" fontSize="1.3em">
+                <Typography sx={{ color: "text.secondary", fontSize: "1.3em" }}>
                     Choisissez un lieu pour en savoir plus et réserver votre guide
                 </Typography>
             </Box>
 
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 3 }}>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, alignItems: "center" }} aria-live="polite">
-                    <Typography color="text.secondary">
+                    <Typography sx={{ color: "text.secondary" }}>
                         {donnees ? `${resultats.length} site${resultats.length > 1 ? "s" : ""} sur ${sprs.length}` : " "}
                     </Typography>
                     {filtres.recherche.trim() && <Chip label={`« ${filtres.recherche.trim()} »`} onDelete={() => setFiltres({ ...filtres, recherche: "" })} />}
@@ -83,7 +83,7 @@ function Explorer() {
             ) : (
                 donnees && (
                     <Box sx={{ textAlign: "center", mt: 4 }}>
-                        <Typography variant="h6" color="text.secondary" gutterBottom>
+                        <Typography variant="h6" gutterBottom sx={{ color: "text.secondary" }}>
                             Aucun site patrimonial remarquable ne correspond à ces critères.
                         </Typography>
                         <ButtonCustom variant="outlined" onClick={() => setFiltres(FILTRES_VIDES)}>

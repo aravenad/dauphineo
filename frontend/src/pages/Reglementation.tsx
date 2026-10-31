@@ -1,12 +1,12 @@
 import { Link, Typography } from "@mui/material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import EventNoteOutlinedIcon from "@mui/icons-material/EventNoteOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import HandshakeOutlinedIcon from "@mui/icons-material/HandshakeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import PaymentOutlinedIcon from "@mui/icons-material/PaymentOutlined";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutlined";
 import StorageOutlinedIcon from "@mui/icons-material/StorageOutlined";
 import TuneIcon from "@mui/icons-material/Tune";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";

@@ -39,7 +39,7 @@ const FormulaireAvis: React.FC<FormulaireAvisProps> = ({ sprId, onPublie, onAnnu
   return (
     <Box component="form" onSubmit={envoyer} noValidate>
       <Stack spacing={2}>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
           Vous pouvez laisser un seul avis par site.
         </Typography>
 

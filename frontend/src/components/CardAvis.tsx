@@ -1,5 +1,5 @@
 import { Box, Typography, Avatar, Rating, Link, IconButton, Tooltip } from "@mui/material";
-import { DeleteOutline } from "@mui/icons-material";
+import DeleteOutline from "@mui/icons-material/DeleteOutlined";
 import { useState } from "react";
 import { formaterDate } from "../utils/format";
 
@@ -24,10 +24,10 @@ const CardAvis: React.FC<CardAvisProps> = ({ titre, commentaire, note, date, pse
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Avatar sx={{ bgcolor: "primary.main" }}>{pseudo.charAt(0).toUpperCase()}</Avatar>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle1" fontWeight="bold">
+          <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
             {pseudo}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
             Posté le {formaterDate(date, { day: "numeric", month: "long", year: "numeric" })}
           </Typography>
         </Box>
@@ -42,13 +42,13 @@ const CardAvis: React.FC<CardAvisProps> = ({ titre, commentaire, note, date, pse
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Rating value={note} readOnly size="small" aria-label={`${note} sur 5`} />
-        <Typography variant="subtitle1" component="h4" fontWeight="bold">
+        <Typography variant="subtitle1" component="h4" sx={{ fontWeight: "bold" }}>
           {titre}
         </Typography>
       </Box>
 
       <Box>
-        <Typography variant="body2" color="text.primary" sx={{ whiteSpace: "pre-line" }}>
+        <Typography variant="body2" sx={{ color: "text.primary", whiteSpace: "pre-line" }}>
           {long && !deplie ? `${commentaire.slice(0, LONGUEUR_APERCU).trimEnd()}…` : commentaire}
         </Typography>
         {long && (

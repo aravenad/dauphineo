@@ -58,7 +58,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
   return (
     <Box component="section" aria-labelledby="titre-avis">
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2, mb: 2 }}>
-        <Typography id="titre-avis" variant="h4" component="h2" fontWeight="bold">
+        <Typography id="titre-avis" variant="h4" component="h2" sx={{ fontWeight: "bold" }}>
           Avis
         </Typography>
         {!dejaPublie && (
@@ -80,7 +80,7 @@ const AvisSection: React.FC<AvisSectionProps> = ({ sprId }) => {
 
           <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
             {avis.length === 0 ? (
-              <Typography color="text.secondary">Aucun avis pour le moment. Soyez le premier à partager votre visite.</Typography>
+              <Typography sx={{ color: "text.secondary" }}>Aucun avis pour le moment. Soyez le premier à partager votre visite.</Typography>
             ) : (
               avis.slice(0, visibles).map((a) => (
                 <CardAvis
